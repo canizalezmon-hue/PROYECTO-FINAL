@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMZON | Bienvenido</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div id="view-welcome" class="welcome-screen">
+        <div class="welcome-box">
+            <h1 class="logo-large">AMZON</h1>
+            <p>Tu tienda de confianza en Venezuela</p>
+            
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button id="tab-login" class="tab-btn active" onclick="switchAuth('login')">Entrar</button>
+                    <button id="tab-register" class="tab-btn" onclick="switchAuth('register')">Registrarse</button>
+                </div>
+                
+                <form id="auth-form" onsubmit="handleAuth(event)">
+                    <div id="extra-fields"></div>
+                    <input type="email" id="auth-email" placeholder="Correo electrónico" required>
+                    <input type="password" id="auth-pass" placeholder="Contraseña" required>
+                    <button type="submit" class="btn-auth" id="btn-auth-text">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="view-store" class="store-screen" style="display: none;">
+        <header>
+            <nav class="navbar">
+                <div class="logo">AMZON</div>
+                <div class="search-bar">
+                    <input type="text" id="user-search" placeholder="¿Qué buscas?" oninput="buscarProductos()">
+                </div>
+                <div class="bcv-info">
+                    BCV: <strong id="tasa-valor">...</strong> Bs.
+                </div>
+                <ul class="nav-links">
+                    <li id="user-greeting" class="nav-item">Hola</li>
+                    <li class="nav-item" onclick="logout()">Cerrar Sesión</li>
+                    <li class="cart-container" onclick="toggleModal('cart-modal')" style="cursor:pointer">
+                        🛒 <span id="cart-count">0</span>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <div class="container">
+            <aside class="filters">
+                <h3>Categorías</h3>
+                <button class="filter-btn active" onclick="filtrarProductos('todos', this)">Todos</button>
+                <button class="filter-btn" onclick="filtrarProductos('Electrónica', this)">Electrónica</button>
+                <button class="filter-btn" onclick="filtrarProductos('Hogar', this)">Hogar</button>
+                <button class="filter-btn" onclick="filtrarProductos('Ropa', this)">Ropa</button>
+            </aside>
+
+            <main>
+                <h2 id="category-title">Catálogo</h2>
+                <div id="product-grid" class="grid"></div>
+            </main>
+        </div>
+    </div>
+
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal('cart-modal')">&times;</span>
+            <h2>Tu Carrito</h2>
+            <hr>
+            <div id="cart-items" style="margin: 20px 0; max-height: 300px; overflow-y: auto;"></div>
+            <div class="cart-total" style="border-top: 2px solid #eee; padding-top: 15px;">
+                <p>Total USD: <strong id="total-price-usd">$0.00</strong></p>
+                <p>Total Bs: <strong id="total-price-bs">0,00 Bs.</strong></p>
+                <button class="btn-checkout" onclick="procesarCompra()">Finalizar Compra</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-modal" class="modal product-modal-view">
+        <div class="modal-content-lg">
+            <span class="close" onclick="toggleModal('product-modal')">&times;</span>
+            <div class="product-layout">
+                <div class="product-images">
+                    <img id="p-main-img" src="" alt="Producto" class="main-img">
+                    <div class="thumbnails" id="p-thumbnails"></div>
+                </div>
+                <div class="product-info">
+                    <h2 id="p-title"></h2>
+                    <div class="product-rating">
+                        <span id="p-rating-stars"></span>
+                        <span id="p-rating-count"></span>
+                    </div>
+                    <div class="product-pricing">
+                        <p class="price-usd" id="p-price-usd"></p>
+                        <span class="price-bs" id="p-price-bs"></span>
+                        <p id="p-stock" class="stock-info"></p>
+                    </div>
+                    <div class="product-description">
+                        <h3>Descripción</h3>
+                        <p id="p-description"></p>
+                        <h3>Especificaciones</h3>
+                        <ul id="p-specs"></ul>
+                    </div>
+                    <div class="product-actions">
+                        <button id="btn-modal-add" class="btn-primary" onclick="agregarAlCarritoModal()">🛒 Añadir al Carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
