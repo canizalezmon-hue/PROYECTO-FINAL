@@ -1,5 +1,4 @@
 // --- CONFIGURACIÓN Y ESTADO ---
-// --- CONFIGURACIÓN Y ESTADO ---
 const TASA_ACTUAL = 475.96; 
 let usuariosRegistrados = JSON.parse(localStorage.getItem('usuarios')) || []; 
 let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo')) || null;
@@ -321,6 +320,9 @@ function procesarCompra() {
     }
     alert(`Compra procesada por un total de: ${document.getElementById('total-price-bs').innerText}`);
     carrito = [];
+    actualizarCarritoUI();
+    toggleModal('cart-modal');
+}
     actualizarCarritoUI();
     toggleModal('cart-modal');
 }
