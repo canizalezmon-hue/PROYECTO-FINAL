@@ -1,6 +1,6 @@
 # AMZON | Tienda Virtual 🛒🇻🇪
 
-**AMZON** es una plataforma de comercio electrónico diseñada para el mercado venezolano. Este proyecto es una aplicación web responsiva que permite a los usuarios navegar por un catálogo de productos, gestionar un carrito de compras y visualizar precios convertidos automáticamente a Bolívares (Bs.) según la tasa actual del mercado.
+**AMZON** es una plataforma de comercio electrónico diseñada específicamente para el mercado venezolano. Este proyecto es una aplicación web responsiva que permite a los usuarios navegar por un catálogo de productos, gestionar un carrito de compras y visualizar precios convertidos automáticamente a Bolívares (Bs.) según la tasa actual del mercado.
 
 ---
 
@@ -15,10 +15,22 @@
 
 ---
 
+## 🎨 Diseño UI/UX (Figma)
+
+El concepto visual y la experiencia de usuario fueron desarrollados previamente para asegurar una interfaz moderna y limpia.
+
+[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/make/1VAAJ1JUFR6Dpar9GbSTc1/E-commerce-Web-App-Design?t=LczPjxwNd1Z92dnh-1)
+
+---
+
 ## 🛠️ Tecnologías utilizadas
 
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+
 * **HTML5:** Estructura semántica del sitio.
-* **CSS3:** Diseño personalizado con variables, Flexbox, Grid y Media Queries para una responsividad total.
+* **CSS3:** Diseño personalizado con variables, Flexbox, Grid y Media Queries.
 * **JavaScript (Vanilla):** Lógica de negocio, manejo de eventos del DOM y gestión del estado del carrito.
 
 ---
@@ -29,17 +41,17 @@
 PROYECTO-FINAL/
 │
 ├── index.html      # Estructura principal y contenedores de modales.
-├── style.css       # Estilos globales y adaptaciones responsivas (Media Queries).
-├── script.js       # Lógica de autenticación, carrito y renderizado de productos.
+├── style.css       # Estilos globales y adaptaciones responsivas.
+├── script.js       # Lógica de autenticación, carrito y renderizado.
 └── README.md       # Documentación del proyecto.
-✒️ Autor
-Canizalez Mon Hue - Desarrollo Completo - GitHub
+```
 
-✒️ Autores
-Canizalez Mon Hue
-franmrr
-vodkad2
+---
 
+## ✒️ Autores
 
-
+* **Canizalez Mon Hue** 
+* **franmrr**
+* **vodkad2_**
+```
 
