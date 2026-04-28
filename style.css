@@ -210,3 +210,86 @@ body {
     .navbar { padding: 10px 15px; }
     .nav-links { gap: 10px; font-size: 0.8rem; }
 }
+/* --- RESPONSIVIDAD TOTAL (PC, TABLET Y MÓVIL) --- */
+
+/* Ajustes para Pantallas Grandes (Laptops/PC) */
+@media (min-width: 1025px) {
+    .grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Ajustes para Tablets (Pantallas medianas) */
+@media (max-width: 1024px) {
+    .navbar { padding: 10px 20px; }
+    .search-bar input { width: 250px; }
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    .filters { width: 200px; }
+}
+
+/* Ajustes para Teléfonos (Pantallas pequeñas) */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .search-bar { width: 100%; order: 3; }
+    .search-bar input { width: 100%; }
+
+    .nav-links {
+        width: 100%;
+        justify-content: space-between;
+        order: 2;
+    }
+
+    .bcv-info { order: 4; width: 100%; text-align: center; }
+
+    /* Convertir barra lateral en menú horizontal scrollable */
+    .container { flex-direction: column; }
+    .filters {
+        width: 100%;
+        min-height: auto;
+        display: flex;
+        overflow-x: auto;
+        padding: 10px;
+        background: var(--white);
+        position: sticky;
+        top: 130px; /* Ajustar según altura de navbar móvil */
+        z-index: 900;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .filters h3 { display: none; } /* Ocultar título en móvil */
+    .filter-btn {
+        width: auto;
+        margin-bottom: 0;
+        margin-right: 10px;
+        white-space: nowrap;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .grid { 
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
+        padding: 10px;
+        gap: 10px;
+    }
+
+    /* Ajuste de Modales en móvil */
+    .modal-content-lg {
+        width: 95%;
+        margin: 5% auto;
+        padding: 15px;
+    }
+
+    .product-layout { flex-direction: column; }
+    .main-img { height: 250px; }
+    
+    .welcome-box { width: 90%; padding: 20px; }
+}
+
+/* Ajuste para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    .logo { font-size: 1.5rem; }
+}
