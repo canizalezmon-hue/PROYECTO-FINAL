@@ -141,16 +141,17 @@ function handleAuth(event) {
 
     if (authMode === 'register') {
         const nameInput = document.getElementById('auth-name');
-        const name = nameInput ? nameInput.value : '';
-        
+        const nameValue = nameInput ? nameInput.value : '';
+
         if (usuariosRegistrados.some(u => u.email === email)) {
-            alert("Este correo ya está registrado");
+            showToast("Este correo ya está registrado");
             return;
         }
 
-        usuariosRegistrados.push({ name, email, pass });
+        usuariosRegistrados.push({ name: nameValue, email: email, pass: pass });
         localStorage.setItem('usuarios', JSON.stringify(usuariosRegistrados));
-        showToast("Registro exitoso. ¡Inicia sesión!");
+        
+        showToast("¡Registro exitoso! Inicia sesión.");
         document.getElementById('auth-form').reset();
         switchAuth('login');
     } else {
@@ -161,7 +162,7 @@ function handleAuth(event) {
             document.getElementById('user-greeting').innerText = `Hola, ${usuario.name.split(' ')[0]}`;
             showStore();
         } else {
-            alert("Error: credenciales incorrectas");
+            showToast("Credenciales incorrectas");
         }
     }
 }
