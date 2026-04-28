@@ -35,6 +35,11 @@ PROYECTO-FINAL/
 ✒️ Autor
 Canizalez Mon Hue - Desarrollo Completo - GitHub
 
-✒️ Autor
-Canizalez Mon Hue - Desarrollo Completo - GitHub
-link de diseño en figma: https://www.figma.com/make/1VAAJ1JUFR6Dpar9GbSTc1/E-commerce-Web-App-Design?t=LczPjxwNd1Z92dnh-1
+✒️ Autores
+Canizalez Mon Hue
+franmrr
+vodkad2
+
+
+
+
