@@ -1,4 +1,5 @@
 // --- CONFIGURACIÓN Y ESTADO ---
+// --- CONFIGURACIÓN Y ESTADO ---
 const TASA_ACTUAL = 475.96; 
 let usuariosRegistrados = JSON.parse(localStorage.getItem('usuarios')) || []; 
 let usuarioActivo = JSON.parse(localStorage.getItem('usuarioActivo')) || null;
@@ -212,9 +213,11 @@ function abrirDetalleProducto(id) {
     
     const thumbContainer = document.getElementById('p-thumbnails');
     thumbContainer.innerHTML = '';
-    producto.imgs.forEach(imgUrl => {
-        thumbContainer.innerHTML += `<img src="${imgUrl}" class="thumb" onclick="document.getElementById('p-main-img').src='${imgUrl}'">`;
-    });
+    if (producto.imgs) {
+        producto.imgs.forEach(imgUrl => {
+            thumbContainer.innerHTML += `<img src="${imgUrl}" class="thumb" onclick="document.getElementById('p-main-img').src='${imgUrl}'">`;
+        });
+    }
 
     const stockEl = document.getElementById('p-stock');
     const btnModal = document.getElementById('btn-modal-add');
@@ -240,10 +243,11 @@ function abrirDetalleProducto(id) {
     toggleModal('product-modal');
 }
 
-// --- LÓGICA DEL CARRITO (CON CANTIDADES) ---
+// --- LÓGICA DEL CARRITO ---
 function toggleModal(id) {
     const m = document.getElementById(id);
-    m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+    const isVisible = (m.style.display === 'block');
+    m.style.display = isVisible ? 'none' : 'block';
 }
 
 function agregarAlCarrito(id) {
@@ -320,5 +324,3 @@ function procesarCompra() {
     actualizarCarritoUI();
     toggleModal('cart-modal');
 }
-console.log (prueba)
-
