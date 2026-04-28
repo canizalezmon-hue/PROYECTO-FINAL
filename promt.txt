@@ -1,0 +1,19 @@
+"Design a high-fidelity E-commerce Web App called 'AMZON' with a clean, Amazon-inspired aesthetic using a professional color palette: Dark Blue (#232f3e), Amber (#febd69), and Orange (#e47911).
+
+The layout must include two main views:
+
+Welcome/Auth Screen: A centered white card on a dark blue background containing a large logo, 'Login' and 'Register' tabs, email/password inputs, and a bold amber action button.
+
+Store Dashboard: >    * Sticky Navbar: Logo on the left, a 350px centered search bar, a 'BCV Exchange Rate' badge, and user icons/cart with a counter on the right.
+
+Main Layout: A 240px left sidebar for categories (as vertical buttons) and a flexible grid of product cards on the right.
+
+Product Cards: Each card should have a product image, title, price in USD (bold), price in VEB (orange text), and an 'Add to Cart' button.
+
+Modals to design:
+
+Shopping Cart: A right-side or centered modal listing items with quantities, a trash icon, and a 'Finalize Purchase' checkout section at the bottom.
+
+Product Detail: A large overlay with a 2-column layout. Left: main product image with a row of small thumbnails below. Right: Product title, star rating, pricing, description, technical specs list, and a prominent 'Add to Cart' button.
+
+Style Requirements: Use 'Arial' or 'Inter' font. Apply subtle border-radius (5-10px) to all containers and buttons. Ensure the design is responsive for desktop and mobile."
