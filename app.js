@@ -12,10 +12,7 @@ const productos = [
         nombre: "Laptop Pro X1", 
         precio: 120, 
         categoria: "Electrónica", 
-        imgs: [
-            "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=600&auto=format&fit=crop", 
-            "https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=600&auto=format&fit=crop"
-        ],
+        imgs: ["https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=600&auto=format&fit=crop", "https://images.unsplash.com/photo-1504707748692-419802cf939d?q=80&w=600&auto=format&fit=crop"],
         rating: 4.5, reviewCount: 15, stock: 5,
         description: "Una laptop potente para trabajo y diseño. Pantalla 15.6' 4K, 16GB RAM, 512GB SSD.",
         specs: ["Procesador: i7 12th", "RAM: 16GB", "Pantalla: 15.6'", "Peso: 1.5kg"]
@@ -92,7 +89,7 @@ function showToast(mensaje) {
     setTimeout(() => toast.remove(), 3000);
 }
 
-// --- PERSISTENCIA Y CARGA INICIAL ---
+// --- CARGA INICIAL ---
 window.onload = () => {
     if (usuarioActivo) {
         document.getElementById('user-greeting').innerText = `Hola, ${usuarioActivo.name.split(' ')[0]}`;
@@ -117,6 +114,7 @@ function logout() {
     carrito = [];
     localStorage.removeItem('carrito');
     actualizarCarritoUI();
+    showToast("Sesión cerrada");
 }
 
 function switchAuth(mode) {
@@ -142,10 +140,18 @@ function handleAuth(event) {
     const pass = document.getElementById('auth-pass').value;
 
     if (authMode === 'register') {
-        const name = document.getElementById('auth-name').value;
+        const nameInput = document.getElementById('auth-name');
+        const name = nameInput ? nameInput.value : '';
+        
+        if (usuariosRegistrados.some(u => u.email === email)) {
+            alert("Este correo ya está registrado");
+            return;
+        }
+
         usuariosRegistrados.push({ name, email, pass });
         localStorage.setItem('usuarios', JSON.stringify(usuariosRegistrados));
         showToast("Registro exitoso. ¡Inicia sesión!");
+        document.getElementById('auth-form').reset();
         switchAuth('login');
     } else {
         const usuario = usuariosRegistrados.find(u => u.email === email && u.pass === pass);
@@ -197,13 +203,12 @@ function buscarProductos() {
     mostrarProductos(res);
 }
 
-// --- DETALLE DE PRODUCTO ---
+// --- DETALLES ---
 function abrirDetalleProducto(id) {
     const producto = productos.find(p => p.id === id);
     if (!producto) return;
     
     productoActualEnModal = producto; 
-
     document.getElementById('p-title').innerText = producto.nombre;
     document.getElementById('p-price-usd').innerText = `$${producto.precio.toFixed(2)}`;
     document.getElementById('p-price-bs').innerText = `${formatBs(producto.precio * TASA_ACTUAL)} Bs.`;
@@ -212,11 +217,9 @@ function abrirDetalleProducto(id) {
     
     const thumbContainer = document.getElementById('p-thumbnails');
     thumbContainer.innerHTML = '';
-    if (producto.imgs) {
-        producto.imgs.forEach(imgUrl => {
-            thumbContainer.innerHTML += `<img src="${imgUrl}" class="thumb" onclick="document.getElementById('p-main-img').src='${imgUrl}'">`;
-        });
-    }
+    producto.imgs.forEach(imgUrl => {
+        thumbContainer.innerHTML += `<img src="${imgUrl}" class="thumb" onclick="document.getElementById('p-main-img').src='${imgUrl}'">`;
+    });
 
     const stockEl = document.getElementById('p-stock');
     const btnModal = document.getElementById('btn-modal-add');
@@ -242,32 +245,29 @@ function abrirDetalleProducto(id) {
     toggleModal('product-modal');
 }
 
-// --- LÓGICA DEL CARRITO ---
+// --- CARRITO ---
 function toggleModal(id) {
     const m = document.getElementById(id);
-    const isVisible = (m.style.display === 'block');
-    m.style.display = isVisible ? 'none' : 'block';
+    m.style.display = (m.style.display === 'block') ? 'none' : 'block';
 }
 
 function agregarAlCarrito(id) {
-    const productoOriginal = productos.find(p => p.id === id);
-    if (!productoOriginal || productoOriginal.stock <= 0) return;
+    const pOrig = productos.find(p => p.id === id);
+    if (!pOrig || pOrig.stock <= 0) return;
 
-    const itemEnCarrito = carrito.find(item => item.id === id);
-
-    if (itemEnCarrito) {
-        if (itemEnCarrito.cantidad < productoOriginal.stock) {
-            itemEnCarrito.cantidad++;
-            showToast(`${productoOriginal.nombre} actualizado`);
+    const item = carrito.find(i => i.id === id);
+    if (item) {
+        if (item.cantidad < pOrig.stock) {
+            item.cantidad++;
+            showToast(`${pOrig.nombre} actualizado`);
         } else {
             showToast("Límite de stock alcanzado");
             return;
         }
     } else {
-        carrito.push({ ...productoOriginal, cantidad: 1 });
-        showToast("Producto añadido al carrito");
+        carrito.push({ ...pOrig, cantidad: 1 });
+        showToast("Producto añadido");
     }
-
     actualizarCarritoUI();
 }
 
@@ -280,10 +280,7 @@ function agregarAlCarritoModal() {
 
 function actualizarCarritoUI() {
     localStorage.setItem('carrito', JSON.stringify(carrito));
-    
-    const countLabel = document.getElementById('cart-count');
-    const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-    countLabel.innerText = totalItems;
+    document.getElementById('cart-count').innerText = carrito.reduce((acc, i) => acc + i.cantidad, 0);
 
     const container = document.getElementById('cart-items');
     container.innerHTML = '';
@@ -291,16 +288,16 @@ function actualizarCarritoUI() {
     
     carrito.forEach((item, index) => {
         totalUSD += (item.precio * item.cantidad);
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'cart-item';
-        itemDiv.innerHTML = `
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
             <div style="flex-grow:1">
-                <strong>${item.nombre}</strong> <span class="cart-item-qty">x${item.cantidad}</span>
+                <strong>${item.nombre}</strong> x${item.cantidad}
                 <br><small>$${(item.precio * item.cantidad).toFixed(2)}</small>
             </div>
-            <button onclick="eliminarDelCarrito(${index})" style="background:none; border:none; cursor:pointer; font-size:1.2rem">🗑️</button>
+            <button onclick="eliminarDelCarrito(${index})" style="background:none; border:none; cursor:pointer">🗑️</button>
         `;
-        container.appendChild(itemDiv);
+        container.appendChild(div);
     });
     
     document.getElementById('total-price-usd').innerText = `$${totalUSD.toFixed(2)}`;
@@ -310,19 +307,12 @@ function actualizarCarritoUI() {
 function eliminarDelCarrito(index) {
     carrito.splice(index, 1);
     actualizarCarritoUI();
-    showToast("Producto eliminado");
 }
 
 function procesarCompra() {
-    if (carrito.length === 0) {
-        showToast("El carrito está vacío");
-        return;
-    }
-    alert(`Compra procesada por un total de: ${document.getElementById('total-price-bs').innerText}`);
+    if (carrito.length === 0) return showToast("Carrito vacío");
+    alert(`Compra exitosa por: ${document.getElementById('total-price-bs').innerText}`);
     carrito = [];
-    actualizarCarritoUI();
-    toggleModal('cart-modal');
-}
     actualizarCarritoUI();
     toggleModal('cart-modal');
 }
