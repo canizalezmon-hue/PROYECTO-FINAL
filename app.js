@@ -320,3 +320,5 @@ function procesarCompra() {
     actualizarCarritoUI();
     toggleModal('cart-modal');
 }
+console.log (prueba)
+
