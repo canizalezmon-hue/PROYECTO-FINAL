@@ -17,3 +17,38 @@ Shopping Cart: A right-side or centered modal listing items with quantities, a t
 Product Detail: A large overlay with a 2-column layout. Left: main product image with a row of small thumbnails below. Right: Product title, star rating, pricing, description, technical specs list, and a prominent 'Add to Cart' button.
 
 Style Requirements: Use 'Arial' or 'Inter' font. Apply subtle border-radius (5-10px) to all containers and buttons. Ensure the design is responsive for desktop and mobile."
+
+
+
+
+
+
+
+
+
+
+"Create a responsive multi-device design for an e-commerce app named 'AMZON'. Generate three specific frame sizes: Desktop (1440px), Tablet (768px), and Mobile (390px), ensuring a consistent design system across all.
+
+Design System:
+
+Colors: Navy Blue (#232f3e), Amber (#febd69), and Accent Orange (#e47911).
+
+UI Style: Amazon-inspired, clean cards, subtle shadows (4px), and 8px border-radius.
+
+Layout Adaptations:
+
+Desktop View: Features a sticky top navbar with a wide search bar. A fixed 240px left sidebar for categories. A 4-column product grid.
+
+Tablet View: Navbar scales down. Left sidebar reduces to 200px or becomes a collapsible menu. Product grid switches to 2 or 3 columns.
+
+Mobile View: >    * Stacked Navbar: Logo and Cart on top row; Search bar moves to a second row (full width).
+
+Horizontal Categories: The vertical sidebar transforms into a horizontal, scrollable pill-button list at the top of the content.
+
+Single/Double Grid: Product cards display in a 1-column or 2-column list depending on width.
+
+Interactive Components:
+
+Show a 'Shopping Cart' modal that covers the full screen on Mobile but appears as a right-side drawer on Desktop.
+
+Design a 'Product Detail' page that is a 2-column split on Desktop and a vertical stacked layout on Mobile (Image on top, Info below)."
