@@ -8,10 +8,10 @@
 </head>
 <body>
 
-    <!-- Tu contenedor de notificaciones original -->
+    <!-- Contenedor para notificaciones flotantes -->
     <div id="toast-container"></div>
 
-    <!-- Pantalla de Bienvenida Original -->
+    <!-- Pantalla de Bienvenida con Validación de Gmail -->
     <div id="welcome-screen" class="welcome-screen">
         <div class="welcome-box">
             <div class="logo-large">AMZON</div>
@@ -20,33 +20,38 @@
                 <button id="tab-register" class="tab-btn">Registrarse</button>
             </div>
             <div id="auth-form">
-                <input type="text" id="usuario" placeholder="Usuario">
-                <input type="password" id="password" placeholder="Contraseña">
+                <!-- Mejorado: type email y pattern para validación visual instantánea -->
+                <input type="email" id="usuario" placeholder="Usuario" required pattern=".+@gmail\.com">
+                <input type="password" id="password" placeholder="Contraseña" required>
                 <button id="btn-auth-action" class="btn-auth">Entrar</button>
             </div>
         </div>
     </div>
 
-    <!-- Interfaz Principal con tu Navbar y Grid original -->
+    <!-- Interfaz Principal -->
     <div id="app-container" style="display: none;">
         <nav class="navbar">
             <div class="logo">AMZON</div>
+            
             <div class="search-bar">
                 <input type="text" id="input-search" placeholder="Buscar en AMZON...">
             </div>
+
             <div class="bcv-info">
                 Tasa BCV: <span id="tasa-venda">36.50</span> Bs.
             </div>
+
             <ul class="nav-links">
-                <li class="nav-item" id="btn-ver-carrito" style="position: relative;">
-                    🛒 Carrito (<span id="cart-count">0</span>)
+                <!-- El contador ahora está fuera de paréntesis para usar el estilo de "badge" (globo) del CSS -->
+                <li class="nav-item" id="btn-ver-carrito">
+                    🛒 Carrito <span id="cart-count">0</span>
                 </li>
-                <li class="nav-item" id="btn-logout">Salir</li>
+                <li class="nav-item" id="btn-logout" style="color: #febd69;">Salir</li>
             </ul>
         </nav>
 
         <div class="container">
-            <!-- Barra lateral de filtros original -->
+            <!-- Barra lateral de filtros -->
             <aside class="filters">
                 <h3>Categorías</h3>
                 <button class="filter-btn active" data-category="all">Todos</button>
@@ -55,12 +60,12 @@
                 <button class="filter-btn" data-category="ropa">Ropa</button>
             </aside>
 
-            <!-- Tu cuadrícula de productos -->
+            <!-- Cuadrícula de productos dinámica -->
             <main id="product-grid" class="grid"></main>
         </div>
     </div>
 
-    <!-- Modales originales con tus clases de diseño -->
+    <!-- Modal de Detalles del Producto -->
     <div id="modal-detalle" class="modal">
         <div class="modal-content-lg">
             <span class="close" id="close-detalle">&times;</span>
@@ -68,14 +73,23 @@
         </div>
     </div>
 
+    <!-- Modal del Carrito -->
     <div id="modal-carrito" class="modal">
         <div class="modal-content">
             <span class="close" id="close-carrito">&times;</span>
             <h2>Tu Carrito</h2>
-            <div id="cart-items"></div>
+            <div id="cart-items">
+                <!-- Se llena mediante JS -->
+            </div>
             <div class="cart-total">
-                <p>Total: <strong>$<span id="total-usd">0.00</span></strong></p>
-                <p class="price-bs">Total Bs: <span id="total-bs">0.00</span></p>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Subtotal:</span>
+                    <strong>$<span id="total-usd">0.00</span></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #e47911; font-weight: bold;">
+                    <span>Total en Bs:</span>
+                    <span><span id="total-bs">0.00</span> Bs.</span>
+                </div>
                 <button id="btn-checkout" class="btn-checkout">Finalizar Compra</button>
             </div>
         </div>
