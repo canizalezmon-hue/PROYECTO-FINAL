@@ -149,18 +149,29 @@ document.getElementById('close-detalle').onclick = () => document.getElementById
 document.getElementById('close-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'none';
 document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
 document.getElementById('btn-logout').onclick = () => location.reload();
-// --- LÓGICA DEL BUSCADOR ---
+// --- LÓGICA DEL BUSCADOR MEJORADA ---
 const inputSearch = document.getElementById('input-search');
 
 inputSearch.addEventListener('input', (e) => {
-    const termino = e.target.value.toLowerCase(); // Convertimos a minúsculas para comparar mejor
+    const termino = e.target.value.toLowerCase();
+    const grid = document.getElementById('product-grid');
     
-    // Filtramos los productos cuyo nombre incluya el término buscado
+    // Filtrar productos
     const filtrados = productos.filter(p => 
         p.nombre.toLowerCase().includes(termino) || 
         p.cat.toLowerCase().includes(termino)
     );
 
-    // Volvemos a renderizar la cuadrícula con los resultados
-    renderProducts(filtrados);
+    // Si no hay resultados, mostrar mensaje
+    if (filtrados.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #666;">
+                <h2 style="margin-bottom: 10px;">🔍 No hay resultados para "${e.target.value}"</h2>
+                <p>Intenta con otra palabra clave o categoría.</p>
+            </div>
+        `;
+    } else {
+        // Si hay resultados, renderizar normalmente
+        renderProducts(filtrados);
+    }
 });
