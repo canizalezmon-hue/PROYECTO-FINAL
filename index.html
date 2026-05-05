@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMZON - Proyecto Final</title>
+    <title>AMZON - Premium Store</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Contenedor de Notificaciones (Toasts) -->
     <div id="toast-container"></div>
 
-    <!-- Pantalla de Bienvenida / Auth -->
+    <!-- Pantalla de Bienvenida con Animación -->
     <div id="welcome-screen" class="welcome-screen">
         <div class="welcome-box">
             <div class="logo-large">AMZON</div>
-            <p>Tu tienda favorita</p>
+            <p style="margin-bottom: 20px; color: #666;">Tu estilo, tu mundo.</p>
             
             <div class="auth-tabs">
                 <button id="tab-login" class="tab-btn active">Ingresar</button>
@@ -25,53 +24,54 @@
             <div id="auth-form">
                 <input type="text" id="usuario" placeholder="Nombre de usuario">
                 <input type="password" id="password" placeholder="Contraseña">
-                <button id="btn-auth-action" class="btn-auth">Entrar</button>
+                <button id="btn-auth-action" class="btn-auth">Entrar a la tienda</button>
             </div>
         </div>
     </div>
 
-    <!-- Interfaz de la Tienda (Oculta al inicio) -->
-    <div id="app-container" style="display: none;">
+    <!-- Interfaz Principal -->
+    <div id="app-container" style="display: none; opacity: 0; transition: opacity 0.8s ease;">
         <nav class="navbar">
             <div class="logo">AMZON</div>
             
             <div class="search-bar">
-                <input type="text" id="input-search" placeholder="Buscar productos...">
+                <input type="text" id="input-search" placeholder="¿Qué estás buscando hoy?">
             </div>
 
             <div class="bcv-info">
-                Tasa BCV: <span id="tasa-venda">36.50</span> Bs.
+                Tasa Oficial: <span id="tasa-venda">36.50</span> Bs.
             </div>
 
             <ul class="nav-links">
-                <li class="nav-item" id="btn-ver-carrito">🛒 Carrito (<span id="cart-count">0</span>)</li>
-                <li class="nav-item" id="btn-logout">Salir</li>
+                <li class="nav-item" id="btn-ver-carrito" style="position: relative;">
+                    🛒 Carrito 
+                    <span id="cart-count" style="background: var(--accent); color: white; padding: 2px 6px; border-radius: 50%; font-size: 0.7rem; position: absolute; top: -10px; right: -15px;">0</span>
+                </li>
+                <li class="nav-item" id="btn-logout" style="color: #ff4d4d;">Cerrar Sesión</li>
             </ul>
         </nav>
 
         <div class="container">
-            <!-- Barra Lateral de Filtros -->
             <aside class="filters">
                 <h3>Categorías</h3>
-                <button class="filter-btn active" data-category="all">Todos</button>
-                <button class="filter-btn" data-category="electronica">Electrónica</button>
-                <button class="filter-btn" data-category="hogar">Hogar</button>
-                <button class="filter-btn" data-category="ropa">Ropa</button>
+                <button class="filter-btn active" data-category="all">Ver Todo</button>
+                <button class="filter-btn" data-category="estilo">Estilo & Moda</button>
+                <button class="filter-btn" data-category="electronica">Tecnología</button>
+                <button class="filter-btn" data-category="hogar">Hogar & DIY</button>
             </aside>
 
-            <!-- Cuadrícula de Productos -->
             <main id="product-grid" class="grid">
-                <!-- Productos generados por JS -->
+                <!-- Se llena dinámicamente -->
             </main>
         </div>
     </div>
 
-    <!-- Modal de Detalle de Producto -->
+    <!-- Modal de Detalle (Con Galería) -->
     <div id="modal-detalle" class="modal">
         <div class="modal-content-lg">
             <span class="close" id="close-detalle">&times;</span>
             <div id="detalle-body" class="product-layout">
-                <!-- Contenido dinámico del detalle -->
+                <!-- El contenido se genera en el JS -->
             </div>
         </div>
     </div>
@@ -80,14 +80,18 @@
     <div id="modal-carrito" class="modal">
         <div class="modal-content">
             <span class="close" id="close-carrito">&times;</span>
-            <h2>Tu Carrito</h2>
-            <div id="cart-items">
-                <!-- Items del carrito -->
-            </div>
+            <h2 style="border-bottom: 2px solid var(--primary); padding-bottom: 10px;">Tu Carrito</h2>
+            <div id="cart-items"></div>
             <div class="cart-total">
-                <p>Total en $: <strong id="total-usd">0.00</strong></p>
-                <p class="price-bs">Total en Bs: <span id="total-bs">0.00</span></p>
-                <button id="btn-checkout" class="btn-checkout">Finalizar Compra</button>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Subtotal:</span>
+                    <strong>$<span id="total-usd">0.00</span></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: var(--accent);">
+                    <span>Total en Bolívares:</span>
+                    <strong><span id="total-bs">0.00</span> Bs.</strong>
+                </div>
+                <button id="btn-checkout" class="btn-checkout" style="margin-top: 20px;">Confirmar Pedido</button>
             </div>
         </div>
     </div>
