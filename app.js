@@ -9,23 +9,23 @@ const productos = [
 let carrito = JSON.parse(localStorage.getItem('amzon_cart')) || [];
 let modoRegistro = false;
 
-// --- MANTENIENDO TUS NOTIFICACIONES ORIGINALES ---
+// --- NOTIFICACIONES ---
 function showToast(mensaje) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
-    toast.className = 'toast'; // Esta clase dispara tu animación slideIn
+    toast.className = 'toast';
     toast.innerText = mensaje;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
 }
 
-// --- LÓGICA DE TIENDA (Genera el HTML que tu CSS espera) ---
+// --- LÓGICA DE TIENDA ---
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
     lista.forEach(p => {
         const div = document.createElement('div');
-        div.className = 'product-card'; // Tu clase original
+        div.className = 'product-card';
         div.innerHTML = `
             <img src="${p.img}" class="card-img" onclick="abrirDetalle(${p.id})">
             <h4 onclick="abrirDetalle(${p.id})">${p.nombre}</h4>
@@ -87,30 +87,55 @@ window.quitar = (i) => { carrito.splice(i, 1); actualizarTodo(); };
 const btnAuth = document.getElementById('btn-auth-action');
 const tabLogin = document.getElementById('tab-login');
 const tabRegister = document.getElementById('tab-register');
+const inputUsuario = document.getElementById('usuario');
+const inputPass = document.getElementById('password');
 
-tabLogin.onclick = () => { modoRegistro = false; tabLogin.classList.add('active'); tabRegister.classList.remove('active'); btnAuth.innerText = "Entrar"; };
-tabRegister.onclick = () => { modoRegistro = true; tabRegister.classList.add('active'); tabLogin.classList.remove('active'); btnAuth.innerText = "Registrarse"; };
+tabLogin.onclick = () => { 
+    modoRegistro = false; 
+    tabLogin.classList.add('active'); 
+    tabRegister.classList.remove('active'); 
+    btnAuth.innerText = "Entrar"; 
+    inputUsuario.placeholder = "Usuario";
+};
+
+tabRegister.onclick = () => { 
+    modoRegistro = true; 
+    tabRegister.classList.add('active'); 
+    tabLogin.classList.remove('active'); 
+    btnAuth.innerText = "Registrarse"; 
+    inputUsuario.placeholder = "ejemplo@gmail.com";
+};
 
 btnAuth.onclick = () => {
-    const u = document.getElementById('usuario').value;
-    const p = document.getElementById('password').value;
+    const u = inputUsuario.value;
+    const p = inputPass.value;
+
     if(!u || !p) return showToast("⚠️ Completa los campos");
+
     if(modoRegistro) {
+        // Validación obligatoria de Gmail para el registro
+        if (!u.includes('@') || !u.includes('gmail.com')) {
+            return showToast("❌ El usuario debe ser un correo @gmail.com");
+        }
+
         localStorage.setItem(`user_${u}`, p);
         showToast("✅ Registro exitoso");
         tabLogin.click();
     } else {
+        // Lógica de inicio de sesión
         if(localStorage.getItem(`user_${u}`) === p) {
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('app-container').style.display = 'block';
             showToast("👋 Bienvenido");
             renderProducts(productos);
             actualizarTodo();
-        } else { showToast("❌ Datos incorrectos"); }
+        } else { 
+            showToast("❌ Datos incorrectos"); 
+        }
     }
 };
 
-// Filtros y Cierre
+// --- FILTROS Y CONTROLES ---
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.onclick = () => {
         document.querySelector('.filter-btn.active').classList.remove('active');
@@ -124,49 +149,3 @@ document.getElementById('close-detalle').onclick = () => document.getElementById
 document.getElementById('close-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'none';
 document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
 document.getElementById('btn-logout').onclick = () => location.reload();
-btnAuth.onclick = () => {
-    const u = document.getElementById('usuario').value;
-    const p = document.getElementById('password').value;
-
-    if(!u || !p) return showToast("⚠️ Completa los campos");
-
-    // --- NUEVA VALIDACIÓN DE CORREO ---
-    if(modoRegistro) {
-        // Comprobamos si el usuario incluye '@' y 'gmail.com'
-        if (!u.includes('@') || !u.includes('gmail.com')) {
-            return showToast("❌ El usuario debe ser un correo @gmail.com");
-        }
-
-        localStorage.setItem(`user_${u}`, p);
-        showToast("✅ Registro exitoso");
-        tabLogin.click();
-    } else {
-        // Lógica de login que ya tenías...
-        if(localStorage.getItem(`user_${u}`) === p) {
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-            showToast("👋 Bienvenido");
-            renderProducts(productos);
-            actualizarTodo();
-        } else { 
-            showToast("❌ Datos incorrectos"); 
-        }
-    }
-}; 
-tabRegister.onclick = () => {
-    modoRegistro = true;
-    tabRegister.classList.add('active');
-    tabLogin.classList.remove('active');
-    btnAuth.innerText = "Registrarse";
-    // Cambia el texto de ayuda
-    document.getElementById('usuario').placeholder = "ejemplo@gmail.com";
-};
-
-tabLogin.onclick = () => {
-    modoRegistro = false;
-    tabLogin.classList.add('active');
-    tabRegister.classList.remove('active');
-    btnAuth.innerText = "Entrar";
-    // Lo devuelve a la normalidad para el login
-    document.getElementById('usuario').placeholder = "Usuario";
-};
