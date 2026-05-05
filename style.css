@@ -7,6 +7,7 @@
     --white: #ffffff;
     --text: #111111;
     --success: #2ecc71;
+    --danger: #ff4d4d;
     --shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
@@ -74,9 +75,23 @@ body {
 }
 .tab-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
 
+/* --- VALIDACIÓN DE CORREO GMAIL --- */
 #auth-form input {
     width: 100%; padding: 12px; margin-bottom: 15px;
     border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+/* Cuando el correo es válido (tiene @ y gmail.com) */
+#usuario:focus:valid {
+    border: 2px solid var(--success) !important;
+    background-color: #eaffef;
+}
+
+/* Cuando el usuario está escribiendo y no cumple el formato */
+#usuario:focus:invalid {
+    border: 2px solid var(--danger) !important;
+    background-color: #fff5f5;
 }
 
 .btn-auth {
@@ -102,10 +117,24 @@ body {
 }
 
 .nav-links { display: flex; list-style: none; gap: 25px; align-items: center; margin: 0; padding: 0; }
-.nav-item { cursor: pointer; color: var(--white); font-weight: 500; transition: 0.2s; }
+.nav-item { cursor: pointer; color: var(--white); font-weight: 500; transition: 0.2s; position: relative; }
 .nav-item:hover { color: var(--secondary); }
 
-/* --- GRID Y CONTENEDOR --- */
+/* --- CONTADOR DE CARRITO (Badge) --- */
+#cart-count {
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: -10px;
+    right: -15px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* --- GRID Y PRODUCTOS --- */
 .container { display: flex; padding: 20px; gap: 20px; }
 
 .filters { 
@@ -133,7 +162,7 @@ body {
 
 .card-img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 10px; cursor: pointer; }
 
-/* --- BOTONES Y PRECIOS --- */
+/* --- PRECIOS Y ESTADOS --- */
 .price-bs { color: var(--accent); font-weight: bold; font-size: 1.2rem; display: block; margin: 8px 0; }
 .in-stock { color: var(--success); font-size: 0.85rem; font-weight: bold; }
 .out-of-stock { color: #c0392b; font-size: 0.85rem; font-weight: bold; }
@@ -159,11 +188,19 @@ body {
 }
 
 .modal-content-lg { max-width: 800px; width: 90%; }
-.modal-content { max-width: 400px; width: 90%; }
+.modal-content { max-width: 450px; width: 90%; }
 
 .close { position: absolute; right: 20px; top: 15px; cursor: pointer; font-size: 24px; color: #666; }
 
-/* --- PRODUCT LAYOUT (DETALLE) --- */
+/* --- DISEÑO DEL CARRITO INTERNO --- */
+.cart-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid #eee;
+}
+
+.cart-total { margin-top: 20px; border-top: 2px solid var(--primary); padding-top: 15px; }
+
+/* --- DETALLE DE PRODUCTO --- */
 .product-layout { display: flex; gap: 30px; flex-wrap: wrap; align-items: center; }
 .product-images { flex: 1; text-align: center; }
 .main-img { max-width: 100%; height: 300px; object-fit: contain; }
@@ -180,26 +217,4 @@ body {
     }
     .filter-btn { margin-bottom: 0; white-space: nowrap; width: auto; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
-}
-/* Cuando el correo es válido (tiene @ y gmail.com) */
-#usuario:focus:valid {
-    border: 2px solid var(--success) !important;
-    background-color: #eaffef;
-}
-
-/* Cuando el usuario ha escrito algo pero no cumple con el formato @gmail.com */
-#usuario:focus:invalid {
-    border: 2px solid #ff4d4d !important;
-    background-color: #fff5f5;
-}
-
-/* Estilo para un mensaje de ayuda pequeño (opcional) */
-#auth-form::after {
-    content: "Usa un correo @gmail.com";
-    display: block;
-    font-size: 0.75rem;
-    color: #666;
-    margin-top: -10px;
-    margin-bottom: 15px;
-    text-align: left;
 }
