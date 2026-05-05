@@ -149,3 +149,18 @@ document.getElementById('close-detalle').onclick = () => document.getElementById
 document.getElementById('close-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'none';
 document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
 document.getElementById('btn-logout').onclick = () => location.reload();
+// --- LÓGICA DEL BUSCADOR ---
+const inputSearch = document.getElementById('input-search');
+
+inputSearch.addEventListener('input', (e) => {
+    const termino = e.target.value.toLowerCase(); // Convertimos a minúsculas para comparar mejor
+    
+    // Filtramos los productos cuyo nombre incluya el término buscado
+    const filtrados = productos.filter(p => 
+        p.nombre.toLowerCase().includes(termino) || 
+        p.cat.toLowerCase().includes(termino)
+    );
+
+    // Volvemos a renderizar la cuadrícula con los resultados
+    renderProducts(filtrados);
+});
