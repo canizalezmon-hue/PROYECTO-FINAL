@@ -218,3 +218,8 @@ body {
     .filter-btn { margin-bottom: 0; white-space: nowrap; width: auto; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
+.search-bar input:focus {
+    box-shadow: 0 0 5px var(--secondary);
+    border: 1px solid var(--accent);
+    outline: none;
+}
