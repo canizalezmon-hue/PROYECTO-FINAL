@@ -1,50 +1,108 @@
-function handleAuth(event) {
-    event.preventDefault();
-    
-    // Obtenemos los valores que SIEMPRE existen
-    const email = document.getElementById('auth-email').value;
-    const pass = document.getElementById('auth-pass').value;
+// Base de datos de productos
+const productos = [
+    { id: 1, nombre: "Laptop Pro", precio: 1500, img: "https://via.placeholder.com/120" },
+    { id: 2, nombre: "Smartphone", precio: 800, img: "https://via.placeholder.com/120" },
+    { id: 3, nombre: "Auriculares", precio: 150, img: "https://via.placeholder.com/120" },
+    { id: 4, nombre: "Teclado RGB", precio: 60, img: "https://via.placeholder.com/120" }
+];
 
-    if (authMode === 'register') {
-        // Buscamos el campo de nombre SOLO si estamos en registro
-        const nameInput = document.getElementById('auth-name');
-        
-        // Verificamos que el input exista antes de pedir su valor
-        if (!nameInput || !nameInput.value) {
-            showToast("Por favor, ingresa tu nombre");
-            return;
-        }
+let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+let modoRegistro = false;
 
-        const name = nameInput.value;
+// Referencias
+const btnLogin = document.getElementById('btn-login');
+const btnToggle = document.getElementById('btn-toggle');
+const seccionAuth = document.getElementById('seccion-auth');
+const interfazTienda = document.getElementById('interfaz-tienda');
 
-        // Verificar si el correo ya existe
-        if (usuariosRegistrados.some(u => u.email === email)) {
-            showToast("Este correo ya está registrado");
-            return;
-        }
+// Alternar entre Login y Registro
+btnToggle.addEventListener('click', () => {
+    modoRegistro = !modoRegistro;
+    document.getElementById('titulo-auth').innerText = modoRegistro ? "Crear Cuenta" : "Iniciar Sesión";
+    btnLogin.innerText = modoRegistro ? "Registrarse" : "Entrar";
+    btnToggle.innerText = modoRegistro ? "Volver al login" : "Crear cuenta nueva";
+});
 
-        // Guardar usuario
-        usuariosRegistrados.push({ name, email, pass });
-        localStorage.setItem('usuarios', JSON.stringify(usuariosRegistrados));
-        
-        showToast("¡Registro exitoso! Ahora puedes entrar.");
-        
-        // Resetear formulario y volver a login
-        document.getElementById('auth-form').reset();
-        switchAuth('login');
+// Manejo de Login
+btnLogin.addEventListener('click', () => {
+    const user = document.getElementById('usuario').value;
+    const pass = document.getElementById('password').value;
 
+    if (!user || !pass) return alert("Completa los datos");
+
+    if (modoRegistro) {
+        localStorage.setItem(`user_${user}`, pass);
+        alert("Cuenta creada. Ahora puedes iniciar sesión.");
+        btnToggle.click();
     } else {
-        // Lógica de Login (Entrar)
-        const usuario = usuariosRegistrados.find(u => u.email === email && u.pass === pass);
-        
-        if (usuario) {
-            usuarioActivo = usuario;
-            localStorage.setItem('usuarioActivo', JSON.stringify(usuario));
-            document.getElementById('user-greeting').innerText = `Hola, ${usuario.name.split(' ')[0]}`;
-            showStore();
-            showToast("Bienvenido a AMZON");
+        const passStored = localStorage.getItem(`user_${user}`);
+        if (passStored === pass) {
+            iniciarSesion(user);
         } else {
-            showToast("Correo o contraseña incorrectos");
+            alert("Credenciales incorrectas");
         }
     }
+});
+
+function iniciarSesion(usuario) {
+    seccionAuth.style.display = "none";
+    interfazTienda.style.display = "block";
+    document.getElementById('nombre-usuario-display').innerText = `Bienvenido, ${usuario}`;
+    cargarProductos();
+    actualizarCarrito();
 }
+
+// Funciones de la Tienda
+function cargarProductos() {
+    const catalogo = document.getElementById('catalogo');
+    catalogo.innerHTML = productos.map(p => `
+        <div class="product-card">
+            <img src="${p.img}" alt="${p.nombre}">
+            <h4>${p.nombre}</h4>
+            <p>$${p.precio}</p>
+            <button class="btn-primary" onclick="agregarAlCarrito(${p.id})">Añadir al carrito</button>
+        </div>
+    `).join('');
+}
+
+window.agregarAlCarrito = (id) => {
+    const p = productos.find(prod => prod.id === id);
+    carrito.push(p);
+    guardarYRefrescar();
+};
+
+window.eliminarDelCarrito = (index) => {
+    carrito.splice(index, 1);
+    guardarYRefrescar();
+};
+
+function guardarYRefrescar() {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarCarrito();
+}
+
+function actualizarCarrito() {
+    const lista = document.getElementById('lista-carrito');
+    const totalDisplay = document.getElementById('total-precio');
+    let total = 0;
+
+    lista.innerHTML = carrito.map((item, index) => {
+        total += item.precio;
+        return `
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span>${item.nombre}</span>
+                <span>$${item.precio} <button onclick="eliminarDelCarrito(${index})" style="color:red">x</button></span>
+            </div>
+        `;
+    }).join('');
+    
+    totalDisplay.innerText = total;
+}
+
+document.getElementById('btn-logout').onclick = () => location.reload();
+document.getElementById('btn-comprar').onclick = () => {
+    if (carrito.length === 0) return alert("Carrito vacío");
+    alert("Compra realizada con éxito");
+    carrito = [];
+    guardarYRefrescar();
+};
