@@ -181,3 +181,25 @@ body {
     .filter-btn { margin-bottom: 0; white-space: nowrap; width: auto; }
     .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
+/* Cuando el correo es válido (tiene @ y gmail.com) */
+#usuario:focus:valid {
+    border: 2px solid var(--success) !important;
+    background-color: #eaffef;
+}
+
+/* Cuando el usuario ha escrito algo pero no cumple con el formato @gmail.com */
+#usuario:focus:invalid {
+    border: 2px solid #ff4d4d !important;
+    background-color: #fff5f5;
+}
+
+/* Estilo para un mensaje de ayuda pequeño (opcional) */
+#auth-form::after {
+    content: "Usa un correo @gmail.com";
+    display: block;
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    text-align: left;
+}
