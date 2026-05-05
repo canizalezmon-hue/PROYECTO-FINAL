@@ -124,3 +124,49 @@ document.getElementById('close-detalle').onclick = () => document.getElementById
 document.getElementById('close-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'none';
 document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
 document.getElementById('btn-logout').onclick = () => location.reload();
+btnAuth.onclick = () => {
+    const u = document.getElementById('usuario').value;
+    const p = document.getElementById('password').value;
+
+    if(!u || !p) return showToast("⚠️ Completa los campos");
+
+    // --- NUEVA VALIDACIÓN DE CORREO ---
+    if(modoRegistro) {
+        // Comprobamos si el usuario incluye '@' y 'gmail.com'
+        if (!u.includes('@') || !u.includes('gmail.com')) {
+            return showToast("❌ El usuario debe ser un correo @gmail.com");
+        }
+
+        localStorage.setItem(`user_${u}`, p);
+        showToast("✅ Registro exitoso");
+        tabLogin.click();
+    } else {
+        // Lógica de login que ya tenías...
+        if(localStorage.getItem(`user_${u}`) === p) {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+            showToast("👋 Bienvenido");
+            renderProducts(productos);
+            actualizarTodo();
+        } else { 
+            showToast("❌ Datos incorrectos"); 
+        }
+    }
+}; 
+tabRegister.onclick = () => {
+    modoRegistro = true;
+    tabRegister.classList.add('active');
+    tabLogin.classList.remove('active');
+    btnAuth.innerText = "Registrarse";
+    // Cambia el texto de ayuda
+    document.getElementById('usuario').placeholder = "ejemplo@gmail.com";
+};
+
+tabLogin.onclick = () => {
+    modoRegistro = false;
+    tabLogin.classList.add('active');
+    tabRegister.classList.remove('active');
+    btnAuth.innerText = "Entrar";
+    // Lo devuelve a la normalidad para el login
+    document.getElementById('usuario').placeholder = "Usuario";
+};
