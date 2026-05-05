@@ -1,81 +1,183 @@
-/* --- MEJORAS PARA LA GALERÍA Y DETALLES --- */
-
-/* Ajuste para que la imagen principal del modal no se deforme */
-.main-img {
-    width: 100%;
-    height: 350px;
-    object-content: contain; /* Mantiene la proporción de la imagen */
-    background: #f9f9f9;
-    border-radius: 8px;
+/* --- VARIABLES Y CONFIGURACIÓN --- */
+:root {
+    --primary: #232f3e;
+    --secondary: #febd69;
+    --accent: #e47911;
+    --light: #f3f3f3;
+    --white: #ffffff;
+    --text: #111111;
+    --success: #2ecc71;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Estilo para las miniaturas en el modal */
-.thumbnails {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    justify-content: center;
+body { 
+    font-family: 'Arial', sans-serif; 
+    margin: 0; 
+    background: var(--light); 
+    color: var(--text);
+    line-height: 1.6;
 }
 
-.thumb {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    cursor: pointer;
-    border: 2px solid transparent;
-    border-radius: 6px;
-    transition: 0.2s;
+/* --- NOTIFICACIONES (Toasts) --- */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
 }
 
-.thumb:hover {
-    border-color: var(--accent);
-    transform: scale(1.1);
-}
-
-/* --- MEJORAS EN EL CARRITO --- */
-
-/* Burbuja flotante del contador (Badge) */
-#cart-count {
-    background: var(--accent);
-    color: white;
-    font-size: 0.75rem;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 50%;
-    position: absolute;
-    top: -8px;
-    right: -12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-}
-
-/* Estilo para los items dentro del modal del carrito */
-.cart-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.cart-item img {
-    border: 1px solid #ddd;
-}
-
-/* --- TRANSICIONES DE PANTALLA --- */
-
-#app-container {
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-}
-
-/* Efecto de "Clickable" en las tarjetas */
-.product-card img, .product-card h4 {
-    cursor: pointer;
-}
-
-/* Mejora de visibilidad de los Toasts */
 .toast {
-    min-width: 200px;
+    background: var(--primary);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border-left: 5px solid var(--secondary);
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* --- PANTALLA DE BIENVENIDA --- */
+.welcome-screen {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--primary);
+}
+
+.welcome-box {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 10px;
     text-align: center;
-    font-weight: 500;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    width: 350px;
+}
+
+.logo-large { 
+    font-size: 3rem; 
+    font-weight: bold; 
+    color: var(--primary); 
+    margin-bottom: 20px; 
+}
+
+.auth-tabs { display: flex; margin-bottom: 25px; border-bottom: 1px solid #ddd; }
+.tab-btn { 
+    flex: 1; padding: 10px; border: none; background: none; 
+    cursor: pointer; color: #666; font-weight: bold; transition: 0.3s; 
+}
+.tab-btn.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+
+#auth-form input {
+    width: 100%; padding: 12px; margin-bottom: 15px;
+    border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+}
+
+.btn-auth {
+    width: 100%; padding: 12px; background: var(--secondary);
+    border: 1px solid #a88734; border-radius: 4px; font-weight: bold;
+    cursor: pointer; transition: 0.2s;
+}
+.btn-auth:hover { background: #f3a847; }
+
+/* --- NAVBAR --- */
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--primary); padding: 10px 40px; color: white;
+    position: sticky; top: 0; z-index: 1000; gap: 20px;
+}
+
+.logo { font-size: 1.8rem; font-weight: bold; color: var(--secondary); cursor: pointer; }
+
+.search-bar { flex-grow: 1; max-width: 600px; }
+.search-bar input {
+    width: 100%; padding: 10px 15px; border-radius: 4px;
+    border: none; outline: none; font-size: 1rem;
+}
+
+.nav-links { display: flex; list-style: none; gap: 25px; align-items: center; margin: 0; padding: 0; }
+.nav-item { cursor: pointer; color: var(--white); font-weight: 500; transition: 0.2s; }
+.nav-item:hover { color: var(--secondary); }
+
+/* --- GRID Y CONTENEDOR --- */
+.container { display: flex; padding: 20px; gap: 20px; }
+
+.filters { 
+    width: 220px; background: var(--white); padding: 20px; 
+    border-radius: 8px; height: fit-content; box-shadow: var(--shadow);
+}
+
+.filter-btn {
+    display: block; width: 100%; padding: 10px; margin-bottom: 8px;
+    text-align: left; border: 1px solid #eee; background: var(--white);
+    border-radius: 4px; cursor: pointer; transition: 0.2s;
+}
+.filter-btn.active { background: var(--secondary); border-color: var(--secondary); font-weight: bold; }
+
+.grid { 
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+    gap: 20px; flex-grow: 1; 
+}
+
+.product-card {
+    background: var(--white); padding: 15px; border-radius: 8px;
+    box-shadow: var(--shadow); text-align: center; transition: 0.3s;
+}
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+
+.card-img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 10px; cursor: pointer; }
+
+/* --- BOTONES Y PRECIOS --- */
+.price-bs { color: var(--accent); font-weight: bold; font-size: 1.2rem; display: block; margin: 8px 0; }
+.in-stock { color: var(--success); font-size: 0.85rem; font-weight: bold; }
+.out-of-stock { color: #c0392b; font-size: 0.85rem; font-weight: bold; }
+
+.btn-add, .btn-primary, .btn-checkout {
+    background: var(--secondary); border: 1px solid #d8a45f;
+    padding: 10px; border-radius: 4px; font-weight: bold;
+    cursor: pointer; width: 100%; transition: 0.2s; margin-top: 10px;
+}
+.btn-add:hover { background: #f3a847; }
+.btn-add:disabled { background: #eee; border-color: #ddd; cursor: not-allowed; color: #999; }
+
+/* --- MODALES --- */
+.modal { 
+    display: none; position: fixed; z-index: 9999; 
+    left: 0; top: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(3px);
+}
+
+.modal-content, .modal-content-lg {
+    background: white; margin: 5% auto; padding: 25px;
+    border-radius: 12px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.modal-content-lg { max-width: 800px; width: 90%; }
+.modal-content { max-width: 400px; width: 90%; }
+
+.close { position: absolute; right: 20px; top: 15px; cursor: pointer; font-size: 24px; color: #666; }
+
+/* --- PRODUCT LAYOUT (DETALLE) --- */
+.product-layout { display: flex; gap: 30px; flex-wrap: wrap; align-items: center; }
+.product-images { flex: 1; text-align: center; }
+.main-img { max-width: 100%; height: 300px; object-fit: contain; }
+.product-info { flex: 1; }
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 768px) {
+    .navbar { padding: 15px; flex-direction: column; }
+    .search-bar { width: 100%; order: 3; }
+    .container { flex-direction: column; }
+    .filters { 
+        width: 100%; display: flex; overflow-x: auto; 
+        padding: 10px; gap: 10px; position: sticky; top: 130px; 
+    }
+    .filter-btn { margin-bottom: 0; white-space: nowrap; width: auto; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
