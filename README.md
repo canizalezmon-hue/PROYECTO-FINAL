@@ -19,7 +19,7 @@
 
 El concepto visual y la experiencia de usuario fueron desarrollados previamente para asegurar una interfaz moderna y limpia.
 
-[![Figma]([https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/make/1VAAJ1JUFR6Dpar9GbSTc1/E-commerce-Web-App-Design?t=LczPjxwNd1Z92dnh-1](https://www.figma.com/make/2yncW8a1QpmbHFA4nvmvin/Luxury-E-commerce-UI-Design?t=Be81AgBp7Om3kKjk-1))
+[![Figma](https://www.figma.com/make/2yncW8a1QpmbHFA4nvmvin/Luxury-E-commerce-UI-Design?t=Be81AgBp7Om3kKjk-1)
 
 ---
 
