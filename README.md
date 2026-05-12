@@ -1,6 +1,6 @@
-# Human.store | Tienda Virtual 🛒🇻🇪
+# Human Store | Tienda Virtual 🛒🇻🇪
 
-**Human.store** es una plataforma de comercio electrónico diseñada específicamente para el mercado venezolano. Este proyecto es una aplicación web responsiva que permite a los usuarios navegar por un catálogo de productos, gestionar un carrito de compras y visualizar precios convertidos automáticamente a Bolívares (Bs.) según la tasa actual del mercado.
+**Human Store** es una plataforma de comercio electrónico diseñada específicamente para el mercado venezolano. Este proyecto es una aplicación web responsiva que permite a los usuarios navegar por un catálogo de productos, gestionar un carrito de compras y visualizar precios convertidos automáticamente a Bolívares (Bs.) según la tasa actual del mercado.
 
 ---
 
