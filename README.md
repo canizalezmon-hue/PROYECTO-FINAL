@@ -4,6 +4,14 @@
 
 ---
 
+## 🌐 Demo en Vivo
+
+Puedes ver la versión estable del proyecto desplegada aquí:
+
+[![Vercel](https://img.shields.io/badge/Deploy_en_Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://proyecto-final-woad-beta.vercel.app)
+
+---
+
 ## 🚀 Características principales
 
 * **Sistema de Autenticación:** Registro e inicio de sesión funcional con persistencia de datos mediante `localStorage`.
@@ -20,6 +28,7 @@
 El concepto visual y la experiencia de usuario fueron desarrollados previamente para asegurar una interfaz moderna y limpia.
 
 [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/make/2yncW8a1QpmbHFA4nvmvin/Luxury-E-commerce-UI-Design?t=Be81AgBp7Om3kKjk-1)
+
 ---
 
 ## 🛠️ Tecnologías utilizadas
@@ -27,10 +36,12 @@ El concepto visual y la experiencia de usuario fueron desarrollados previamente 
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
 * **HTML5:** Estructura semántica del sitio.
 * **CSS3:** Diseño personalizado con variables, Flexbox, Grid y Media Queries.
 * **JavaScript (Vanilla):** Lógica de negocio, manejo de eventos del DOM y gestión del estado del carrito.
+* **Vercel:** Hosting y despliegue continuo.
 
 ---
 
@@ -40,18 +51,20 @@ El concepto visual y la experiencia de usuario fueron desarrollados previamente 
 PROYECTO-FINAL/
 │
 ├── index.html      # Estructura principal y contenedores de modales.
-├── style.css       # Estilos globales y adaptaciones responsivas.
+├── style.css        # Estilos globales y adaptaciones responsivas.
 ├── app.js       # Lógica de autenticación, carrito y renderizado.
 └── README.md       # Documentación del proyecto.
+
 ```
 
 ---
 
-
 ## ✒️ Autores
 
-* **Canizalez Mon Hue** 
+* **Canizalez Mon Hue**
 * **franmrr**
 * **vodkad2_**
+
 ```
 
+```
