@@ -4,7 +4,14 @@ let usuarioLogueado = false;
 let modoRegistro = false;
 
 const productos = [
-    { id: 1, nombre: "Laptop Gamer X-Pro", precio: 1200, cat: "electronica", stock: 5, img: "https://sigmatiendas.com/cdn/shop/products/Laptop-ACER-Nitro-5-Pantalla-15.6-Pulgadas-AMD-Ryzen-5-Nvidia-GeForce-RTX-3060-512GB-SSD-Front_grande.webp?v=1672968170" },
+    { 
+  id: 1, 
+  nombre: "Laptop Gamer X-Pro", 
+  precio: 1200, 
+  cat: "electronica", 
+  stock: 5, 
+  img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500" 
+},
     { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
     { id: 3, nombre: "Lámpara Led Inteligente", precio: 45, cat: "hogar", stock: 4, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
     { id: 4, nombre: "Chaqueta Urban Style", precio: 80, cat: "ropa", stock: 12, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" }
