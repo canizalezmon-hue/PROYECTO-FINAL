@@ -1,25 +1,77 @@
-const TASA_BCV = 36.50;
+// --- VARIABLES DE ESTADO ---
+let TASA_BCV = parseFloat(localStorage.getItem('last_bcv_rate')) || 36.50; 
+let usuarioLogueado = false;
+let modoRegistro = false;
+
 const productos = [
-    { id: 1, nombre: "Laptop Gamer", precio: 1200, cat: "electronica", stock: 5, img: "https://images.unsplash.com/photo-1517336712468-0611182b68be?w=500" },
-    { id: 2, nombre: "Mouse Pro", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
-    { id: 3, nombre: "Lámpara de Espejo", precio: 45, cat: "hogar", stock: 4, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
-    { id: 4, nombre: "Chaqueta Dark Academia", precio: 80, cat: "ropa", stock: 12, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" }
+    { id: 1, nombre: "Laptop Gamer X-Pro", precio: 1200, cat: "electronica", stock: 5, img: "https://images.unsplash.com/photo-1517336712468-0611182b68be?w=500" },
+    { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
+    { id: 3, nombre: "Lámpara Led Inteligente", precio: 45, cat: "hogar", stock: 4, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
+    { id: 4, nombre: "Chaqueta Urban Style", precio: 80, cat: "ropa", stock: 12, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" }
 ];
 
 let carrito = JSON.parse(localStorage.getItem('amzon_cart')) || [];
-let modoRegistro = false;
 
-// --- NOTIFICACIONES ---
+// --- LÓGICA DE CARGA (PRELOADER) ---
+window.addEventListener('load', () => {
+    const preloader = document.getElementById('preloader');
+    const app = document.getElementById('app-container');
+
+    obtenerTasaBCV();
+
+    setTimeout(() => {
+        preloader.style.transition = "opacity 1s ease, filter 1s ease";
+        preloader.style.opacity = "0";
+        preloader.style.filter = "blur(20px)";
+        
+        setTimeout(() => {
+            preloader.style.display = "none";
+            app.classList.remove('hidden-app');
+            app.classList.add('app-entry-animation'); 
+        }, 1000);
+    }, 2800);
+});
+
+// --- SISTEMA BCV ---
+async function obtenerTasaBCV() {
+    const apiSources = [
+        'https://ve.dolarapi.com/v1/dolares/oficial',
+        'https://pydolarve.org/api/v1/dollar?page=bcv'
+    ];
+
+    for (let url of apiSources) {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            let valor = url.includes('dolarapi') ? data.promedio : data.monedas?.usd?.valor;
+
+            if (valor) {
+                TASA_BCV = valor;
+                localStorage.setItem('last_bcv_rate', TASA_BCV);
+                actualizarVisualTasa();
+                break; 
+            }
+        } catch (e) { console.warn(`Fuente fallida: ${url}`); }
+    }
+    actualizarVisualTasa(); // Asegurar render aunque falle API
+}
+
+function actualizarVisualTasa() {
+    const el = document.getElementById('tasa-venda');
+    if (el) el.innerText = TASA_BCV.toFixed(2);
+    renderProducts(productos);
+    actualizarTodo();
+}
+
 function showToast(mensaje) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.innerText = mensaje;
     container.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+    setTimeout(() => toast.remove(), 4000);
 }
 
-// --- LÓGICA DE TIENDA ---
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
@@ -28,150 +80,176 @@ function renderProducts(lista) {
         div.className = 'product-card';
         div.innerHTML = `
             <img src="${p.img}" class="card-img" onclick="abrirDetalle(${p.id})">
-            <h4 onclick="abrirDetalle(${p.id})">${p.nombre}</h4>
-            <span class="price-bs">$${p.precio}</span>
-            <p class="${p.stock > 0 ? 'in-stock' : 'out-of-stock'}">${p.stock > 0 ? 'En Stock' : 'Agotado'}</p>
-            <button class="btn-add" ${p.stock === 0 ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">Agregar</button>
+            <h4 onclick="abrirDetalle(${p.id})" style="cursor:pointer">${p.nombre}</h4>
+            <span class="price-usd">Precio: $${p.precio}</span>
+            <span class="price-bs">${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</span>
+            <p style="font-size: 0.8rem; font-weight: bold; color: ${p.stock > 0 ? '#10B981' : '#EF4444'}">
+                ${p.stock > 0 ? 'Disponible en Stock' : 'Agotado'}
+            </p>
+            <button class="btn-add" ${p.stock === 0 ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">Añadir al Carrito</button>
         `;
         grid.appendChild(div);
     });
 }
 
-// --- DETALLE DE PRODUCTO ---
 window.abrirDetalle = (id) => {
     const p = productos.find(i => i.id === id);
     const body = document.getElementById('detalle-body');
     body.innerHTML = `
         <div class="product-images"><img src="${p.img}" class="main-img"></div>
         <div class="product-info">
-            <h2>${p.nombre}</h2>
-            <h3 class="price-bs" style="font-size: 1.8rem;">$${p.precio}</h3>
-            <p>Categoría: ${p.cat.toUpperCase()}</p>
-            <button class="btn-primary" onclick="agregarCarrito(${p.id})">Añadir al Carrito</button>
-        </div>
-    `;
+            <h2 style="font-family: 'Orbitron'; color: var(--primary)">${p.nombre}</h2>
+            <h3 class="price-bs" style="font-size: 2.2rem; color:var(--secondary)">$${p.precio}</h3>
+            <p style="font-size: 1.1rem">Precio en Moneda Local: <strong>${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</strong></p>
+            <p style="margin: 20px 0; color: #64748B">Este producto de alta calidad está disponible para envío inmediato.</p>
+            <button class="btn-primary" ${p.stock === 0 ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">${p.stock > 0 ? 'Añadir al Carrito' : 'Agotado'}</button>
+        </div>`;
     document.getElementById('modal-detalle').style.display = 'block';
 };
 
-// --- CARRITO Y PERSISTENCIA ---
 window.agregarCarrito = (id) => {
+    if (!usuarioLogueado) {
+        showToast("🔑 Identifícate para una experiencia de compra completa");
+        document.getElementById('welcome-screen').style.display = 'flex';
+        return;
+    }
     const p = productos.find(i => i.id === id);
     const existe = carrito.find(i => i.id === id);
-    if(existe) existe.qty++; else carrito.push({...p, qty: 1});
+    if(existe) {
+        if(existe.qty < p.stock) { 
+            existe.qty++; 
+            showToast("🛒 Cantidad actualizada"); 
+        } else { 
+            showToast("❌ Stock máximo alcanzado"); 
+        }
+    } else {
+        carrito.push({...p, qty: 1});
+        showToast("🛒 ¡Añadido con éxito!");
+    }
     actualizarTodo();
-    showToast("🛒 Producto añadido");
 };
 
 function actualizarTodo() {
     localStorage.setItem('amzon_cart', JSON.stringify(carrito));
     const list = document.getElementById('cart-items');
     let total = 0, count = 0;
-    list.innerHTML = "";
+    list.innerHTML = carrito.length ? "" : "<p style='text-align:center; color:#94A3B8; padding: 20px;'>Tu bolsa está vacía.</p>";
+    
     carrito.forEach((item, i) => {
         total += (item.precio * item.qty);
         count += item.qty;
         list.innerHTML += `
             <div class="cart-item">
-                <span>${item.nombre} (x${item.qty})</span>
-                <span>$${item.precio * item.qty} <button onclick="quitar(${i})" style="color:red; border:none; background:none; cursor:pointer; font-weight:bold;">x</button></span>
+                <img src="${item.img}" class="cart-item-img">
+                <div class="cart-item-info">
+                    <h4>${item.nombre}</h4>
+                    <div class="cart-qty-controls">
+                        <button class="qty-btn" onclick="cambiarCant(${i}, -1)">-</button>
+                        <span style="font-weight: 900">${item.qty}</span>
+                        <button class="qty-btn" onclick="cambiarCant(${i}, 1)">+</button>
+                    </div>
+                </div>
+                <div style="font-weight:bold; color: var(--primary)">$${(item.precio * item.qty).toFixed(2)}</div>
+                <button class="btn-remove" onclick="quitar(${i})">&times;</button>
             </div>`;
     });
+    
     document.getElementById('total-usd').innerText = total.toFixed(2);
-    document.getElementById('total-bs').innerText = (total * TASA_BCV).toFixed(2);
+    document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE');
     document.getElementById('cart-count').innerText = count;
 }
 
-window.quitar = (i) => { carrito.splice(i, 1); actualizarTodo(); };
+window.cambiarCant = (index, delta) => {
+    const item = carrito[index];
+    const original = productos.find(p => p.id === item.id);
+    if (item.qty + delta > 0 && item.qty + delta <= original.stock) item.qty += delta;
+    actualizarTodo();
+};
 
-// --- EVENTOS DE USUARIO ---
+window.quitar = (i) => { carrito.splice(i, 1); showToast("🗑️ Eliminado"); actualizarTodo(); };
+
+// --- LÓGICA DE CHECKOUT ---
+document.getElementById('btn-go-checkout').onclick = () => {
+    if (!carrito.length) return showToast("⚠️ Carrito vacío");
+    document.getElementById('modal-carrito').style.display = 'none';
+    document.getElementById('store-content').style.display = 'none';
+    document.getElementById('checkout-page').style.display = 'flex';
+    
+    const list = document.getElementById('checkout-items-list');
+    list.innerHTML = "";
+    carrito.forEach(i => {
+        list.innerHTML += `<p>• ${i.nombre} (x${i.qty}) - $${(i.precio * i.qty).toFixed(2)}</p>`;
+    });
+    document.getElementById('checkout-total-usd').innerText = `$${document.getElementById('total-usd').innerText}`;
+    document.getElementById('checkout-total-bs').innerText = `${document.getElementById('total-bs').innerText} Bs.`;
+};
+
+document.getElementById('btn-back-store').onclick = () => {
+    document.getElementById('checkout-page').style.display = 'none';
+    document.getElementById('store-content').style.display = 'flex';
+};
+
+document.getElementById('btn-finalizar-pago').onclick = () => {
+    let msg = "🛍️ *NUEVO PEDIDO - HUMAN STORE*%0A%0A";
+    carrito.forEach(i => msg += `▪️ ${i.nombre} (x${i.qty}) - $${i.precio * i.qty}%0A`);
+    msg += `%0A💰 *TOTAL USD:* $${document.getElementById('total-usd').innerText}%0A🇻🇪 *TOTAL BS:* ${document.getElementById('total-bs').innerText} Bs.`;
+    window.open(`https://wa.me/584120000000?text=${msg}`, '_blank');
+};
+
+// --- AUTH ---
 const btnAuth = document.getElementById('btn-auth-action');
-const tabLogin = document.getElementById('tab-login');
-const tabRegister = document.getElementById('tab-register');
-const inputUsuario = document.getElementById('usuario');
-const inputPass = document.getElementById('password');
-
-tabLogin.onclick = () => { 
-    modoRegistro = false; 
-    tabLogin.classList.add('active'); 
-    tabRegister.classList.remove('active'); 
-    btnAuth.innerText = "Entrar"; 
-    inputUsuario.placeholder = "Usuario";
-};
-
-tabRegister.onclick = () => { 
-    modoRegistro = true; 
-    tabRegister.classList.add('active'); 
-    tabLogin.classList.remove('active'); 
-    btnAuth.innerText = "Registrarse"; 
-    inputUsuario.placeholder = "ejemplo@gmail.com";
-};
+const welcome = document.getElementById('welcome-screen');
 
 btnAuth.onclick = () => {
-    const u = inputUsuario.value;
-    const p = inputPass.value;
-
-    if(!u || !p) return showToast("⚠️ Completa los campos");
+    const u = document.getElementById('usuario').value.trim();
+    const p = document.getElementById('password').value.trim();
+    if(!u || !p) return showToast("⚠️ Llena los campos");
 
     if(modoRegistro) {
-        // Validación obligatoria de Gmail para el registro
-        if (!u.includes('@') || !u.includes('gmail.com')) {
-            return showToast("❌ El usuario debe ser un correo @gmail.com");
-        }
-
         localStorage.setItem(`user_${u}`, p);
-        showToast("✅ Registro exitoso");
-        tabLogin.click();
+        showToast("✅ ¡Registrado! Ahora inicia sesión.");
+        document.getElementById('tab-login').click();
     } else {
-        // Lógica de inicio de sesión
-        if(localStorage.getItem(`user_${u}`) === p) {
-            document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
-            showToast("👋 Bienvenido");
-            renderProducts(productos);
-            actualizarTodo();
-        } else { 
-            showToast("❌ Datos incorrectos"); 
-        }
+        const passStored = localStorage.getItem(`user_${u}`);
+        if(passStored === p) {
+            usuarioLogueado = true;
+            welcome.style.opacity = "0";
+            setTimeout(() => {
+                welcome.style.display = "none";
+                document.getElementById('btn-logout').style.display = "block";
+                showToast("👋 ¡Bienvenida!");
+            }, 500);
+        } else { showToast("❌ Error de acceso"); }
     }
 };
 
-// --- FILTROS Y CONTROLES ---
+// --- CIERRE Y EVENTOS ---
+document.querySelectorAll('.close').forEach(btn => btn.onclick = () => {
+    document.getElementById('modal-carrito').style.display = 'none';
+    document.getElementById('modal-detalle').style.display = 'none';
+});
+
+window.onclick = (e) => {
+    if (e.target.className === 'modal') {
+        e.target.style.display = 'none';
+    }
+};
+
+document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
+document.getElementById('tab-login').onclick = function() { modoRegistro = false; this.classList.add('active'); document.getElementById('tab-register').classList.remove('active'); btnAuth.innerText = "Entrar"; };
+document.getElementById('tab-register').onclick = function() { modoRegistro = true; this.classList.add('active'); document.getElementById('tab-login').classList.remove('active'); btnAuth.innerText = "Registrarse"; };
+document.getElementById('btn-cancel-auth').onclick = () => { welcome.style.display = 'none'; };
+document.getElementById('btn-logout').onclick = () => { usuarioLogueado = false; location.reload(); };
+
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.onclick = () => {
         document.querySelector('.filter-btn.active').classList.remove('active');
         btn.classList.add('active');
-        const cat = btn.dataset.category;
-        renderProducts(cat === 'all' ? productos : productos.filter(p => p.cat === cat));
+        renderProducts(btn.dataset.category === 'all' ? productos : productos.filter(p => p.cat === btn.dataset.category));
     };
 });
 
-document.getElementById('close-detalle').onclick = () => document.getElementById('modal-detalle').style.display = 'none';
-document.getElementById('close-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'none';
-document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
-document.getElementById('btn-logout').onclick = () => location.reload();
-// --- LÓGICA DEL BUSCADOR MEJORADA ---
-const inputSearch = document.getElementById('input-search');
-
-inputSearch.addEventListener('input', (e) => {
-    const termino = e.target.value.toLowerCase();
-    const grid = document.getElementById('product-grid');
-    
-    // Filtrar productos
-    const filtrados = productos.filter(p => 
-        p.nombre.toLowerCase().includes(termino) || 
-        p.cat.toLowerCase().includes(termino)
-    );
-
-    // Si no hay resultados, mostrar mensaje
-    if (filtrados.length === 0) {
-        grid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 50px; color: #666;">
-                <h2 style="margin-bottom: 10px;">🔍 No hay resultados para "${e.target.value}"</h2>
-                <p>Intenta con otra palabra clave o categoría.</p>
-            </div>
-        `;
-    } else {
-        // Si hay resultados, renderizar normalmente
-        renderProducts(filtrados);
-    }
-});
+document.getElementById('input-search').oninput = (e) => {
+    const b = e.target.value.toLowerCase();
+    renderProducts(productos.filter(p => p.nombre.toLowerCase().includes(b)));
+};
