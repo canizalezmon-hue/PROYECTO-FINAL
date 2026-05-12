@@ -143,59 +143,44 @@ Canizalez Mon Hue - Desarrollo Completo - GitHub
 
 
 
+Prompt Final para Figma AI (Versión Full System)
+Role: Senior UX/UI & Interaction Designer
+Project: "HUMAN STORE" - A Premium Venezuelan Tech E-commerce
 
-💎 Prompt Maestro: HUMAN STORE "Premium Experience"
-Instrucción: Diseña una interfaz de usuario (UI) para un E-commerce de ultra-lujo llamado HUMAN STORE. La estética debe ser "Dark Tech-Luxury" combinando azul medianoche profundo con acentos de oro champagne y gradientes metálicos.
+Core Design Systems:
 
-1. Identidad Visual y Estilo (Basado en CSS):
-Colores Principales: Fondo #E2E8F0 (Gris seda), Contenedores oscuros #0F172A (Azul Medianoche).
+Branding: "Midnight Tech & Gold". Use #0F172A (Deep Navy) for surfaces, #D4AF37 (Gold) for primary accents/actions, and a light #E2E8F0 (Slate) for the main background.
 
-Acentos: Usar un gradiente dorado lineal (#BF953F, #FCF6BA, #B38728) para logotipos, botones de carga y elementos destacados.
+Typography: 'Orbitron' for heavy headers (luxury/tech feel) and 'Montserrat' for all functional UI text.
 
-Tipografía: 'Orbitron' para logotipos y títulos de secciones (estilo futurista); 'Montserrat' para textos de lectura y botones.
+Components: Rounded corners (24px+), heavy elevation (shadows), and micro-interactions (hover states, glowing borders).
 
-Efectos: Bordes muy redondeados (25px-35px), sombras profundas (0 10px 30px rgba(15,23,42,0.15)) y desenfoque de fondo (backdrop-filter: blur) en modales.
+Required Screens & States:
 
-2. Componentes de Pantalla Obligatorios:
-A. Preloader (Pantalla de Carga):
+Immersive Preloader: Dark screen with a centered, glowing gold logo and a progress bar with a metallic gradient.
 
-Diseña una pantalla completa en #0F172A con el logo central 'HUMAN STORE' en dorado brillante.
+Auth Portal (Modal/Screen): A "Welcome Box" with a high-end feel. Include a segmented control (Login/Register), clean input fields, and a "Premium Gold" button. Design a "Guest Mode" link at the bottom.
 
-Incluye una barra de carga delgada con gradiente de oro y el texto "CARGANDO EXPERIENCIA PREMIUM...".
+Main Dashboard (The Shop):
 
-B. Pantalla de Bienvenida (Auth Box):
+Smart Navbar: Design a sticky bar containing a brand logo, a search input with glassmorphism, and a dynamic "BCV Rate" ticker in gold.
 
-Un modal flotante de 440px de ancho con bordes redondeados (30px).
+Product Catalog: A sidebar with category chips (Electronics, Home, Fashion) and a main grid.
 
-Pestañas minimalistas para "Ingresar" y "Registrarse". El botón de acción debe ser un bloque sólido azul oscuro con texto dorado.
+Premium Product Cards: Each card must display an image, product title, and dual pricing (USD and local currency VEs). Include a "Stock Status" indicator (Green for available, Red for out of stock) and a "Add to Cart" button.
 
-C. Header y Navegación:
+Interactive Cart Drawer: A side-panel showing list items with quantity controls (+/-), a delete icon, and a "Total Breakdown" section that mirrors the dual-currency system.
 
-Navbar: Fondo azul oscuro. El logo debe destacar con un efecto de brillo dorado.
+Product Detail Modal: A 2-column layout (Large Image / Details + Description) with a prominent "Buy Now" button.
 
-Search Bar: Campo de búsqueda aerodinámico con bordes totalmente redondeados y borde sutil dorado al activarse.
+Checkout & Order Confirmation: A clean, trust-focused screen.
 
-Carrito: Icono de carrito con un contador redondo en dorado y números en azul.
+Left side: Order summary list.
 
-D. Grid de Productos y Filtros:
+Right side: Total calculation and a WhatsApp-branded primary action button to finalize the order.
 
-Sidebar: Botones de categoría que al pasar el mouse (hover) se desplacen lateralmente y muestren un borde dorado.
+Responsive Specs:
+Design for Desktop (1440px) and Mobile (390px). On mobile, ensure the categories are in a horizontal scrollable list and the navigation is compact.
 
-Product Cards: Tarjetas blancas con bordes de 25px. Al hacer hover, la tarjeta debe elevarse y la imagen escalarse ligeramente. Debe incluir el precio en Dólares (gris suave) y en Bolívares (azul negrita grande).
-
-E. Flujo de Checkout (Página de Pago):
-
-Layout de dos columnas: Izquierda con el "Resumen de Compra" (lista de productos con miniaturas) y Derecha con la "Confirmación Final".
-
-Botón prominente de "ENVIAR PEDIDO POR WHATSAPP" con estilo de lujo.
-
-F. Footer Profesional:
-
-Diseño de 4 columnas en fondo azul oscuro con una línea superior dorada de 5px. Incluye iconos de redes sociales circulares que cambian a dorado al pasar el mouse.
-
-3. Notas Técnicas para Figma:
-Utiliza una rejilla (grid) de 12 columnas.
-
-Asegúrate de que los botones tengan un letter-spacing de 1px y texto en mayúsculas.
-
-Los modales deben ocupar el centro de la pantalla con un fondo oscurecido y desenfocado.
+Interactions to Simulate:
+Show "Hover" states for product cards (y-axis lift), "Disabled" states for out-of-stock items, and "Success" toasts for items added to the cart.
