@@ -124,3 +124,78 @@ PROYECTO-FINAL/
 └── README.md       # Documentación del proyecto.
 ✒️ Autor
 Canizalez Mon Hue - Desarrollo Completo - GitHub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+💎 Prompt Maestro: HUMAN STORE "Premium Experience"
+Instrucción: Diseña una interfaz de usuario (UI) para un E-commerce de ultra-lujo llamado HUMAN STORE. La estética debe ser "Dark Tech-Luxury" combinando azul medianoche profundo con acentos de oro champagne y gradientes metálicos.
+
+1. Identidad Visual y Estilo (Basado en CSS):
+Colores Principales: Fondo #E2E8F0 (Gris seda), Contenedores oscuros #0F172A (Azul Medianoche).
+
+Acentos: Usar un gradiente dorado lineal (#BF953F, #FCF6BA, #B38728) para logotipos, botones de carga y elementos destacados.
+
+Tipografía: 'Orbitron' para logotipos y títulos de secciones (estilo futurista); 'Montserrat' para textos de lectura y botones.
+
+Efectos: Bordes muy redondeados (25px-35px), sombras profundas (0 10px 30px rgba(15,23,42,0.15)) y desenfoque de fondo (backdrop-filter: blur) en modales.
+
+2. Componentes de Pantalla Obligatorios:
+A. Preloader (Pantalla de Carga):
+
+Diseña una pantalla completa en #0F172A con el logo central 'HUMAN STORE' en dorado brillante.
+
+Incluye una barra de carga delgada con gradiente de oro y el texto "CARGANDO EXPERIENCIA PREMIUM...".
+
+B. Pantalla de Bienvenida (Auth Box):
+
+Un modal flotante de 440px de ancho con bordes redondeados (30px).
+
+Pestañas minimalistas para "Ingresar" y "Registrarse". El botón de acción debe ser un bloque sólido azul oscuro con texto dorado.
+
+C. Header y Navegación:
+
+Navbar: Fondo azul oscuro. El logo debe destacar con un efecto de brillo dorado.
+
+Search Bar: Campo de búsqueda aerodinámico con bordes totalmente redondeados y borde sutil dorado al activarse.
+
+Carrito: Icono de carrito con un contador redondo en dorado y números en azul.
+
+D. Grid de Productos y Filtros:
+
+Sidebar: Botones de categoría que al pasar el mouse (hover) se desplacen lateralmente y muestren un borde dorado.
+
+Product Cards: Tarjetas blancas con bordes de 25px. Al hacer hover, la tarjeta debe elevarse y la imagen escalarse ligeramente. Debe incluir el precio en Dólares (gris suave) y en Bolívares (azul negrita grande).
+
+E. Flujo de Checkout (Página de Pago):
+
+Layout de dos columnas: Izquierda con el "Resumen de Compra" (lista de productos con miniaturas) y Derecha con la "Confirmación Final".
+
+Botón prominente de "ENVIAR PEDIDO POR WHATSAPP" con estilo de lujo.
+
+F. Footer Profesional:
+
+Diseño de 4 columnas en fondo azul oscuro con una línea superior dorada de 5px. Incluye iconos de redes sociales circulares que cambian a dorado al pasar el mouse.
+
+3. Notas Técnicas para Figma:
+Utiliza una rejilla (grid) de 12 columnas.
+
+Asegúrate de que los botones tengan un letter-spacing de 1px y texto en mayúsculas.
+
+Los modales deben ocupar el centro de la pantalla con un fondo oscurecido y desenfocado.
