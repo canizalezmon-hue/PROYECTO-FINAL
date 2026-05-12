@@ -42,7 +42,7 @@ PROYECTO-FINAL/
 │
 ├── index.html      # Estructura principal y contenedores de modales.
 ├── style.css       # Estilos globales y adaptaciones responsivas.
-├── script.js       # Lógica de autenticación, carrito y renderizado.
+├── app.js       # Lógica de autenticación, carrito y renderizado.
 └── README.md       # Documentación del proyecto.
 ```
 
