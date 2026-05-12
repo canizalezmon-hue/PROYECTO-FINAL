@@ -3,66 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMZON - Proyecto Final</title>
+    <title>HUMAN STORE - Proyecto Final</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <!-- --- PRELOADER (Pantalla de Carga) --- -->
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="logo-large">HUMAN STORE</div>
+            <div class="loader-bar"></div>
+            <p style="color: #D4AF37; font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 2px; margin-top: 10px;">CARGANDO EXPERIENCIA PREMIUM...</p>
+        </div>
+    </div>
+
     <!-- Contenedor para notificaciones flotantes -->
     <div id="toast-container"></div>
 
-    <!-- Pantalla de Bienvenida con Validación de Gmail -->
-    <div id="welcome-screen" class="welcome-screen">
+    <!-- Pantalla de Bienvenida y Autenticación -->
+    <div id="welcome-screen" class="welcome-screen" style="display: none;">
         <div class="welcome-box">
-            <div class="logo-large">AMZON</div>
+            <div class="logo-large">HUMAN STORE</div>
+            <p id="auth-msg" style="margin-bottom: 20px; color: #64748B;">Identifícate para gestionar tu carrito y pedidos</p>
             <div class="auth-tabs">
                 <button id="tab-login" class="tab-btn active">Ingresar</button>
                 <button id="tab-register" class="tab-btn">Registrarse</button>
             </div>
             <div id="auth-form">
-                <!-- Mejorado: type email y pattern para validación visual instantánea -->
-                <input type="email" id="usuario" placeholder="Usuario" required pattern=".+@gmail\.com">
+                <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
                 <input type="password" id="password" placeholder="Contraseña" required>
                 <button id="btn-auth-action" class="btn-auth">Entrar</button>
             </div>
+            <button id="btn-cancel-auth" style="background: none; border: none; color: #94A3B8; margin-top: 15px; cursor: pointer; font-family: 'Montserrat';">Explorar catálogo sin sesión</button>
         </div>
     </div>
 
     <!-- Interfaz Principal -->
-    <div id="app-container" style="display: none;">
+    <div id="app-container" class="hidden-app">
         <nav class="navbar">
-            <div class="logo">AMZON</div>
+            <div class="logo" onclick="location.reload()" style="cursor:pointer">HUMAN STORE</div>
             
             <div class="search-bar">
-                <input type="text" id="input-search" placeholder="Buscar en AMZON...">
+                <input type="text" id="input-search" placeholder="Buscar tecnología, hogar, ropa...">
             </div>
 
             <div class="bcv-info">
-                Tasa BCV: <span id="tasa-venda">36.50</span> Bs.
+                Tasa BCV: <span id="tasa-venda">Cargando...</span> Bs.
             </div>
 
             <ul class="nav-links">
-                <!-- El contador ahora está fuera de paréntesis para usar el estilo de "badge" (globo) del CSS -->
-                <li class="nav-item" id="btn-ver-carrito">
+                <li class="nav-item" id="btn-ver-carrito" style="cursor:pointer; position:relative; list-style: none;">
                     🛒 Carrito <span id="cart-count">0</span>
                 </li>
-                <li class="nav-item" id="btn-logout" style="color: #febd69;">Salir</li>
+                <li class="nav-item" id="btn-logout" style="color: #febd69; display: none; cursor:pointer; list-style: none;">Salir</li>
             </ul>
         </nav>
 
-        <div class="container">
-            <!-- Barra lateral de filtros -->
+        <!-- CONTENIDO DINÁMICO: TIENDA -->
+        <div id="store-content" class="container">
             <aside class="filters">
                 <h3>Categorías</h3>
-                <button class="filter-btn active" data-category="all">Todos</button>
+                <button class="filter-btn active" data-category="all">Todos los Productos</button>
                 <button class="filter-btn" data-category="electronica">Electrónica</button>
                 <button class="filter-btn" data-category="hogar">Hogar</button>
                 <button class="filter-btn" data-category="ropa">Ropa</button>
             </aside>
 
-            <!-- Cuadrícula de productos dinámica -->
             <main id="product-grid" class="grid"></main>
         </div>
+
+        <!-- CONTENIDO DINÁMICO: CHECKOUT -->
+        <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
+            <button id="btn-back-store" class="btn-primary" style="width: fit-content; margin-bottom: 20px; cursor:pointer">← Volver a la Tienda</button>
+            
+            <div class="checkout-layout">
+                <!-- Resumen de Productos -->
+                <div class="checkout-box summary-box">
+                    <h2 class="checkout-title">Resumen de Compra</h2>
+                    <div id="checkout-items-list" class="checkout-items-scroll"></div>
+                    <div class="checkout-totals">
+                        <div class="total-row">
+                            <span>Subtotal Divisas:</span>
+                            <strong id="checkout-total-usd">$0.00</strong>
+                        </div>
+                        <div class="total-row main-total">
+                            <span>Total a Pagar (Bs):</span>
+                            <span id="checkout-total-bs">0.00 Bs.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pasarela de Pago -->
+                <div class="checkout-box payment-box">
+                    <h2 class="checkout-title">Confirmación Final</h2>
+                    <p>Tu pedido será enviado vía WhatsApp para coordinar el pago y la entrega.</p>
+                    
+                    <div class="payment-options">
+                        <button class="pay-method-btn active" onclick="seleccionarMetodo('whatsapp', this)">
+                            <i>📱</i> WhatsApp
+                        </button>
+                    </div>
+
+                    <button id="btn-finalizar-pago" class="btn-checkout-final">ENVIAR PEDIDO POR WHATSAPP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Profesional -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo" style="font-size: 1.5rem; margin-bottom: 10px;">HUMAN STORE</div>
+                    <p>Tu destino premium para tecnología y estilo. Operamos con la tasa oficial del BCV para tu total seguridad y confianza.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="#" onclick="location.reload()">Inicio</a></li>
+                        <li><a href="#" id="footer-ver-carrito">Mi Carrito</a></li>
+                        <li><a href="#">Términos de Compra</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto Oficial</h4>
+                    <p>📍 Caracas, Venezuela</p>
+                    <p>📱 +58 412-0000000</p>
+                    <p>✉️ ventas@humanstore.com</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Nuestras Redes</h4>
+                    <div class="social-links">
+                        <a href="#">IG</a>
+                        <a href="#">FB</a>
+                        <a href="#">WA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 HUMAN STORE - Todos los derechos reservados. Diseñado para Emily.</p>
+            </div>
+        </footer>
     </div>
 
     <!-- Modal de Detalles del Producto -->
@@ -73,24 +153,22 @@
         </div>
     </div>
 
-    <!-- Modal del Carrito -->
+    <!-- Modal del Carrito de Compras -->
     <div id="modal-carrito" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 550px;">
             <span class="close" id="close-carrito">&times;</span>
-            <h2>Tu Carrito</h2>
-            <div id="cart-items">
-                <!-- Se llena mediante JS -->
-            </div>
+            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;">Tu Carrito de Compras</h2>
+            <div id="cart-items"></div>
             <div class="cart-total">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span>Subtotal:</span>
-                    <strong>$<span id="total-usd">0.00</span></strong>
+                    <span>Subtotal en Divisas:</span>
+                    <strong style="font-size: 1.2rem;">$<span id="total-usd">0.00</span></strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; color: #e47911; font-weight: bold;">
-                    <span>Total en Bs:</span>
+                <div style="display: flex; justify-content: space-between; color: var(--primary); font-weight: 900; border-top: 2px solid #E2E8F0; padding-top: 15px; margin-top: 10px;">
+                    <span>Total a Pagar (Bs):</span>
                     <span><span id="total-bs">0.00</span> Bs.</span>
                 </div>
-                <button id="btn-checkout" class="btn-checkout">Finalizar Compra</button>
+                <button id="btn-go-checkout" class="btn-checkout" style="margin-top: 20px; width: 100%;">Proceder al Pago</button>
             </div>
         </div>
     </div>
