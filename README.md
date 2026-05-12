@@ -1,6 +1,6 @@
-# Algo.store | Tienda Virtual 🛒🇻🇪
+# Human.store | Tienda Virtual 🛒🇻🇪
 
-**AMZON** es una plataforma de comercio electrónico diseñada específicamente para el mercado venezolano. Este proyecto es una aplicación web responsiva que permite a los usuarios navegar por un catálogo de productos, gestionar un carrito de compras y visualizar precios convertidos automáticamente a Bolívares (Bs.) según la tasa actual del mercado.
+**Human.store** es una plataforma de comercio electrónico diseñada específicamente para el mercado venezolano. Este proyecto es una aplicación web responsiva que permite a los usuarios navegar por un catálogo de productos, gestionar un carrito de compras y visualizar precios convertidos automáticamente a Bolívares (Bs.) según la tasa actual del mercado.
 
 ---
 
