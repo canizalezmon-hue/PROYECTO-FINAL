@@ -5,19 +5,20 @@ let modoRegistro = false;
 
 const productos = [
     { 
-  id: 1, 
-  nombre: "Laptop Gamer X-Pro", 
-  precio: 1200, 
-  cat: "electronica", 
-  stock: 5, 
-  img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500" 
-},
+        id: 1, 
+        nombre: "Laptop Gamer X-Pro", 
+        precio: 1200, 
+        cat: "electronica", 
+        stock: 5, 
+        img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500" 
+    },
     { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
     { id: 3, nombre: "Lámpara Led Inteligente", precio: 45, cat: "hogar", stock: 4, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
     { id: 4, nombre: "Chaqueta Urban Style", precio: 80, cat: "ropa", stock: 12, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" }
 ];
 
 let carrito = JSON.parse(localStorage.getItem('amzon_cart')) || [];
+let favoritos = JSON.parse(localStorage.getItem('human_store_favs')) || [];
 
 // --- LÓGICA DE CARGA (PRELOADER) ---
 window.addEventListener('load', () => {
@@ -60,7 +61,7 @@ async function obtenerTasaBCV() {
             }
         } catch (e) { console.warn(`Fuente fallida: ${url}`); }
     }
-    actualizarVisualTasa(); // Asegurar render aunque falle API
+    actualizarVisualTasa();
 }
 
 function actualizarVisualTasa() {
@@ -83,9 +84,11 @@ function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
     lista.forEach(p => {
+        const esFav = favoritos.some(f => f.id === p.id);
         const div = document.createElement('div');
         div.className = 'product-card';
         div.innerHTML = `
+            <button class="btn-fav ${esFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorito(${p.id})">★</button>
             <img src="${p.img}" class="card-img" onclick="abrirDetalle(${p.id})">
             <h4 onclick="abrirDetalle(${p.id})" style="cursor:pointer">${p.nombre}</h4>
             <span class="price-usd">Precio: $${p.precio}</span>
@@ -112,6 +115,98 @@ window.abrirDetalle = (id) => {
             <button class="btn-primary" ${p.stock === 0 ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">${p.stock > 0 ? 'Añadir al Carrito' : 'Agotado'}</button>
         </div>`;
     document.getElementById('modal-detalle').style.display = 'block';
+};
+
+// --- LÓGICA DE FAVORITOS ---
+window.toggleFavorito = (id) => {
+    const index = favoritos.findIndex(f => f.id === id);
+    if (index > -1) {
+        favoritos.splice(index, 1);
+        showToast("⭐ Quitado de tus favoritos");
+    } else {
+        const prod = productos.find(p => p.id === id);
+        favoritos.push(prod);
+        showToast("⭐ ¡Añadido a tus favoritos!");
+    }
+    localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
+    
+    const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+    renderProducts(activeCategory === 'all' ? productos : productos.filter(p => p.cat === activeCategory));
+    
+    if(document.getElementById('modal-favoritos').style.display === 'block') {
+        renderFavoritos();
+    }
+};
+
+function renderFavoritos() {
+    const list = document.getElementById('fav-items');
+    const actionsArea = document.getElementById('fav-actions-area');
+    
+    if(favoritos.length === 0) {
+        list.innerHTML = "<p style='text-align:center; color:#94A3B8; padding: 20px;'>No tienes productos en tu lista de deseos.</p>";
+        actionsArea.style.display = 'none';
+    } else {
+        list.innerHTML = "";
+        actionsArea.style.display = 'block';
+        
+        favoritos.forEach((item) => {
+            list.innerHTML += `
+                <div class="cart-item">
+                    <img src="${item.img}" class="cart-item-img">
+                    <div class="cart-item-info">
+                        <h4>${item.nombre}</h4>
+                        <p style="margin: 5px 0 0; font-weight: bold; color: var(--accent)">$${item.precio.toFixed(2)}</p>
+                    </div>
+                    <button class="btn-primary" style="padding: 10px 15px; font-size: 0.8rem; border-radius: 8px;" ${item.stock === 0 ? 'disabled' : ''} onclick="agregarCarrito(${item.id})">🛒 Llevar</button>
+                    <button class="btn-remove" onclick="toggleFavorito(${item.id})">×</button>
+                </div>`;
+        });
+    }
+}
+
+// --- AGREGAR TODOS LOS FAVORITOS AL CARRITO ---
+document.getElementById('btn-llevar-todo-fav').onclick = () => {
+    if (!usuarioLogueado) {
+        showToast("🔑 Identifícate para una experiencia de compra completa");
+        document.getElementById('modal-favoritos').style.display = 'none';
+        document.getElementById('welcome-screen').style.display = 'flex';
+        return;
+    }
+
+    let agregadosContador = 0;
+
+    for (let i = favoritos.length - 1; i >= 0; i--) {
+        const p = favoritos[i];
+        
+        if (p.stock > 0) {
+            const existe = carrito.find(item => item.id === p.id);
+            if (existe) {
+                if (existe.qty < p.stock) {
+                    existe.qty++;
+                    agregadosContador++;
+                    favoritos.splice(i, 1);
+                }
+            } else {
+                carrito.push({...p, qty: 1});
+                agregadosContador++;
+                favoritos.splice(i, 1);
+            }
+        }
+    }
+
+    if (agregadosContador > 0) {
+        showToast(`🛒 Se agregaron ${agregadosContador} productos al carrito`);
+        localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
+        localStorage.setItem('amzon_cart', JSON.stringify(carrito));
+        
+        actualizarTodo();
+        renderFavoritos();
+        
+        const activeCategory = document.querySelector('.filter-btn.active').dataset.category;
+        renderProducts(activeCategory === 'all' ? productos : productos.filter(p => p.cat === activeCategory));
+    } else {
+        showToast("❌ No se pudieron agregar productos (sin stock o límite alcanzado)");
+    }
 };
 
 window.agregarCarrito = (id) => {
@@ -157,7 +252,7 @@ function actualizarTodo() {
                     </div>
                 </div>
                 <div style="font-weight:bold; color: var(--primary)">$${(item.precio * item.qty).toFixed(2)}</div>
-                <button class="btn-remove" onclick="quitar(${i})">&times;</button>
+                <button class="btn-remove" onclick="quitar(${i})">×</button>
             </div>`;
     });
     
@@ -230,10 +325,46 @@ btnAuth.onclick = () => {
     }
 };
 
-// --- CIERRE Y EVENTOS ---
+// --- MODAL DE TÉRMINOS Y CONDICIONES ---
+const modalTerminos = document.getElementById('modal-terminos');
+const checkTerminos = document.getElementById('check-terminos');
+const btnConfirmarTerminos = document.getElementById('btn-confirmar-terminos');
+
+document.getElementById('link-terminos').onclick = (e) => {
+    e.preventDefault();
+    modalTerminos.style.display = 'block';
+};
+
+document.getElementById('close-terminos').onclick = () => {
+    modalTerminos.style.display = 'none';
+};
+
+checkTerminos.onchange = function() {
+    btnConfirmarTerminos.disabled = !this.checked;
+};
+
+btnConfirmarTerminos.onclick = () => {
+    showToast("✅ Términos aceptados correctamente");
+    modalTerminos.style.display = 'none';
+};
+
+// --- EVENTOS DEL MODAL DE FAVORITOS ---
+document.getElementById('footer-ver-favoritos').onclick = (e) => {
+    e.preventDefault();
+    renderFavoritos();
+    document.getElementById('modal-favoritos').style.display = 'block';
+};
+
+document.getElementById('close-favoritos').onclick = () => {
+    document.getElementById('modal-favoritos').style.display = 'none';
+};
+
+// --- CIERRE Y EVENTOS GLOBALES ---
 document.querySelectorAll('.close').forEach(btn => btn.onclick = () => {
     document.getElementById('modal-carrito').style.display = 'none';
     document.getElementById('modal-detalle').style.display = 'none';
+    modalTerminos.style.display = 'none';
+    document.getElementById('modal-favoritos').style.display = 'none';
 });
 
 window.onclick = (e) => {
