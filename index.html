@@ -8,7 +8,6 @@
 </head>
 <body>
 
-    <!-- --- PRELOADER (Pantalla de Carga) --- -->
     <div id="preloader">
         <div class="loader-content">
             <div class="logo-large">HUMAN STORE</div>
@@ -17,10 +16,8 @@
         </div>
     </div>
 
-    <!-- Contenedor para notificaciones flotantes -->
     <div id="toast-container"></div>
 
-    <!-- Pantalla de Bienvenida y Autenticación -->
     <div id="welcome-screen" class="welcome-screen" style="display: none;">
         <div class="welcome-box">
             <div class="logo-large">HUMAN STORE</div>
@@ -38,7 +35,6 @@
         </div>
     </div>
 
-    <!-- Interfaz Principal -->
     <div id="app-container" class="hidden-app">
         <nav class="navbar">
             <div class="logo" onclick="location.reload()" style="cursor:pointer">HUMAN STORE</div>
@@ -59,7 +55,6 @@
             </ul>
         </nav>
 
-        <!-- CONTENIDO DINÁMICO: TIENDA -->
         <div id="store-content" class="container">
             <aside class="filters">
                 <h3>Categorías</h3>
@@ -72,12 +67,10 @@
             <main id="product-grid" class="grid"></main>
         </div>
 
-        <!-- CONTENIDO DINÁMICO: CHECKOUT -->
         <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
             <button id="btn-back-store" class="btn-primary" style="width: fit-content; margin-bottom: 20px; cursor:pointer">← Volver a la Tienda</button>
             
             <div class="checkout-layout">
-                <!-- Resumen de Productos -->
                 <div class="checkout-box summary-box">
                     <h2 class="checkout-title">Resumen de Compra</h2>
                     <div id="checkout-items-list" class="checkout-items-scroll"></div>
@@ -93,7 +86,6 @@
                     </div>
                 </div>
 
-                <!-- Pasarela de Pago -->
                 <div class="checkout-box payment-box">
                     <h2 class="checkout-title">Confirmación Final</h2>
                     <p>Tu pedido será enviado vía WhatsApp para coordinar el pago y la entrega.</p>
@@ -109,7 +101,6 @@
             </div>
         </div>
 
-        <!-- Footer Profesional -->
         <footer class="main-footer">
             <div class="footer-content">
                 <div class="footer-section">
@@ -120,43 +111,49 @@
                     <h4>Enlaces Rápidos</h4>
                     <ul>
                         <li><a href="#" onclick="location.reload()">Inicio</a></li>
-                        <li><a href="#" id="footer-ver-carrito">Mi Favoritos</a></li>
-                        <li><a href="#">Términos de Compra</a></li>
+                        <li><a href="#" id="footer-ver-favoritos">Mi Favoritos</a></li>
+                        <li><a href="#" id="link-terminos">Términos de Compra</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Contacto Oficial</h4>
-                    <p>📍 Caracas, Venezuela</p>
+                    <p>
+                        <a href="https://maps.google.com/?cid=18180701402930565847&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNl" target="_blank" class="footer-map-link">
+                            📍 Av. Andrés Bello, con 1ra Transversal, Caracas 1060, Distrito Capital, Venezuela
+                        </a>
+                    </p>
                     <p>📱 +58 412-0000000</p>
-                    <p>✉️ ventas@humanstore.com</p>
+                    <p>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=ventas@humanstore.com" target="_blank" class="footer-email-link">
+                            ✉️ ventas@humanstore.com
+                        </a>
+                    </p>
                 </div>
                 <div class="footer-section">
                     <h4>Nuestras Redes</h4>
                     <div class="social-links">
-                        <a href="#">IG</a>
-                        <a href="#">FB</a>
-                        <a href="#">WA</a>
+                        <a href="https://github.com/?locale=es-419" target="_blank" rel="noopener noreferrer">IG</a>
+                        <a href="https://github.com/?locale=es-419" target="_blank" rel="noopener noreferrer">FB</a>
+                        <a href="https://github.com/?locale=es-419" target="_blank" rel="noopener noreferrer">WA</a>
                     </div>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 HUMAN STORE - Todos los derechos reservados.</p>
+                <p>© 2026 HUMAN STORE - Todos los derechos reservados.</p>
             </div>
         </footer>
     </div>
 
-    <!-- Modal de Detalles del Producto -->
     <div id="modal-detalle" class="modal">
         <div class="modal-content-lg">
-            <span class="close" id="close-detalle">&times;</span>
+            <span class="close" id="close-detalle">×</span>
             <div id="detalle-body" class="product-layout"></div>
         </div>
     </div>
 
-    <!-- Modal del Carrito de Compras -->
     <div id="modal-carrito" class="modal">
         <div class="modal-content" style="max-width: 550px;">
-            <span class="close" id="close-carrito">&times;</span>
+            <span class="close" id="close-carrito">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;">Tu Carrito de Compras</h2>
             <div id="cart-items"></div>
             <div class="cart-total">
@@ -169,6 +166,47 @@
                     <span><span id="total-bs">0.00</span> Bs.</span>
                 </div>
                 <button id="btn-go-checkout" class="btn-checkout" style="margin-top: 20px; width: 100%;">Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-terminos" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <span class="close" id="close-terminos">×</span>
+            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Términos de Compra</h2>
+            
+            <div class="terms-scroll-box">
+                <h4>1. Tasa de Cambio Oficial</h4>
+                <p>Todos los precios mostrados en Bolívares (Bs.) se calculan estrictamente con base en la tasa oficial provista por el Banco Central de Venezuela (BCV) correspondiente al día valor de la transacción.</p>
+                
+                <h4>2. Verificación de Stock</h4>
+                <p>La inclusión de productos en el carrito de compras no garantiza su reserva automática. El stock real del artículo se confirmará formalmente de forma definitiva durante el contacto directo con nuestros asesores comerciales vía WhatsApp.</p>
+                
+                <h4>3. Mecánica de Pago y Entrega</h4>
+                <p>Nuestra plataforma funciona bajo la modal de generación de pedido y reenvío automático de datos informativos. Los métodos específicos de pago final (Transferencias, Pago Móvil, Efectivo, Zelle u otros), así como las tarifas o condiciones aplicables al servicio de entrega (delivery o envíos nacionales), se acordarán y finiquitarán durante la conversación personalizada por mensajería.</p>
+                
+                <h4>4. Garantías y Cambios</h4>
+                <p>Todo artículo tecnológico o comercial de HUMAN STORE cuenta con un respaldo específico contra desperfectos de fábrica. No se procesan devoluciones monetarias o cambios basados en equivocaciones subjetivas del cliente ajenas a fallas técnicas verificables.</p>
+            </div>
+
+            <div class="terms-acceptance-area">
+                <label class="terms-checkbox-label">
+                    <input type="checkbox" id="check-terminos">
+                    <span class="custom-checkbox"></span>
+                    He leído detenidamente y acepto los términos de compra descritos.
+                </label>
+                <button id="btn-confirmar-terminos" class="btn-checkout" style="width: 100%; margin-top: 15px;" disabled>Confirmar y Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-favoritos" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <span class="close" id="close-favoritos">×</span>
+            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;">Mis Favoritos</h2>
+            <div id="fav-items"></div>
+            <div id="fav-actions-area" style="border-top: 2px solid #E2E8F0; padding-top: 20px; margin-top: 10px; display: none;">
+                <button id="btn-llevar-todo-fav" class="btn-checkout" style="width: 100%;">Agregar todos a mi carrito de compras</button>
             </div>
         </div>
     </div>
