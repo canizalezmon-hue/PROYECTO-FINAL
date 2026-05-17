@@ -41,9 +41,9 @@ body {
     100% { width: 100%; }
 }
 
-@keyframes brutalEntry {
-    0% { opacity: 0; transform: scale(1.2) translateY(50px); filter: blur(15px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+@keyframes brutalEntryLeft {
+    0% { opacity: 0; transform: scale(0.9) translateX(-50px); filter: blur(10px); }
+    100% { opacity: 1; transform: scale(1) translateX(0); filter: blur(0); }
 }
 
 @keyframes fadeIn {
@@ -95,18 +95,29 @@ body {
 
 .logo:hover { transform: scale(1.05); }
 
-/* --- NOTIFICACIONES --- */
+/* --- CONFIGURACIÓN DE NOTIFICACIONES: PARTE SUPERIOR IZQUIERDA --- */
 #toast-container { 
     position: fixed; 
-    top: 25px; 
-    right: 25px; 
-    z-index: 10000; 
-    max-width: calc(100% - 50px);
+    top: 105px; 
+    left: 25px; 
+    z-index: 100000; 
+    max-width: 350px;
+    width: calc(100% - 50px);
+    pointer-events: none;
 }
 .toast { 
-    background: var(--primary); color: white; border-left: 5px solid var(--secondary); 
-    padding: 18px 30px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    animation: brutalEntry 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards; font-weight: 600;
+    background: var(--primary); 
+    color: white; 
+    border-left: 5px solid var(--secondary); 
+    padding: 16px 25px; 
+    border-radius: 12px; 
+    margin-bottom: 10px; 
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.25);
+    animation: brutalEntryLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; 
+    font-weight: 600;
+    font-size: 0.9rem;
+    pointer-events: auto;
+    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* --- PANTALLA DE BIENVENIDA --- */
@@ -130,11 +141,32 @@ body {
 }
 .tab-btn.active { color: var(--primary); border-bottom: 4px solid var(--secondary); }
 
-#auth-form input { 
+#auth-form input, #auth-form select { 
     width: 100%; padding: 16px; margin-bottom: 20px; border: 1px solid #E2E8F0; 
     border-radius: 12px; outline: none; font-family: 'Montserrat'; transition: 0.3s;
+    background: var(--white); color: var(--text); font-size: 0.95rem;
 }
-#auth-form input:focus { border-color: var(--secondary); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+#auth-form input:focus, #auth-form select:focus { border-color: var(--secondary); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+
+/* Grupo Telefónico Especial */
+.phone-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 0px;
+}
+.phone-input-group select {
+    width: 110px !important;
+    text-align: center;
+    cursor: pointer;
+}
+
+.auth-support-links a {
+    transition: 0.2s ease;
+}
+.auth-support-links a:hover {
+    color: var(--primary) !important;
+    text-decoration: underline !important;
+}
 
 /* --- NAVBAR PREMIUM --- */
 .navbar { 
@@ -175,7 +207,7 @@ body {
 .container { display: flex; padding: 50px 6%; gap: 40px; min-height: 85vh; width: 100%; }
 
 .hidden-app { opacity: 0; pointer-events: none; }
-.app-entry-animation { animation: brutalEntry 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
+.app-entry-animation { animation: brutalEntryLeft 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
 
 .filters { 
     width: 280px; background: var(--white); padding: 30px; border-radius: 20px; 
@@ -194,7 +226,6 @@ body {
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 35px; flex-grow: 1; }
 
-/* --- CLASE NUEVA: MENSAJE CUANDO NO HAY PRODUCTOS --- */
 .no-products-msg {
     grid-column: 1 / -1;
     background: var(--white);
@@ -414,7 +445,7 @@ button:disabled {
     background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); 
     padding: 20px; overflow-y: auto;
 }
-.modal-content-lg { background: var(--white); margin: 3% auto; padding: 50px; border-radius: 35px; position: relative; max-width: 950px; width: 100%; animation: brutalEntry 0.6s ease; }
+.modal-content-lg { background: var(--white); margin: 3% auto; padding: 50px; border-radius: 35px; position: relative; max-width: 950px; width: 100%; animation: brutalEntryLeft 0.6s ease; }
 .modal-content { background: var(--white); margin: 5% auto; padding: 40px; border-radius: 30px; width: 100%; max-width: 550px; position: relative; animation: fadeIn 0.4s ease; }
 .close { position: absolute; right: 30px; top: 25px; cursor: pointer; font-size: 35px; color: var(--primary); font-weight: bold; transition: 0.3s; z-index: 10; }
 .close:hover { color: var(--danger); transform: rotate(90deg); }
