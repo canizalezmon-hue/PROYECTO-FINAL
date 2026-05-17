@@ -194,6 +194,30 @@ body {
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 35px; flex-grow: 1; }
 
+/* --- CLASE NUEVA: MENSAJE CUANDO NO HAY PRODUCTOS --- */
+.no-products-msg {
+    grid-column: 1 / -1;
+    background: var(--white);
+    padding: 50px 30px;
+    border-radius: 25px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.5s ease forwards;
+    border: 1px dashed #CBD5E1;
+}
+.no-products-msg h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+.no-products-msg p {
+    color: #64748B;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
 /* --- TARJETAS DE PRODUCTO --- */
 .product-card { 
     background: var(--white); border-radius: 25px; padding: 30px; text-align: center; 
@@ -212,7 +236,7 @@ body {
 .price-bs { color: var(--primary); font-weight: 900; font-size: 1.7rem; margin: 8px 0; }
 .price-usd { color: #64748B; font-weight: 600; font-size: 1rem; }
 
-/* --- BOTÓN DE FAVORITOS --- */
+/* --- BOTÓN DE FAVORITOS (ESTRELLA) --- */
 .btn-fav {
     position: absolute;
     top: 20px;
