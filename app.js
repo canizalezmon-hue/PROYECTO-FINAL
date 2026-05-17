@@ -83,6 +83,18 @@ function showToast(mensaje) {
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
+
+    // VALIDACIÓN NUEVA: Si la lista filtrada está vacía, muestra el mensaje interactivo
+    if (lista.length === 0) {
+        grid.innerHTML = `
+            <div class="no-products-msg">
+                <h3>🔍 Sin Resultados Coincidentes</h3>
+                <p>No se encontraron productos que coincidan con tu búsqueda actual en nuestra tienda.</p>
+            </div>
+        `;
+        return;
+    }
+
     lista.forEach(p => {
         const esFav = favoritos.some(f => f.id === p.id);
         const div = document.createElement('div');
