@@ -22,15 +22,53 @@
         <div class="welcome-box">
             <div class="logo-large">HUMAN STORE</div>
             <p id="auth-msg" style="margin-bottom: 20px; color: #64748B;">Identifícate para gestionar tu carrito y pedidos</p>
-            <div class="auth-tabs">
+            
+            <div id="auth-nav-tabs" class="auth-tabs">
                 <button id="tab-login" class="tab-btn active">Ingresar</button>
                 <button id="tab-register" class="tab-btn">Registrarse</button>
             </div>
+
             <div id="auth-form">
+                <div id="extended-register-fields" style="display: none;">
+                    <input type="text" id="reg-nombres" placeholder="Nombres">
+                    <input type="text" id="reg-apellidos" placeholder="Apellidos">
+                    
+                    <div class="phone-input-group">
+                        <select id="reg-country-code">
+                            <option value="+58">🇻🇪 +58</option>
+                            <option value="+1">🇺🇸 +1</option>
+                            <option value="+34">🇪🇸 +34</option>
+                            <option value="+57">🇨🇴 +57</option>
+                            <option value="+54">🇦🇷 +54</option>
+                        </select>
+                        <input type="tel" id="reg-telefono" placeholder="Número de Teléfono">
+                    </div>
+                </div>
+
                 <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
-                <input type="password" id="password" placeholder="Contraseña" required>
+                
+                <div id="login-password-area">
+                    <input type="password" id="password" placeholder="Contraseña" required>
+                </div>
+
+                <div id="verification-code-area" style="display: none; margin-bottom: 20px;">
+                    <p style="font-size: 0.8rem; color: #64748B; margin-bottom: 8px;">Introduce el código de 6 dígitos enviado</p>
+                    <input type="text" id="auth-verification-code" placeholder="Código de Verificación (Ej: 123456)" maxlength="6">
+                </div>
+
+                <div id="new-password-area" style="display: none;">
+                    <input type="password" id="new-password" placeholder="Nueva Contraseña">
+                    <input type="password" id="new-password-confirm" placeholder="Confirmar Nueva Contraseña">
+                </div>
+
                 <button id="btn-auth-action" class="btn-auth">Entrar</button>
             </div>
+
+            <div class="auth-support-links" style="margin-top: 20px; font-size: 0.85rem;">
+                <a href="#" id="link-forgot-password" style="color: #64748B; text-decoration: none; font-weight: 600; display: block; margin-bottom: 10px;">¿Olvidaste tu contraseña?</a>
+                <a href="#" id="link-back-to-auth" style="color: var(--accent); text-decoration: none; font-weight: 700; display: none; margin-bottom: 10px;">← Volver al Login</a>
+            </div>
+
             <button id="btn-cancel-auth" style="background: none; border: none; color: #94A3B8; margin-top: 15px; cursor: pointer; font-family: 'Montserrat';">Explorar catálogo sin sesión</button>
         </div>
     </div>
@@ -183,7 +221,7 @@
                 <p>La inclusión de productos en el carrito de compras no garantiza su reserva automática. El stock real del artículo se confirmará formalmente de forma definitiva durante el contacto directo con nuestros asesores comerciales vía WhatsApp.</p>
                 
                 <h4>3. Mecánica de Pago y Entrega</h4>
-                <p>Nuestra plataforma funciona bajo la modal de generación de pedido y reenvío automático de datos informativos. Los métodos específicos de pago final (Transferencias, Pago Móvil, Efectivo, Zelle u otros), así como las tarifas o conditions aplicables al servicio de entrega (delivery o envíos nacionales), se acordarán y finiquitarán durante la conversación personalizada por mensajería.</p>
+                <p>Nuestra plataforma funciona bajo la modal de generación de pedido y reenvío automático de datos informativos. Los métodos específicos de pago final (Transferencias, Pago Móvil, Efectivo, Zelle u otros), así como las tarifas o condiciones aplicables al servicio de entrega (delivery o envíos nacionales), se acordarán y finiquitarán durante la conversación personalizada por mensajería.</p>
                 
                 <h4>4. Garantías y Cambios</h4>
                 <p>Todo artículo tecnológico o comercial de HUMAN STORE cuenta con un respaldo específico contra desperfectos de fábrica. No se procesan devoluciones monetarias o cambios basados en equivocaciones subjetivas del cliente ajenas a fallas técnicas verificables.</p>
@@ -211,6 +249,6 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
