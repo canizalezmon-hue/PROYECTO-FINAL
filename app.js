@@ -108,14 +108,6 @@ estilosExtra.innerHTML = `
         color: #FBBF24; padding: 6px 12px; border-radius: 20px; cursor: pointer;
         font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
     }
-    .floating-cart-card {
-        position: fixed; bottom: 25px; right: 25px; background: #1E293B;
-        color: white; padding: 12px 20px; border-radius: 30px; display: flex;
-        align-items: center; gap: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        z-index: 850; border: 1px solid #334155; transition: transform 0.4s ease, opacity 0.3s;
-    }
-    .floating-cart-card.hidden-float { transform: translateY(100px); opacity: 0; pointer-events: none; }
-    .btn-float-action { background: #FBBF24; border: none; padding: 5px 12px; border-radius: 15px; font-weight: bold; cursor: pointer; color: #0F172A; }
     
     .card-sold-out { opacity: 0.6; }
     .badge-sold-out {
@@ -146,7 +138,6 @@ window.addEventListener('load', () => {
             app.classList.add('app-entry-animation'); 
             
             inyectarSelectorMonedaNavbar();
-            inyectarCarritoFlotanteDOM();
 
             const ultimaSeccion = localStorage.getItem('human_store_current_view') || 'store';
             if (ultimaSeccion === 'checkout' && usuarioLogueado && carrito.length > 0) {
@@ -231,18 +222,6 @@ function inyectarSelectorMonedaNavbar() {
     };
 }
 
-function inyectarCarritoFlotanteDOM() {
-    if (document.getElementById('floating-cart-card')) return;
-    const div = document.createElement('div');
-    div.id = 'floating-cart-card';
-    div.className = 'floating-cart-card hidden-float';
-    div.innerHTML = `
-        <span style="font-size:0.85rem;">🛒 Total Bolsa: <strong id="float-total-val" style="color:#FBBF24;">$0.00</strong></span>
-        <button class="btn-float-action" onclick="document.getElementById('btn-ver-carrito').click()">Ver Bolsa</button>
-    `;
-    document.body.appendChild(div);
-}
-
 // --- SISTEMA BCV ---
 async function obtenerTasaBCV() {
     const apiSources = [
@@ -268,14 +247,17 @@ async function obtenerTasaBCV() {
     actualizarTodo();
 }
 
+// --- MODIFICACIÓN DE TIEMPO A 10 SEGUNDOS ---
 function showToast(mensaje) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.innerText = mensaje;
     container.appendChild(toast);
-    setTimeout(() => { toast.classList.add('toast-fade-out'); }, 3500);
-    setTimeout(() => { toast.remove(); }, 4000);
+    
+    // El mensaje se mantendrá visible por 10 segundos (10000ms) antes de desvanecerse
+    setTimeout(() => { toast.classList.add('toast-fade-out'); }, 10000);
+    setTimeout(() => { toast.remove(); }, 10500);
 }
 
 // --- RENDERING TIENDA ---
@@ -295,13 +277,14 @@ function renderProducts(lista) {
         let precioHtml = "";
         if (MONEDA_ACTUAL === "USD") {
             precioHtml = `
-                <span class="price-usd">Precio: $${p.precio}</span>
-                <span class="price-bs">${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</span>
+                <span class="price-usd" style="display:none;"></span>
+                <span class="price-bs">$${p.precio.toFixed(2)} USD</span>
             `;
         } else {
+            let precioEnBs = p.precio * TASA_BCV;
             precioHtml = `
-                <span class="price-usd" style="color:#10B981;">Precio: ${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</span>
-                <span class="price-bs">Equivalente: $${p.precio}</span>
+                <span class="price-usd" style="display:none;"></span>
+                <span class="price-bs">${precioEnBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</span>
             `;
         }
 
@@ -378,7 +361,7 @@ window.agregarCarrito = (id) => {
     const existe = carrito.find(i => i.id === id);
     if(existe) {
         if(existe.qty < original.stock) { 
-            existe.qty++; showToast("🛒 Bolsa actualizada"); 
+            existe.qty++; showToast("🛒 Carrito actualizado"); 
         } else { 
             showToast("❌ Stock máximo superado"); 
         }
@@ -395,7 +378,7 @@ function actualizarTodo() {
     let total = 0, count = 0;
     
     if(list) {
-        list.innerHTML = carrito.length ? "" : "<p style='text-align:center; color:#94A3B8; padding: 20px;'>Tu bolsa está vacía.</p>";
+        list.innerHTML = carrito.length ? "" : "<p style='text-align:center; color:#94A3B8; padding: 20px;'>Tu carrito está vacío.</p>";
         carrito.forEach((item, i) => {
             total += (item.precio * item.qty);
             count += item.qty;
@@ -421,16 +404,6 @@ function actualizarTodo() {
     if(document.getElementById('total-usd')) document.getElementById('total-usd').innerText = total.toFixed(2);
     if(document.getElementById('total-bs')) document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE');
     if(document.getElementById('cart-count')) document.getElementById('cart-count').innerText = count;
-
-    const floatCard = document.getElementById('floating-cart-card');
-    if(floatCard) {
-        if(count > 0 && localStorage.getItem('human_store_current_view') !== 'checkout') {
-            floatCard.classList.remove('hidden-float');
-            document.getElementById('float-total-val').innerText = `$${total.toFixed(2)}`;
-        } else {
-            floatCard.classList.add('hidden-float');
-        }
-    }
 }
 
 window.cambiarCant = (index, delta) => {
@@ -451,8 +424,6 @@ function irASeccionCheckout(mostrarToast = true) {
     document.getElementById('store-content').style.display = 'none';
     document.getElementById('checkout-page').style.display = 'flex';
     localStorage.setItem('human_store_current_view', 'checkout');
-    
-    if(document.getElementById('floating-cart-card')) document.getElementById('floating-cart-card').classList.add('hidden-float');
 
     const list = document.getElementById('checkout-items-list');
     list.innerHTML = "";
@@ -476,7 +447,7 @@ function irASeccionTienda() {
 }
 
 document.getElementById('btn-go-checkout').onclick = () => {
-    if (!carrito.length) return showToast("⚠️ Bolsa vacía");
+    if (!carrito.length) return showToast("⚠️ Carrito vacío");
     irASeccionCheckout(true);
 };
 document.getElementById('btn-back-store').onclick = () => { irASeccionTienda(); };
@@ -718,7 +689,7 @@ function cancelarFlujosEspeciales() {
     modoRecuperar = false; modoRegistro = false; pasoVerificacion = false;
     codigoGeneradoSimulado = ""; correoTemporalRecuperacion = ""; datosRegistroTemporales = {};
     inputUsuario.style.display = "block"; areaPasswordLogin.style.display = "block"; fieldsetRegistro.style.display = "none"; 
-    areaCodigoVerificacion.style.display = "none"; areaNuevaPassword.style.display = "none"; navTabsAutenticacion.style.display = "flex";
+    areaCodigoVerificacion.style.none; areaNuevaPassword.style.display = "none"; navTabsAutenticacion.style.display = "flex";
     linkOlvidoPass.style.display = "block"; linkVolverLogin.style.none;
 }
 
@@ -789,13 +760,11 @@ function renderFavoritos() {
             let precioHtmlFavoritos = "";
             if (MONEDA_ACTUAL === "USD") {
                 precioHtmlFavoritos = `
-                    <div class="fav-item-price-main">$${item.precio.toFixed(2)}</div>
-                    <div class="fav-item-price-sub">${(item.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</div>
+                    <div class="fav-item-price-main">$${item.precio.toFixed(2)} USD</div>
                 `;
             } else {
                 precioHtmlFavoritos = `
-                    <div class="fav-item-price-main" style="color:#10B981;">${(item.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</div>
-                    <div class="fav-item-price-sub">Eqv: $${item.precio.toFixed(2)}</div>
+                    <div class="fav-item-price-main" style="color:#10B981;">${(item.precio * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</div>
                 `;
             }
 
