@@ -465,8 +465,6 @@ button:disabled {
 .btn-remove { color: var(--danger); border: none; background: none; cursor: pointer; font-weight: bold; font-size: 1.5rem; transition: 0.3s; }
 .btn-remove:hover { transform: scale(1.2) rotate(10deg); }
 
-.cart-total { background: #F8FAFC; padding: 30px; border-radius: 25px; border: 1px solid #E2E8F0; }
-
 /* --- RESPONSIVIDAD TOTAL --- */
 @media (max-width: 1024px) {
     .container { gap: 25px; padding: 40px 4%; }
@@ -556,6 +554,70 @@ button:disabled {
     .grid { grid-template-columns: 1fr; }
     .toast { padding: 12px 20px; font-size: 0.9rem; }
     .close { right: 20px; top: 15px; font-size: 30px; }
+}
+
+/* --- OPTIMIZACIÓN EXCLUSIVA: MÓVIL EN HORIZONTAL (LANDSCAPE) --- */
+@media (max-width: 896px) and (orientation: landscape) {
+    .navbar {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        padding: 0.5rem 2% !important;
+        gap: 10px !important;
+    }
+    .navbar .logo {
+        font-size: 1.2rem !important;
+        letter-spacing: 2px !important;
+    }
+    .search-bar {
+        max-width: 200px !important;
+        order: unset !important;
+    }
+    .search-bar input {
+        padding: 6px 15px !important;
+        font-size: 0.8rem !important;
+    }
+    .bcv-info {
+        font-size: 0.75rem !important;
+        order: unset !important;
+    }
+    .nav-links {
+        width: auto !important;
+        gap: 15px !important;
+        font-size: 0.8rem !important;
+        order: unset !important;
+    }
+    .nav-currency-toggle {
+        padding: 4px 8px !important;
+        font-size: 0.7rem !important;
+    }
+    .container {
+        padding: 15px 2% !important;
+        gap: 15px !important;
+    }
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important;
+        gap: 15px !important;
+    }
+    .product-card {
+        padding: 15px !important;
+        border-radius: 15px !important;
+    }
+    .card-img {
+        height: 120px !important;
+        margin-bottom: 10px !important;
+    }
+    .product-card h4 {
+        font-size: 0.85rem !important;
+        margin: 5px 0 !important;
+    }
+    .price-bs {
+        font-size: 1.1rem !important;
+    }
+    .btn-add {
+        padding: 10px !important;
+        font-size: 0.75rem !important;
+        border-radius: 8px !important;
+    }
 }
 
 /* SCROLLBAR GOLD PREMIUM */
