@@ -27,7 +27,7 @@ Puedes ver la versión estable del proyecto desplegada aquí:
 
 El concepto visual y la experiencia de usuario fueron desarrollados previamente para asegurar una interfaz moderna y limpia.
 
-[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/make/2yncW8a1QpmbHFA4nvmvin/Luxury-E-commerce-UI-Design?t=Be81AgBp7Om3kKjk-1)
+[![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/make/2yncW8a1QpmbHFA4nvmvin/Luxury-E-commerce-UI-Design?t=vmFVDrFDFjg1x8N1-1)
 
 ---
 
@@ -67,4 +67,5 @@ PROYECTO-FINAL/
 
 ```
 
+```
 ```
