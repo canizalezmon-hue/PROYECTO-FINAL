@@ -1,5 +1,5 @@
 /* --- FUENTES EXTERNAS --- */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Montserrat:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=700;900&family=Montserrat:wght=400;700;900&display=swap');
 
 /* --- VARIABLES DE MARCA --- */
 :root {
@@ -95,7 +95,7 @@ body {
 
 .logo:hover { transform: scale(1.05); }
 
-/* --- CONFIGURACIÓN DE NOTIFICACIONES: PARTE SUPERIOR IZQUIERDA --- */
+/* --- CONFIGURACIÓN DE NOTIFICACIONES --- */
 #toast-container { 
     position: fixed; 
     top: 105px; 
@@ -120,18 +120,34 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* --- PANTALLA DE BIENVENIDA --- */
+/* --- PANTALLA DE BIENVENIDA Y LOGIN (ESTILO CAPA SUPERIOR) --- */
 .welcome-screen { 
-    height: 100vh; display: flex; justify-content: center; align-items: center; 
+    height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
     background: radial-gradient(circle at center, #1e293b 0%, var(--primary) 100%); 
-    position: fixed; width: 100%; top: 0; z-index: 10001; 
+    position: fixed; 
+    width: 100%; 
+    top: 0; 
+    left: 0;
+    z-index: 10001; 
     padding: 20px;
-    overflow-y: auto;
+    overflow: hidden; /* Elimina scrollbars por la rotación 3D */
 }
 
 .welcome-box { 
-    background: var(--white); padding: 50px 45px; border-radius: 30px; text-align: center; 
-    box-shadow: 0 40px 80px rgba(0,0,0,0.5); width: 100%; max-width: 440px; border: 1px solid rgba(212, 175, 55, 0.1);
+    background: var(--white); 
+    padding: 50px 45px; 
+    border-radius: 30px; 
+    text-align: center; 
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6); 
+    width: 100%; 
+    max-width: 440px; 
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    position: relative;
+    z-index: 10; /* Se posiciona encima del carrusel */
+    backdrop-filter: blur(4px);
 }
 
 .auth-tabs { display: flex; margin-bottom: 30px; border-bottom: 2px solid #F1F5F9; }
@@ -450,10 +466,6 @@ button:disabled {
 .close { position: absolute; right: 30px; top: 25px; cursor: pointer; font-size: 35px; color: var(--primary); font-weight: bold; transition: 0.3s; z-index: 10; }
 .close:hover { color: var(--danger); transform: rotate(90deg); }
 
-.product-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
-.product-images { display: flex; justify-content: center; align-items: center; width: 100%; }
-.main-img { max-width: 100%; height: auto; max-height: 480px; border-radius: 20px; box-shadow: var(--shadow); object-fit: contain; }
-
 /* --- CARRITO Y FAVORITOS --- */
 #cart-items, #fav-items { max-height: 420px; overflow-y: auto; padding-right: 12px; margin-bottom: 25px; }
 .cart-item { display: grid; grid-template-columns: 70px 1fr auto auto; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid #F1F5F9; }
@@ -464,6 +476,57 @@ button:disabled {
 .qty-btn:hover { background: var(--secondary); color: var(--primary); }
 .btn-remove { color: var(--danger); border: none; background: none; cursor: pointer; font-weight: bold; font-size: 1.5rem; transition: 0.3s; }
 .btn-remove:hover { transform: scale(1.2) rotate(10deg); }
+
+/* --- SECTOR EXCLUSIVO: CARRUSEL 3D EN EL FONDO --- */
+.scene, .a3d { 
+    display: grid; 
+}
+
+.scene {
+    position: absolute; /* Se independiza para rellenar la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    perspective: 45em; /* Mayor perspectiva para dar profundidad */
+    z-index: 1; /* Queda debajo de .welcome-box */
+    pointer-events: none; /* Crucial: permite clickear los inputs de login sin bloqueo */
+    
+    /* Atenuación en los bordes laterales */
+    mask: linear-gradient(90deg, transparent, #000 15% 85%, transparent);
+    -webkit-mask: linear-gradient(90deg, transparent, #000 15% 85%, transparent);
+}
+
+.a3d {
+    place-self: center;
+    transform-style: preserve-3d;
+    animation: ry 32s linear infinite;
+}
+
+@keyframes ry { 
+    to { transform: rotateY(1turn); } 
+}
+
+.card {
+    --w: 15em; /* Proporción ideal para orbitar el login */
+    --ba: 1turn / var(--n);
+    grid-area: 1 / 1;
+    width: var(--w);
+    aspect-ratio: 7 / 10;
+    object-fit: cover;
+    border-radius: 1.5em;
+    backface-visibility: hidden;
+    
+    /* El incremento matemático "+ 6.5em" abre el radio para que rodeen el recuadro blanco */
+    transform: 
+        rotateY(calc(var(--i) * var(--ba))) 
+        translateZ(calc(-1 * (.5 * var(--w) + 6.5em) / tan(.5 * var(--ba))));
+        
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    filter: brightness(0.65); /* Atenúa el brillo para conservar el contraste del formulario */
+}
 
 /* --- RESPONSIVIDAD TOTAL --- */
 @media (max-width: 1024px) {
@@ -547,6 +610,11 @@ button:disabled {
         grid-column: 3;
         grid-row: 1;
     }
+    
+    /* Escala reducida del carrusel en tablets/móviles para evitar recortes bruscos */
+    .card {
+        --w: 12em;
+    }
 }
 
 @media (max-width: 480px) {
@@ -554,6 +622,11 @@ button:disabled {
     .grid { grid-template-columns: 1fr; }
     .toast { padding: 12px 20px; font-size: 0.9rem; }
     .close { right: 20px; top: 15px; font-size: 30px; }
+    
+    /* Escala mínima del carrusel para celulares */
+    .card {
+        --w: 9.5em;
+    }
 }
 
 /* --- OPTIMIZACIÓN EXCLUSIVA: MÓVIL EN HORIZONTAL (LANDSCAPE) --- */
@@ -618,6 +691,10 @@ button:disabled {
         font-size: 0.75rem !important;
         border-radius: 8px !important;
     }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .a3d { animation-duration: 128s; }
 }
 
 /* SCROLLBAR GOLD PREMIUM */
