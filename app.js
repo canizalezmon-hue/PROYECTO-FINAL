@@ -200,7 +200,7 @@ window.addEventListener('load', () => {
     }
 });
 
-// --- INYECTORES DINÁMICOS ---
+// --- INYECTORS DINÁMICOS ---
 function inyectarSelectorMonedaNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks || document.getElementById('btn-currency-toggle')) return;
@@ -689,8 +689,8 @@ function cancelarFlujosEspeciales() {
     modoRecuperar = false; modoRegistro = false; pasoVerificacion = false;
     codigoGeneradoSimulado = ""; correoTemporalRecuperacion = ""; datosRegistroTemporales = {};
     inputUsuario.style.display = "block"; areaPasswordLogin.style.display = "block"; fieldsetRegistro.style.display = "none"; 
-    areaCodigoVerificacion.style.none; areaNuevaPassword.style.display = "none"; navTabsAutenticacion.style.display = "flex";
-    linkOlvidoPass.style.display = "block"; linkVolverLogin.style.none;
+    areaCodigoVerificacion.style.display = "none"; areaNuevaPassword.style.display = "none"; navTabsAutenticacion.style.display = "flex";
+    linkOlvidoPass.style.display = "block"; linkVolverLogin.style.display = "none";
 }
 
 linkOlvidoPass.onclick = (e) => {
@@ -732,6 +732,14 @@ document.getElementById('close-terminos').onclick = () => { modalTerminos.style.
 checkTerminos.onchange = function() { btnConfirmarTerminos.disabled = !this.checked; };
 btnConfirmarTerminos.onclick = () => { showToast("✅ Condiciones aprobadas"); modalTerminos.style.display = 'none'; };
 
+// Función auxiliar para actualizar dinámicamente el texto del botón global de favoritos
+function actualizarContadorFavoritos() {
+    const btnFavGlobal = document.getElementById('btn-search-favoritos');
+    if (btnFavGlobal) {
+        btnFavGlobal.innerHTML = `⭐ Favoritos (${favoritos.length})`;
+    }
+}
+
 window.toggleFavorito = (id) => {
     const index = favoritos.findIndex(f => f.id === id);
     if (index > -1) { 
@@ -742,6 +750,9 @@ window.toggleFavorito = (id) => {
         showToast("⭐ Añadido a Favoritos"); 
     }
     localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
+    
+    // Sincroniza la UI del catálogo superior y el botón global
+    actualizarContadorFavoritos();
     const cat = localStorage.getItem('human_store_active_category') || 'all';
     const query = localStorage.getItem('human_store_search_query') || "";
     ejecutarFiltradoCombinado(query, cat);
@@ -785,8 +796,11 @@ function renderFavoritos() {
 document.getElementById('btn-llevar-todo-fav').onclick = () => {
     if (!usuarioLogueado) { document.getElementById('modal-favoritos').style.display = 'none'; document.getElementById('welcome-screen').style.display = 'flex'; return; }
     favoritos.forEach(p => { if(p.stock > 0) agregarCarrito(p.id); });
-    favoritos = []; localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
-    cerrarModalGeneral(); actualizarTodo();
+    favoritos = []; 
+    localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
+    actualizarContadorFavoritos();
+    cerrarModalGeneral(); 
+    actualizarTodo();
 };
 
 document.getElementById('footer-ver-favoritos').onclick = (e) => { e.preventDefault(); renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; };
@@ -797,3 +811,12 @@ document.querySelectorAll('.close').forEach(btn => btn.onclick = () => { cerrarM
 window.onclick = (e) => { if (e.target.className === 'modal' || e.target.className === 'welcome-overlay') { cerrarModalGeneral(); document.getElementById('welcome-screen').style.display = 'none'; } };
 document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
 document.getElementById('btn-cancel-auth').onclick = () => { document.getElementById('welcome-screen').style.display = 'none'; };
+
+// --- INTEGRACIÓN CORRECTA Y RENDERIZADO DEL BOTÓN DE BÚSQUEDA DE FAVORITOS ---
+document.getElementById('btn-search-favoritos').addEventListener('click', () => {
+    renderFavoritos(); 
+    document.getElementById('modal-favoritos').style.display = 'block'; 
+});
+
+// Inicialización de la cantidad de favoritos guardados al cargar la aplicación
+actualizarContadorFavoritos();
