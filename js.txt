@@ -1,0 +1,73 @@
+js/config.js:
+export const CONFIG = {
+    WHATSAPP_PHONE: '584120000000', // Tu número con código de país
+    STORAGE_KEYS: {
+        CART: 'numen_cart_items'
+    }
+};
+
+
+
+
+
+
+
+
+
+js/storage.js:
+import { CONFIG } from './config.js';
+
+export const Storage = {
+    getCart() {
+        const data = localStorage.getItem(CONFIG.STORAGE_KEYS.CART);
+        return data ? JSON.parse(data) : [];
+    },
+
+    saveCart(cartItems) {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.CART, JSON.stringify(cartItems));
+    }
+};
+
+
+
+
+
+
+
+
+js/cart.js:
+import { Storage } from './storage.js';
+
+export class Cart {
+    constructor() {
+        this.items = Storage.getCart();
+    }
+
+    getItems() {
+        return this.items;
+    }
+
+    addItem(product) {
+        const existingItem = this.items.find(item => item.id === product.id);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            this.items.push({ ...product, quantity: 1 });
+        }
+        Storage.saveCart(this.items);
+    }
+
+    removeItem(productId) {
+        this.items = this.items.filter(item => item.id !== productId);
+        Storage.saveCart(this.items);
+    }
+
+    clear() {
+        this.items = [];
+        Storage.saveCart(this.items);
+    }
+
+    calculateTotal() {
+        return this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    }
+}
