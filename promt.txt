@@ -1,528 +1,89 @@
-/* --- FUENTES EXTERNAS --- */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Montserrat:wght@400;600;700;900&display=swap');
+cual  seria la manera mas logica y ustructrual para crear modulos independeinte
 
-/* --- VARIABLES DE MARCA --- */
-:root {
-    --primary: #0F172A;      /* Azul Medianoche */
-    --secondary: #D4AF37;    /* Dorado Champagne */
-    --accent: #C5A059;       /* Oro Mate */
-    --light: #F8FAFC;        /* Fondo claro */
-    --white: #ffffff;
-    --text: #1E293B;         /* Texto principal */
-    --success: #10B981;      /* Verde Esmeralda */
-    --danger: #EF4444;       /* Rojo Coral */
-    --shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-    --gold-gradient: linear-gradient(135deg, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
-}
 
-/* --- RESET Y BASE --- */
-*, *::before, *::after {
-    box-sizing: border-box;
-}
 
-/* TIPOGRAFÍA GLOBAL DE LA PÁGINA (MONTSERRAT) */
-body, 
-p, 
-span, 
-a, 
-li, 
-button, 
-input, 
-textarea, 
-select, 
-label {
-    font-family: 'Montserrat', sans-serif !important;
-}
+La manera más lógica, estructural y profesional de refactorizar tu archivo central app.js (especialmente para un e-commerce o catálogo con carrito de compras y conexión a WhatsApp) es aplicar el principio de Responsabilidad Única utilizando Módulos de JavaScript (ES Modules) mediante import y export.
 
-body { 
-    margin: 0; 
-    background: #E2E8F0; 
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: hidden;
-}
+Aquí tienes la estructura ideal para dividir tu lógica en módulos independientes y limpios:
 
-/* AISLAMIENTO TIPOGRÁFICO PARA TÍTULOS (ORBITRON) */
-h1, 
-h2, 
-h3, 
-h4, 
-h5, 
-h6,
-.logo,
-.logo-large,
-.checkout-title,
-.filters h3,
-.no-products-msg h3,
-.footer-section h4 { 
-    font-family: 'Orbitron', sans-serif !important; 
-}
+1. Estructura de Directorios Recomendada
+En lugar de acumular cientos de líneas en un único archivo, crearemos una carpeta js/ y separaremos las responsabilidades así:
 
-/* --- ANIMACIONES ESPECIALES --- */
-@keyframes glow {
-    0% { filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.3)); transform: scale(1); }
-    50% { filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.7)); transform: scale(1.03); }
-    100% { filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.3)); transform: scale(1); }
-}
+Plaintext
+├── index.html
+├── css/
+└── js/
+    ├── app.js               # Punto de entrada (orquestador e inicializador)
+    ├── config.js            # Constantes globales, credenciales o URLs de APIs
+    ├── storage.js           # Gestión exclusiva de LocalStorage (guardar/leer carrito)
+    ├── cart.js              # Lógica pura del carrito (agregar, restar, calcular totales)
+    ├── ui.js                # Manipulación del DOM (renderizar productos, actualizar diseño)
+    └── whatsapp.js          # Formateo y envío del pedido a la API de WhatsApp
+2. Código de los Módulos Independientes
+A. js/config.js (Configuraciones)
+Centraliza los datos que podrían cambiar en el futuro (como el número de teléfono o las claves).
 
-@keyframes barLoad {
-    0% { width: 0%; }
-    100% { width: 100%; }
-}
-
-@keyframes brutalEntryLeft {
-    0% { opacity: 0; transform: scale(0.9) translateX(-50px); filter: blur(10px); }
-    100% { opacity: 1; transform: scale(1) translateX(0); filter: blur(0); }
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* ANIMACIONES COMPLEMENTARIAS DEL BOTÓN LÍQUIDO */
-@keyframes rotateWave {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-@keyframes floatBubble {
-    0% { transform: translateY(0) scale(1); opacity: 0.8; }
-    100% { transform: translateY(-120px) scale(0.3); opacity: 0; }
-}
-
-/* --- PRELOADER --- */
-#preloader {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: var(--primary);
-    display: flex; justify-content: center; align-items: center;
-    z-index: 20000;
-    padding: 20px;
-}
-
-.loader-content { 
-    text-align: center; 
-    width: 100%;
-    max-width: 400px;
-}
-
-.loader-bar {
-    width: 100%; max-width: 250px; height: 4px; background: rgba(255,255,255,0.1);
-    margin: 25px auto; border-radius: 10px; position: relative; overflow: hidden;
-}
-
-.loader-bar::after {
-    content: ''; position: absolute; left: 0; top: 0; height: 100%;
-    background: var(--gold-gradient); animation: barLoad 2.5s ease-in-out forwards;
-}
-
-#preloader .logo-large { animation: glow 2s infinite ease-in-out; }
-
-/* --- LOGOS PREMIUM --- */
-.logo {
-    font-size: 2.2rem; font-weight: 900; letter-spacing: 5px; text-transform: uppercase;
-    background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 3px 6px rgba(0,0,0,0.2)); display: inline-block; transition: 0.3s; text-decoration: none;
-}
-
-.logo-large {
-    font-size: 3.5rem; font-weight: 900; letter-spacing: 8px;
-    background: var(--gold-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;
-    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.4));
-    word-break: break-word;
-}
-
-.logo:hover { transform: scale(1.05); }
-
-/* --- CONFIGURACIÓN DE NOTIFICACIONES --- */
-#toast-container { 
-    position: fixed; 
-    top: 105px; 
-    left: 25px; 
-    z-index: 100000; 
-    max-width: 350px;
-    width: calc(100% - 50px);
-    pointer-events: none;
-}
-.toast { 
-    background: var(--primary); 
-    color: white; 
-    border-left: 5px solid var(--secondary); 
-    padding: 16px 25px; 
-    border-radius: 12px; 
-    margin-bottom: 10px; 
-    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.25);
-    animation: brutalEntryLeft 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; 
-    font-weight: 600;
-    font-size: 0.9rem;
-    pointer-events: auto;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* --- PANTALLA DE BIENVENIDA Y LOGIN --- */
-.welcome-screen { 
-    height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    background: radial-gradient(circle at center, #1e293b 0%, var(--primary) 100%); 
-    position: fixed; 
-    width: 100%; 
-    top: 0; 
-    left: 0;
-    z-index: 10001; 
-    padding: 20px;
-    overflow: hidden;
-}
-
-.welcome-box { 
-    background: var(--white); 
-    padding: 50px 45px; 
-    border-radius: 30px; 
-    text-align: center; 
-    box-shadow: 0 40px 80px rgba(0,0,0,0.6); 
-    width: 100%; 
-    max-width: 440px; 
-    border: 1px solid rgba(212, 175, 55, 0.15);
-    position: relative;
-    z-index: 10; 
-    backdrop-filter: blur(4px);
-}
-
-.auth-tabs { display: flex; margin-bottom: 30px; border-bottom: 2px solid #F1F5F9; }
-.tab-btn { 
-    flex: 1; padding: 15px; border: none; background: none; cursor: pointer; 
-    color: #94A3B8; font-weight: bold; transition: 0.3s;
-}
-.tab-btn.active { color: var(--primary); border-bottom: 4px solid var(--secondary); }
-
-#auth-form input, #auth-form select { 
-    width: 100%; padding: 16px; margin-bottom: 20px; border: 1px solid #E2E8F0; 
-    border-radius: 12px; outline: none; transition: 0.3s;
-    background: var(--white); color: var(--text); font-size: 0.95rem;
-}
-#auth-form input:focus, #auth-form select:focus { border-color: var(--secondary); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-
-.phone-input-group { display: flex; gap: 10px; margin-bottom: 0px; }
-.phone-input-group select { width: 110px !important; text-align: center; cursor: pointer; }
-
-.auth-support-links a { transition: 0.2s ease; }
-.auth-support-links a:hover { color: var(--primary) !important; text-decoration: underline !important; }
-
-/* --- NAVBAR PREMIUM --- */
-.navbar { 
-    background: var(--primary); color: var(--white); padding: 1.3rem 6%; 
-    display: flex; justify-content: space-between; align-items: center; 
-    position: sticky; top: 0; z-index: 1000; box-shadow: 0 6px 30px rgba(0,0,0,0.4); 
-    gap: 20px; flex-wrap: wrap;
-}
-
-.search-bar { flex-grow: 1; max-width: 450px; display: flex; justify-content: center; }
-.search-bar input { 
-    padding: 12px 25px; border-radius: 30px; border: none; width: 100%; max-width: 380px; 
-    outline: none; background: rgba(255,255,255,0.05); color: white;
-    border: 1px solid rgba(255,255,255,0.1); transition: 0.3s;
-}
-.search-bar input:focus { background: rgba(255,255,255,0.1); border-color: var(--secondary); }
-
-.bcv-info { font-size: 0.95rem; color: var(--secondary); font-weight: 900; letter-spacing: 1px; white-space: nowrap; }
-
-.nav-links { list-style: none; display: flex; gap: 30px; align-items: center; margin: 0; padding: 0; }
-.nav-item { transition: 0.3s; cursor: pointer; }
-.nav-item:hover { color: var(--secondary); transform: translateY(-2px); }
-
-#cart-count { 
-    background: var(--secondary); color: var(--primary); font-size: 0.8rem; 
-    padding: 4px 8px; border-radius: 50%; position: absolute; top: -14px; 
-    right: -18px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-
-/* --- ESTRUCTURA DE LA TIENDA --- */
-.container { display: flex; padding: 50px 6%; gap: 40px; min-height: 85vh; width: 100%; }
-
-.hidden-app { opacity: 0; pointer-events: none; }
-.app-entry-animation { animation: brutalEntryLeft 1.4s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
-
-.filters { 
-    width: 280px; background: var(--white); padding: 30px; border-radius: 20px; 
-    box-shadow: var(--shadow); height: fit-content; position: sticky; top: 110px; flex-shrink: 0;
-}
-.filters h3 { font-size: 1.1rem; margin-bottom: 25px; color: var(--primary); }
-
-.filter-btn { 
-    display: block; width: 100%; padding: 15px; margin-bottom: 12px; text-align: left; 
-    border: 1px solid #F1F5F9; background: #F8FAFC; cursor: pointer; border-radius: 10px; 
-    transition: 0.3s; font-weight: 700;
-}
-.filter-btn:hover { background: #F1F5F9; transform: translateX(8px); border-color: var(--secondary); }
-.filter-btn.active { background: var(--primary); color: var(--secondary); border-left: 5px solid var(--secondary); }
-
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 35px; flex-grow: 1; }
-
-.no-products-msg {
-    grid-column: 1 / -1; background: var(--white); padding: 50px 30px; border-radius: 25px;
-    text-align: center; box-shadow: var(--shadow); animation: fadeIn 0.5s ease forwards; border: 1px dashed #CBD5E1;
-}
-.no-products-msg h3 { color: var(--primary); margin-bottom: 10px; font-size: 1.3rem; letter-spacing: 1px; }
-.no-products-msg p { color: #64748B; font-size: 0.95rem; font-weight: 500; }
-
-/* --- TARJETAS DE PRODUCTO --- */
-.product-card { 
-    background: var(--white); border-radius: 25px; padding: 30px; text-align: center; 
-    transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; 
-    justify-content: space-between; border: 1px solid transparent; position: relative;
-}
-.product-card:hover { 
-    transform: translateY(-15px) scale(1.02); border-color: var(--secondary);
-    box-shadow: 0 25px 50px rgba(15, 23, 42, 0.15); 
-}
-.card-img { width: 100%; height: 240px; object-fit: contain; margin-bottom: 20px; cursor: pointer; transition: 0.4s; }
-.card-img:hover { transform: scale(1.1); }
-
-.price-bs { color: var(--primary); font-weight: 900; font-size: 1.7rem; margin: 8px 0; }
-.price-usd { color: #64748B; font-weight: 600; font-size: 1rem; }
-
-/* --- BOTÓN DE FAVORITOS (ESTRELLA) --- */
-.btn-fav {
-    position: absolute; top: 20px; right: 20px; background: #F1F5F9; border: 1px solid #E2E8F0;
-    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; cursor: pointer; font-size: 1.2rem; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 5; color: #94A3B8;
-}
-.btn-fav:hover { transform: scale(1.15); border-color: var(--secondary); background: #FFFDF0; }
-.btn-fav.active { color: #F59E0B; background: #FEF3C7; border-color: #F59E0B; filter: drop-shadow(0 2px 8px rgba(245, 158, 11, 0.4)); }
-
-/* --- BOTONES DE ACCIÓN STANDARD --- */
-.btn-add, .btn-primary, .btn-checkout, .btn-auth { 
-    background: linear-gradient(135deg, var(--primary) 0%, #2d3748 100%); 
-    border: none; color: var(--secondary); padding: 18px 25px; border-radius: 15px; 
-    font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.3s; 
-    letter-spacing: 1px;
-}
-.btn-add:hover { background: var(--secondary); color: var(--primary); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
-
-/* --- NUEVO BOTÓN 16: LIQUID FILLING CON BURBUJAS (ENVÍO WHATSAPP) --- */
-.btn-liquid-premium {
-    position: relative;
-    width: 100%;
-    padding: 18px 32px;
-    background: #E2E8F0; /* Fondo base neumórfico */
-    color: #1E293B;
-    font-size: 0.95rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    overflow: hidden;
-    transition: all 0.4s ease;
-    box-shadow: 6px 6px 12px #cbd5e1, -6px -6px 12px #ffffff;
-}
-
-.btn-liquid-premium .btn-text {
-    position: relative;
-    z-index: 4;
-    transition: color 0.4s ease;
-}
-
-.btn-liquid-premium .liquid-container {
-    position: absolute;
-    top: 100%; /* Escondido abajo inicialmente */
-    left: 0; width: 100%; height: 100%;
-    background: var(--secondary); /* Usa tu Dorado Champagne corporativo */
-    transition: top 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-    z-index: 1;
-}
-
-.btn-liquid-premium .water-wave {
-    position: absolute; left: -50%; width: 200%; height: 200%;
-    border-radius: 40%; background: #E2E8F0; /* Coincide con el fondo del botón */
-    transition: all 0.6s ease;
-}
-
-.btn-liquid-premium .wave-1 { top: -145%; animation: rotateWave 8s linear infinite; z-index: 2; opacity: 1; }
-.btn-liquid-premium .wave-2 { top: -140%; animation: rotateWave 12s linear infinite; z-index: 3; opacity: 0.5; }
-.btn-liquid-premium .wave-3 { top: -135%; animation: rotateWave 6s linear infinite; z-index: 1; opacity: 0.2; }
-
-/* Estados Hover del Botón Líquido */
-.btn-liquid-premium:hover {
-    box-shadow: inset 4px 4px 8px #cbd5e1, inset -4px -4px 8px #ffffff;
-    transform: translateY(2px);
-}
-.btn-liquid-premium:hover .btn-text {
-    color: #FFFFFF !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-.btn-liquid-premium:hover .liquid-container {
-    top: 0; /* Sube el fluido */
-}
-
-/* Burbujas flotantes inyectadas dinámicamente */
-.btn-liquid-premium .bubble {
-    position: absolute; background: rgba(255, 255, 255, 0.6); bottom: -10px;
-    border-radius: 50%; z-index: 2; pointer-events: none;
-    animation: floatBubble var(--duration) linear forwards;
-}
-
-/* --- BOTONES DESHABILITADOS --- */
-button:disabled {
-    background: #CBD5E1 !important; color: #94A3B8 !important;
-    cursor: not-allowed !important; box-shadow: none !important;
-}
-
-/* --- CHECKOUT PAGE STYLES --- */
-.checkout-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; }
-.checkout-box { background: white; padding: 40px; border-radius: 25px; box-shadow: var(--shadow); }
-.checkout-items-scroll { max-height: 300px; overflow-y: auto; margin-bottom: 20px; }
-.total-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
-.main-total { border-top: 2px solid #E2E8F0; padding-top: 20px; font-size: 1.4rem; color: var(--primary); font-weight: 900; }
-.pay-method-btn { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 15px; border-radius: 12px; cursor: pointer; width: 100%; margin-bottom: 15px; text-align: left; font-weight: 700; transition: 0.3s; }
-.pay-method-btn.active { border-color: var(--secondary); background: #fdfaf0; }
-
-/* --- SECCIÓN DE TÉRMINOS ESPECÍFICOS --- */
-.terms-scroll-box {
-    max-height: 280px; overflow-y: auto; background: #F8FAFC; padding: 20px;
-    border-radius: 15px; border: 1px solid #E2E8F0; margin-bottom: 20px; text-align: left; font-size: 0.9rem;
-}
-.terms-scroll-box h4 { margin-top: 0; margin-bottom: 5px; color: var(--primary); font-weight: 700; }
-.terms-scroll-box p { color: #475569; margin-bottom: 15px; }
-.terms-acceptance-area { border-top: 1px solid #E2E8F0; padding-top: 15px; text-align: left; }
-.terms-checkbox-label { display: flex; align-items: center; gap: 12px; font-size: 0.88rem; font-weight: 600; color: var(--text); cursor: pointer; user-select: none; }
-.terms-checkbox-label input { display: none; }
-.custom-checkbox { width: 20px; height: 20px; border: 2px solid #CBD5E1; border-radius: 6px; display: inline-block; position: relative; transition: 0.2s; background: var(--white); flex-shrink: 0; }
-.terms-checkbox-label input:checked + .custom-checkbox { background: var(--primary); border-color: var(--primary); }
-.terms-checkbox-label input:checked + .custom-checkbox::after { content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px; border: solid var(--secondary); border-width: 0 2px 2px 0; transform: rotate(45deg); }
-
-/* --- FOOTER COMPLETO --- */
-.main-footer { 
-    background: var(--primary); color: #94A3B8; padding: 80px 6% 40px; margin-top: 100px; 
-    border-top: 5px solid var(--secondary); 
-}
-.footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 50px; max-width: 1400px; margin: 0 auto; }
-.footer-section h4 { color: var(--white); margin-bottom: 25px; letter-spacing: 2px; position: relative; }
-.footer-section h4::after { content: ''; position: absolute; left: 0; bottom: -8px; width: 40px; height: 3px; background: var(--secondary); }
-
-.footer-section ul { list-style: none; padding: 0; }
-.footer-section ul li { margin-bottom: 15px; }
-.footer-section ul li a { color: #94A3B8; text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
-.footer-section ul li a:hover { color: var(--secondary); padding-left: 10px; }
-
-.footer-map-link, .footer-email-link { color: #94A3B8; text-decoration: none; transition: 0.3s ease; display: inline-block; }
-.footer-map-link:hover, .footer-email-link:hover { color: var(--secondary); transform: translateX(4px); }
-
-.social-links { display: flex; gap: 20px; }
-.social-links a { 
-    background: rgba(255,255,255,0.05); color: var(--secondary); width: 48px; height: 48px; 
-    display: flex; align-items: center; justify-content: center; border-radius: 50%; 
-    border: 1px solid rgba(212, 175, 55, 0.2); transition: 0.4s; text-decoration: none; font-weight: bold; 
-}
-.social-links a:hover { background: var(--secondary); color: var(--primary); transform: translateY(-8px) rotate(360deg); }
-
-.footer-bottom { text-align: center; margin-top: 70px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
-
-/* --- MODALES Y DETALLES --- */
-.modal { 
-    display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; 
-    background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); padding: 20px; overflow-y: auto;
-}
-.modal-content-lg { background: var(--white); margin: 3% auto; padding: 50px; border-radius: 35px; position: relative; max-width: 950px; width: 100%; animation: brutalEntryLeft 0.6s ease; }
-.modal-content { background: var(--white); margin: 5% auto; padding: 40px; border-radius: 30px; width: 100%; max-width: 550px; position: relative; animation: fadeIn 0.4s ease; }
-.close { position: absolute; right: 30px; top: 25px; cursor: pointer; font-size: 35px; color: var(--primary); font-weight: bold; transition: 0.3s; z-index: 10; }
-.close:hover { color: var(--danger); transform: rotate(90deg); }
-
-/* --- CARRITO Y FAVORITOS --- */
-#cart-items, #fav-items { max-height: 420px; overflow-y: auto; padding-right: 12px; margin-bottom: 25px; }
-.cart-item { display: grid; grid-template-columns: 70px 1fr auto auto; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid #F1F5F9; }
-.cart-item-img { width: 60px; height: 60px; object-fit: cover; border-radius: 12px; background: #F8FAFC; }
-.cart-item-info h4 { margin: 0; font-size: 1rem; color: var(--primary); }
-.cart-qty-controls { display: flex; align-items: center; gap: 15px; margin-top: 8px; }
-.qty-btn { background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: 900; transition: 0.2s; }
-.qty-btn:hover { background: var(--secondary); color: var(--primary); }
-.btn-remove { color: var(--danger); border: none; background: none; cursor: pointer; font-weight: bold; font-size: 1.5rem; transition: 0.3s; }
-.btn-remove:hover { transform: scale(1.2) rotate(10deg); }
-
-/* --- SECTOR EXCLUSIVO: CARRUSEL 3D EN EL FONDO --- */
-.scene, .a3d { display: grid; }
-.scene {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden;
-    perspective: 45em; z-index: 1; pointer-events: none; 
-    mask: linear-gradient(90deg, transparent, #000 15% 85%, transparent);
-    -webkit-mask: linear-gradient(90deg, transparent, #000 15% 85%, transparent);
-}
-.a3d { place-self: center; transform-style: preserve-3d; animation: ry 32s linear infinite; }
-
-@keyframes ry { to { transform: rotateY(1turn); } }
-
-.card {
-    --w: 15em; --ba: 1turn / var(--n); grid-area: 1 / 1; width: var(--w); aspect-ratio: 7 / 10;
-    object-fit: cover; border-radius: 1.5em; backface-visibility: hidden;
-    transform: rotateY(calc(var(--i) * var(--ba))) translateZ(calc(-1 * (.5 * var(--w) + 6.5em) / tan(.5 * var(--ba))));
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.2); filter: brightness(0.65);
-}
-
-/* --- RESPONSIVIDAD TOTAL --- */
-@media (max-width: 1024px) {
-    .container { gap: 25px; padding: 40px 4%; }
-    .filters { width: 240px; padding: 20px; }
-    .grid { gap: 25px; }
-}
-
-@media (max-width: 768px) {
-    .navbar { flex-direction: column; gap: 15px; padding: 1.5rem 4%; text-align: center; }
-    .search-bar { width: 100%; order: 3; }
-    .search-bar input { max-width: 100%; width: 100%; }
-    .bcv-info { order: 1; }
-    .nav-links { order: 2; width: 100%; justify-content: center; gap: 40px; }
-    .container { flex-direction: column; padding: 20px 4%; gap: 30px; }
-    .filters { 
-        width: 100%; display: flex; overflow-x: auto; position: static; padding: 15px; 
-        margin-bottom: 0; gap: 10px; box-shadow: none; background: transparent;
+JavaScript
+export const CONFIG = {
+    WHATSAPP_PHONE: '584120000000', // Tu número con código de país
+    STORAGE_KEYS: {
+        CART: 'numen_cart_items'
     }
-    .filters h3 { display: none; }
-    .filter-btn { white-space: nowrap; width: auto; margin-bottom: 0; padding: 10px 20px; flex-shrink: 0; }
-    .filter-btn.active { border-left: none; border-bottom: 4px solid var(--secondary); }
-    .modal-content-lg { padding: 30px 20px; margin: 10% auto; }
-    .logo-large { font-size: 2.5rem; }
-    .checkout-layout { grid-template-columns: 1fr; gap: 25px; }
-    .checkout-box { padding: 25px 20px; }
-    .welcome-box { padding: 40px 20px; }
-    .cart-item { grid-template-columns: 60px 1fr auto; gap: 15px; }
-    .cart-item .btn-remove { grid-column: 3; grid-row: 1; }
-    .card { --w: 12em; }
-}
+};
+B. js/storage.js (Persistencia de Datos)
+Se encarga únicamente de interactuar con el almacenamiento del navegador.
 
-@media (max-width: 480px) {
-    .logo { font-size: 1.8rem; letter-spacing: 3px; }
-    .grid { grid-template-columns: 1fr; }
-    .toast { padding: 12px 20px; font-size: 0.9rem; }
-    .close { right: 20px; top: 15px; font-size: 30px; }
-    .card { --w: 9.5em; }
-}
+JavaScript
+import { CONFIG } from './config.js';
 
-/* --- OPTIMIZACIÓN EXCLUSIVA: MÓVIL EN HORIZONTAL (LANDSCAPE) --- */
-@media (max-width: 896px) and (orientation: landscape) {
-    .navbar { flex-direction: row !important; flex-wrap: nowrap !important; padding: 0.5rem 2% !important; gap: 10px !important; }
-    .navbar .logo { font-size: 1.2rem !important; letter-spacing: 2px !important; }
-    .search-bar { max-width: 200px !important; order: unset !important; }
-    .search-bar input { padding: 6px 15px !important; font-size: 0.8rem !important; }
-    .bcv-info { font-size: 0.75rem !important; order: unset !important; }
-    .nav-links { width: auto !important; gap: 15px !important; font-size: 0.8rem !important; order: unset !important; }
-    .container { padding: 15px 2% !important; gap: 15px !important; }
-    .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; gap: 15px !important; }
-    .product-card { padding: 15px !important; border-radius: 15px !important; }
-    .card-img { height: 120px !important; margin-bottom: 10px !important; }
-    .product-card h4 { font-size: 0.85rem !important; margin: 5px 0 !important; }
-    .price-bs { font-size: 1.1rem !important; }
-    .btn-add { padding: 10px !important; font-size: 0.75rem !important; border-radius: 8px !important; }
-}
+export const Storage = {
+    getCart() {
+        const data = localStorage.getItem(CONFIG.STORAGE_KEYS.CART);
+        return data ? JSON.parse(data) : [];
+    },
 
-@media (prefers-reduced-motion: reduce) {
-    .a3d { animation-duration: 128s; }
-}
+    saveCart(cartItems) {
+        localStorage.setItem(CONFIG.STORAGE_KEYS.CART, JSON.stringify(cartItems));
+    }
+};
+C. js/cart.js (Lógica de Negocio del Carrito)
+Este módulo maneja los datos y las operaciones matemáticas del carrito. No toca el HTML directamente, lo que hace que tu lógica sea limpia y fácil de testear.
 
-/* SCROLLBAR GOLD PREMIUM */
-::-webkit-scrollbar { width: 10px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--primary); }
-::-webkit-scrollbar-thumb { background: var(--gold-gradient); border-radius: 10px; }
+JavaScript
+import { Storage } from './storage.js';
+
+export class Cart {
+    constructor() {
+        this.items = Storage.getCart();
+    }
+
+    getItems() {
+        return this.items;
+    }
+
+    addItem(product) {
+        const existingItem = this.items.find(item => item.id === product.id);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            this.items.push({ ...product, quantity: 1 });
+        }
+        Storage.saveCart(this.items);
+    }
+
+    removeItem(productId) {
+        this.items = this.items.filter(item => item.id !== productId);
+        Storage.saveCart(this.items);
+    }
+
+    clear() {
+        this.items = [];
+        Storage.saveCart(this.items);
+    }
+
+    calculateTotal() {
+        return this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    }
+}
+D. js/whatsapp.js (Integración de Envíos)
+Se encarga exclusivamente de procesar la lista del carrito, transformarla en texto legible y redirigir al usuario.
