@@ -71,3 +71,139 @@ export class Cart {
         return this.items.reduce((total, item) => total + (item.price * item.quantity), 0);
     }
 }
+
+
+
+
+js/whatsapp.js:
+import { CONFIG } from './config.js';
+
+export const WhatsAppService = {
+    sendOrder(cartItems, total, currencySymbol = '$') {
+        if (cartItems.length === 0) return;
+
+        let message = `*Nou Ordre de Compra*\n\n`;
+        cartItems.forEach(item => {
+            message += `- ${item.name} (x${item.quantity}): ${currencySymbol}${item.price * item.quantity}\n`;
+        });
+        message += `\n*Total a pagar:* ${currencySymbol}${total.toFixed(2)}`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${CONFIG.WHATSAPP_PHONE}&text=${encodedMessage}`;
+        
+        window.open(whatsappUrl, '_blank');
+    }
+};
+
+
+
+
+
+
+js/ui.js:
+export const UI = {
+    renderProducts(products, containerId, onAddClick) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = '';
+
+        products.forEach(product => {
+            const productHtml = `
+                <div class="product-card" data-id="${product.id}">
+                    <img src="${product.image}" alt="${product.name}" class="product-img">
+                    <h3>${product.name}</h3>
+                    <p class="price">$${product.price}</p>
+                    <button class="btn-add-cart">Afegir al carretó</button>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', productHtml);
+        });
+
+        // Assignar esdeveniments als botons acabats de crear
+        container.querySelectorAll('.btn-add-cart').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const card = e.target.closest('.product-card');
+                const productId = card.dataset.id;
+                onAddClick(productId);
+            });
+        });
+    },
+
+    renderCart(cartItems, total, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        // Lògica per pintar el carretó a la barra lateral o modal
+        // ...
+    },
+
+    showAlert(message, type = 'success') {
+        // Integració nativa o amb llibreries (Toastify / SweetAlert)
+        console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+};
+
+
+
+
+js/app.js:
+
+import { Cart } from './cart.js';
+import { UI } from './ui.js';
+import { WhatsAppService } from './whatsapp.js';
+import { Api } from './api.js';
+
+// Inicialització de l'estat de l'aplicació
+const cart = new Cart();
+let productsData = []; // Es pot omplir des d'un JSON local o una base de dades
+
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Aplicació modular inicialitzada.');
+
+    // 1. Opcional: Carregar dades de divises o preus des de l'API
+    const rates = await Api.fetchExchangeRates();
+    
+    // 2. Definir una acció en fer clic a "Afegir al carretó"
+    const handleAddProduct = (productId) => {
+        const product = productsData.find(p => p.id === productId);
+        if (product) {
+            cart.addItem(product);
+            UI.renderCart(cart.getItems(), cart.calculateTotal(), 'cart-container');
+            UI.showAlert(`${product.name} afegit correctament!`);
+        }
+    };
+
+    // 3. Renderitzar els productes inicials del catàleg
+    UI.renderProducts(productsData, 'products-grid', handleAddProduct);
+
+    // 4. Configurar el botó final de confirmació per enviar cap a WhatsApp
+    const checkoutBtn = document.getElementById('checkout-button');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            WhatsAppService.sendOrder(cart.getItems(), cart.calculateTotal());
+            cart.clear();
+            UI.renderCart(cart.getItems(), cart.calculateTotal(), 'cart-container');
+        });
+    }
+});
+.
+
+
+
+
+dominio: <script type="module" src="js/app.js"></script> 
+
+
+
+
+
+
+├── index.html
+├── css/
+└── js/
+    ├── app.js               # Punt d'entrada (inicialitza i coordina els mòduls)
+    ├── config.js            # Configuracions globals, rutes, claus o constants
+    ├── api.js               # Gestió de peticions (Fetch de monedes, productes, etc.)
+    ├── storage.js           # Gestió de LocalStorage o SessionStorage
+    ├── cart.js              # Lògica interna del carretó (afegir, restar, calcular totals)
+    ├── ui.js                # Manipulació del DOM (renderitzar catàleg, pintar carretó, alertes)
+    └── whatsapp.js          # Lògica per processar i enviar la comanda a l'API de WhatsApp
