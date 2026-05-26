@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HUMAN STORE - Proyecto Final</title>
-    <link rel="stylesheet" href="style.css"> 
-    <!-- Colocar dentro del <head> de index.html -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -24,7 +19,7 @@
     <div id="toast-container"></div>
 
     <div id="welcome-screen" class="welcome-screen" style="display: none;">
-
+        
         <div class="scene" style="--n: 6;">
             <div class="a3d">
                 <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop" class="card" style="--i: 0" alt="Producto 1">
@@ -39,7 +34,7 @@
         <div class="welcome-box">
             <div class="logo-large">HUMAN STORE</div>
             <p id="auth-msg" style="margin-bottom: 20px; color: #64748B;">Identifícate para gestionar tu carrito y pedidos</p>
-
+            
             <div id="auth-nav-tabs" class="auth-tabs">
                 <button id="tab-login" class="tab-btn active">Ingresar</button>
                 <button id="tab-register" class="tab-btn">Registrarse</button>
@@ -49,7 +44,7 @@
                 <div id="extended-register-fields" style="display: none;">
                     <input type="text" id="reg-nombres" placeholder="Nombres">
                     <input type="text" id="reg-apellidos" placeholder="Apellidos">
-
+                    
                     <div class="phone-input-group">
                         <select id="reg-country-code">
                             <option value="+58">🇻🇪 +58</option>
@@ -63,7 +58,7 @@
                 </div>
 
                 <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
-
+                
                 <div id="login-password-area">
                     <input type="password" id="password" placeholder="Contraseña" required>
                 </div>
@@ -93,7 +88,7 @@
     <div id="app-container" class="hidden-app">
         <nav class="navbar">
             <div class="logo" onclick="location.reload()" style="cursor:pointer">HUMAN STORE</div>
-
+            
             <div class="search-bar">
                 <input type="text" id="input-search" placeholder="Buscar tecnología, hogar, ropa...">
                 <button id="btn-search-favoritos" class="search-fav-btn" title="Ver Mis Favoritos">
@@ -127,7 +122,7 @@
 
         <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
             <button id="btn-back-store" class="btn-primary" style="width: fit-content; margin-bottom: 20px; cursor:pointer">← Volver a la Tienda</button>
-
+            
             <div class="checkout-layout">
                 <div class="checkout-box summary-box">
                     <h2 class="checkout-title">Resumen de Compra</h2>
@@ -147,7 +142,7 @@
                 <div class="checkout-box payment-box">
                     <h2 class="checkout-title">Confirmación Final</h2>
                     <p>Tu pedido será enviado vía WhatsApp para coordinar el pago y la entrega.</p>
-
+                    
                     <div class="payment-options">
                         <button class="pay-method-btn active" onclick="seleccionarMetodo('whatsapp', this)">
                             <i>📱</i> WhatsApp
@@ -232,17 +227,17 @@
         <div class="modal-content" style="max-width: 650px;">
             <span class="close" id="close-terminos">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Términos de Compra</h2>
-
+            
             <div class="terms-scroll-box">
                 <h4>1. Tasa de Cambio Oficial</h4>
                 <p>Todos los precios mostrados en Bolívares (Bs.) se calculan estrictamente con base en la tasa oficial provista por el Banco Central de Venezuela (BCV) correspondiente al día valor de la transacción.</p>
-
+                
                 <h4>2. Verificación de Stock</h4>
                 <p>La inclusión de productos en el carrito de compras no garantiza su reserva automática. El stock real del artículo se confirmará formalmente de forma definitiva durante el contacto directo con nuestros asesores comerciales vía WhatsApp.</p>
-
+                
                 <h4>3. Mecánica de Pago y Entrega</h4>
                 <p>Nuestra plataforma funciona bajo la modal de generación de pedido y reenvío automático de datos informativos. Los métodos específicos de pago final (Transferencias, Pago Móvil, Efectivo, Zelle u otros), así como las tarifas o condiciones aplicables al servicio de entrega (delivery o envíos nacionales), se acordarán y finiquitarán durante la conversación personalizada por mensajería.</p>
-
+                
                 <h4>4. Garantías y Cambios</h4>
                 <p>Todo artículo tecnológico o comercial de HUMAN STORE cuenta con un respaldo específico contra desperfectos de fábrica. No se procesan devoluciones monetarias o cambios basados en equivocaciones subjetivas del cliente ajenas a fallas técnicas verificables.</p>
             </div>
@@ -279,7 +274,7 @@
             }, 1500);
         });
     </script>
-
+    
     <script src="app.js"></script>
 </body>
 </html>
