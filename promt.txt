@@ -1,4 +1,4 @@
-cual  seria la manera mas logica y ustructrual para crear modulos independeinte
+cual  seria la manera mas logica y estructurada para crear modulos independientes
 
 
 
