@@ -853,3 +853,89 @@ hr {
 
 
 
+
+
+
+
+[ Capa 1: SETTINGS ]  --> Variables, colores de la tienda, fuentes base.
+         │
+ [ Capa 2: GENERIC ]   --> Reseteo de márgenes de navegadores (Reset/Normalize).
+         │
+ [ Capa 3: ELEMENTS ]  --> Estilos directos a etiquetas puras (body, h1, p).
+         │
+ [ Capa 4: LAYOUT ]    --> Esqueleto global (Contenedores, Header, Footer).
+         │
+ [ Capa 5: COMPONENTS ]--> Objetos interactivos específicos (Cards, Tablas, Botones). 
+
+
+
+
+
+css/
+│
+├── 1-settings/
+│   └── _variables.css         # Colores AMZON, fuentes y tamaños raíz (:root).
+│
+├── 3-generic/
+│   └── _reset.css             # Limpieza drástica de márgenes y box-sizing.
+│
+├── 4-elements/
+│   └── _base.css              # Comportamiento general de textos, body y enlaces.
+│
+├── 5-layout/
+│   ├── _grid.css              # Contenedor principal y rejilla de la página.
+│   ├── _header.css            # Barra de navegación superior y buscador.
+│   └── _footer.css            # Pie de página y enlaces corporativos.
+│
+├── 6-components/
+│   ├── _buttons.css           # Botones primarios, secundarios y hovers.
+│   ├── _forms.css             # Estilos para campos de texto e inputs.
+│   ├── _cards.css             # Tarjetas de exhibición de productos.
+│   ├── _tables.css            # Tablas responsivas del carrito de compras.
+│   ├── _filters.css           # Panel lateral de categorías y precios.
+│   ├── _cart-dropdown.css     # Ventana flotante de vista rápida del carrito.
+│   └── _auth-box.css          # Caja central de Login y Registro de usuarios.
+│
+└── main.css                   # El archivo centralizador (Orquestador). 
+
+
+
+
+
+
+/* ==========================================================================
+   ORDEN LOGICO DE IMPORTACIÓN (ARQUITECTURA DE ARCHIVOS)
+   ========================================================================== */
+
+/* CAPA 1: Configuración Inicial */
+@import '1-settings/_variables.css';
+
+/* CAPA 2: Normalización y Reseteo */
+@import '3-generic/_reset.css';
+
+/* CAPA 3: Estilos Base de HTML */
+@import '4-elements/_base.css';
+
+/* CAPA 4: Estructuras y Bloques Mayores (Layout) */
+@import '5-layout/_grid.css';
+@import '5-layout/_header.css';
+@import '5-layout/_footer.css';
+
+/* CAPA 5: Componentes Aislados (Bloques UI) */
+@import '6-components/_buttons.css';
+@import '6-components/_forms.css';
+@import '6-components/_cards.css';
+@import '6-components/_tables.css';
+@import '6-components/_filters.css';
+@import '6-components/_cart-dropdown.css';
+@import '6-components/_auth-box.css'; 
+
+
+
+
+
+
+
+
+
+
