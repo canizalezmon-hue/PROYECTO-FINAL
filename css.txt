@@ -1,0 +1,9 @@
+sttings variable 
+:root {
+  --primary-color: #232f3e;
+  --secondary-color: #febd69;
+  --text-color: #111111;
+  --bg-color: #eaeded;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --transition: all 0.3s ease;
+} 
