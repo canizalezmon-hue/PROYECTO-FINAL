@@ -68,6 +68,29 @@ body {
 .tab-btn { flex: 1; padding: 15px; border: none; background: none; cursor: pointer; color: #94A3B8; font-weight: bold; font-family: 'Montserrat'; transition: 0.3s; }
 .tab-btn.active { color: var(--primary); border-bottom: 4px solid var(--secondary); }
 
+/* Inyección directa para reparar los inputs integrándolos con tu UI */
+#usuario, 
+#password {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block !important;
+    box-sizing: border-box !important;
+    margin: 0 0 16px 0 !important;
+    padding: 14px 16px !important;
+    background: #ffffff !important;
+    border: 2px solid #CBD5E1 !important;
+    border-radius: 12px !important;
+    font-size: 1rem !important;
+    font-family: 'Montserrat', sans-serif !important;
+    color: #0F172A !important;
+    outline: none !important;
+    transition: 0.3s ease !important;
+}
+#usuario:focus, 
+#password:focus {
+    border-color: var(--secondary) !important;
+}
+
 /* --- NAVBAR ARCHITECTURE --- */
 .navbar { background: var(--primary); color: var(--white); padding: 1.3rem 6%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 6px 30px rgba(0,0,0,0.3); gap: 20px; flex-wrap: wrap; }
 .search-bar { flex-grow: 1; max-width: 480px; display: flex; justify-content: center; align-items: center; gap: 10px; }
