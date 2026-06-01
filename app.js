@@ -3,10 +3,13 @@ let TASA_BCV = parseFloat(localStorage.getItem('last_bcv_rate')) || 36.50;
 let usuarioLogueado = localStorage.getItem('human_store_logged') === 'true';
 let usuarioActualCorreo = localStorage.getItem('human_store_user_email') || ""; 
 
-// Estado Global de Moneda del Catálogo ('USD' o 'BS')
+// Estado Global de Moneda del Catálogo ('USD' o 'VES')
 let MONEDA_ACTUAL = localStorage.getItem('human_store_display_currency') || "USD";
 
-// Flujos luegos de autenticación avanzados
+// PERSISTENCIA DEL MODO CLARO / OSCURO (CARGA INMEDIATA ANTES DE RENDERIZAR)
+let TEMA_ACTUAL = localStorage.getItem('human_store_theme') || 'light';
+document.body.className = `theme-${TEMA_ACTUAL}`;
+
 let modoRegistro = false;
 let modoRecuperar = false; 
 let pasoVerificacion = false; 
@@ -14,7 +17,7 @@ let codigoGeneradoSimulado = "";
 let correoTemporalRecuperacion = "";
 let datosRegistroTemporales = {};
 
-// CONFIGURACIÓN BASE DE INVENTARIO EXTENDIDA (NUEVA MERCANCÍA PARA HOGAR AGREGADA)
+// CONFIGURACIÓN DE INVENTARIO EXTENDIDO PARA TIENDA GENERAL
 const catalogoInicial = [
     { id: 1, nombre: "Laptop Gamer X-Pro", precio: 1200, cat: "electronica", stock: 5, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500" },
     { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
@@ -39,86 +42,24 @@ const catalogoInicial = [
     { id: 17, nombre: "Control DualSense PS5 Black", precio: 75, cat: "electronica", stock: 9, img: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500" },
     { id: 18, nombre: "Control DualSense PS5 White", precio: 70, cat: "electronica", stock: 14, img: "https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=500" },
 
-    // --- NUEVO LOTE: 2 COLCHONES SEMI-ORTOPÉDICOS (HOGAR) ---
+    // Hogar
     { id: 19, nombre: "Colchón Semi-Ortopédico Matrimonial", precio: 180, cat: "hogar", stock: 6, img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500" },
     { id: 20, nombre: "Colchón Semi-Ortopédico Individual", precio: 130, cat: "hogar", stock: 8, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500" },
-
-    // --- NUEVO LOTE: 2 JUEGOS DE MUEBLES (HOGAR) ---
     { id: 21, nombre: "Juego de Muebles Minimalista", precio: 450, cat: "hogar", stock: 3, img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500" },
     { id: 22, nombre: "Juego de Muebles Esquinero Moderno", precio: 520, cat: "hogar", stock: 2, img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=500" },
-
-    // --- NUEVO LOTE: 2 LÁMPARAS DE MESA DE NOCHE (HOGAR) ---
     { id: 23, nombre: "Lámpara de Noche Touch Modern", precio: 30, cat: "hogar", stock: 15, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
     { id: 24, nombre: "Lámpara de Noche Vintage de Madera", precio: 35, cat: "hogar", stock: 11, img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" }
 ];
 
-// Inyección y actualización automática de la BD local
+// Inicialización de la base de datos local
 let productosExistentes = JSON.parse(localStorage.getItem('human_store_products_db'));
 if(!productosExistentes || productosExistentes.length !== catalogoInicial.length) {
     localStorage.setItem('human_store_products_db', JSON.stringify(catalogoInicial));
 }
 let productos = JSON.parse(localStorage.getItem('human_store_products_db'));
 
-let carrito = JSON.parse(localStorage.getItem('amzon_cart')) || [];
+let carrito = JSON.parse(localStorage.getItem('human_store_cart')) || [];
 let favoritos = JSON.parse(localStorage.getItem('human_store_favs')) || [];
-
-// --- INYECTAR ESTILOS EXTRAS COMPATIBLES CON TU DISEÑO ---
-const estilosExtra = document.createElement('style');
-estilosExtra.innerHTML = `
-    .user-menu-container { display: inline-block; position: relative; }
-    .user-dropdown-btn {
-        background: none; border: none; color: #FBBF24; font-weight: bold;
-        cursor: pointer; display: flex; align-items: center; gap: 5px;
-        font-size: 1rem; padding: 5px 10px; border-radius: 8px; transition: background 0.3s;
-    }
-    .user-dropdown-btn:hover { background: rgba(255, 255, 255, 0.1); }
-    .user-dropdown-menu {
-        display: none; position: absolute; right: 0; top: 110%;
-        background-color: #1E293B; min-width: 160px;
-        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.4);
-        border: 1px solid #334155; border-radius: 8px; z-index: 1000;
-        overflow: hidden; animation: fadeInDropdown 0.3s ease;
-    }
-    @keyframes fadeInDropdown {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    .user-dropdown-menu a {
-        color: white; padding: 12px 16px; text-decoration: none;
-        display: block; font-size: 0.9rem; transition: background 0.2s, color 0.2s;
-    }
-    .user-dropdown-menu a:hover { background-color: #334155; color: #FBBF24; }
-    .profile-info-box { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 20px; margin-top: 15px; }
-    .profile-field { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #E2E8F0; }
-    .profile-field:last-child { border-bottom: none; }
-    .profile-label { font-weight: bold; color: #475569; }
-    .profile-value { color: #0F172A; }
-    .btn-nav-login { color: #FBBF24; cursor: pointer; font-weight: 700; transition: 0.3s; }
-    .btn-nav-login:hover { color: white; transform: translateY(-2px); }
-    .toast-fade-out {
-        opacity: 0 !important; transform: scale(0.9) translateX(-50px) !important;
-        filter: blur(5px) !important; transition: all 0.5s ease-in-out !important;
-    }
-    .pedido-card { background: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-    .pedido-header { display: flex; justify-content: space-between; border-bottom: 1px solid #E2E8F0; padding-bottom: 8px; margin-bottom: 10px; font-size: 0.85rem; color: #64748B; }
-    .pedido-totales { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #E2E8F0; display: flex; justify-content: space-between; font-weight: bold; }
-    
-    .nav-currency-toggle {
-        background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #FBBF24; padding: 6px 12px; border-radius: 20px; cursor: pointer;
-        font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
-    }
-    
-    .card-sold-out { opacity: 0.6; }
-    .badge-sold-out {
-        position: absolute; top: 12px; left: 12px; background: #EF4444;
-        color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: bold;
-    }
-    
-    .fav-item-price-main { font-size: 0.95rem; font-weight: 800; color: #1E293B; margin-top: 2px; }
-    .fav-item-price-sub { font-size: 0.75rem; color: #64748B; font-weight: 500; }
-`;
-document.head.appendChild(estilosExtra);
 
 // --- LÓGICA DE CARGA (PRELOADER) ---
 window.addEventListener('load', () => {
@@ -163,35 +104,11 @@ window.addEventListener('load', () => {
                 renderProducts(categoriaGuardada === 'all' ? productos : productos.filter(p => p.cat === categoriaGuardada));
             }
 
-            const modalAbierto = localStorage.getItem('human_store_opened_modal');
-            if (modalAbierto === 'perfil' && usuarioLogueado) {
-                document.getElementById('link-ver-perfil').click();
-            } else if (modalAbierto === 'pedidos' && usuarioLogueado) {
-                document.getElementById('link-mis-pedidos').click();
-            } else if (modalAbierto === 'producto') {
-                const prodId = localStorage.getItem('human_store_opened_product');
-                if (prodId) abrirDetalle(parseInt(prodId));
-            }
-
             actualizarTodo();
         }, 1000);
-    }, 2800);
-    
-    if(!document.getElementById('modal-perfil')) {
-        const modalP = document.createElement('div');
-        modalP.id = 'modal-perfil'; modalP.className = 'modal'; modalP.style.display = 'none';
-        modalP.innerHTML = `<div class="modal-content" style="max-width: 450px;"><span class="close" id="close-perfil">&times;</span><h2 style="font-family:'Orbitron';color:#1E293B;border-bottom:2px solid #FBBF24;padding-bottom:10px;">👤 Perfil de Usuario</h2><div id="perfil-body"></div></div>`;
-        document.body.appendChild(modalP);
-        document.getElementById('close-perfil').onclick = () => cerrarModalGeneral();
-    }
+    }, 1500);
 
-    if(!document.getElementById('modal-historial-pedidos')) {
-        const modalH = document.createElement('div');
-        modalH.id = 'modal-historial-pedidos'; modalH.className = 'modal'; modalH.style.display = 'none';
-        modalH.innerHTML = `<div class="modal-content" style="max-width: 500px;"><span class="close" id="close-historial">&times;</span><h2 style="font-family:'Orbitron';color:#1E293B;border-bottom:2px solid #FBBF24;padding-bottom:10px;">📦 Mis Pedidos Solicitados</h2><div id="historial-pedidos-body" style="max-height: 400px; overflow-y: auto; margin-top: 15px;"></div></div>`;
-        document.body.appendChild(modalH);
-        document.getElementById('close-historial').onclick = () => cerrarModalGeneral();
-    }
+    conectarEventosAutenticacion();
 
     if (usuarioLogueado) {
         configurarMenuUsuarioDesplegable();
@@ -200,7 +117,67 @@ window.addEventListener('load', () => {
     }
 });
 
-// --- INYECTORS DINÁMICOS ---
+function conectarEventosAutenticacion() {
+    const btnAuthAction = document.getElementById('btn-auth-action');
+    if(btnAuthAction) btnAuthAction.onclick = () => procesarAccionAuth();
+
+    const tLogin = document.getElementById('tab-login');
+    const tRegister = document.getElementById('tab-register');
+    
+    if(tLogin) tLogin.onclick = () => {
+        cancelarFlujosEspeciales();
+        tLogin.classList.add('active');
+        if(tRegister) tRegister.classList.remove('active');
+        document.getElementById('extended-register-fields').style.display = "none";
+        btnAuthAction.innerText = "Entrar";
+    };
+
+    if(tRegister) tRegister.onclick = () => {
+        cancelarFlujosEspeciales();
+        modoRegistro = true;
+        tRegister.classList.add('active');
+        if(tLogin) tLogin.classList.remove('active');
+        document.getElementById('extended-register-fields').style.display = "block";
+        btnAuthAction.innerText = "Enviar Registro";
+    };
+
+    const linkForgot = document.getElementById('link-forgot-password');
+    const linkBack = document.getElementById('link-back-to-auth');
+    const navTabs = document.getElementById('auth-nav-tabs');
+
+    if(linkForgot) linkForgot.onclick = (e) => {
+        e.preventDefault();
+        modoRecuperar = true;
+        modoRegistro = false;
+        pasoVerificacion = false;
+        document.getElementById('auth-msg').innerText = "Recuperación Oficial";
+        if(navTabs) navTabs.style.display = "none";
+        document.getElementById('extended-register-fields').style.display = "none";
+        document.getElementById('login-password-area').style.display = "none";
+        document.getElementById('verification-code-area').style.display = "none";
+        document.getElementById('new-password-area').style.display = "none";
+        linkForgot.style.display = "none";
+        if(linkBack) linkBack.style.display = "block";
+        btnAuthAction.innerText = "Enviar Código";
+    };
+
+    if(linkBack) linkBack.onclick = (e) => {
+        e.preventDefault();
+        cancelarFlujosEspeciales();
+        if(tLogin) tLogin.click();
+    };
+
+    const btnInicioFooter = document.getElementById('link-inicio-footer');
+    if(btnInicioFooter) {
+        btnInicioFooter.onclick = (e) => {
+            e.preventDefault();
+            irASeccionTienda();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            showToast("🔝 Volviste al inicio del catálogo");
+        };
+    }
+}
+
 function inyectarSelectorMonedaNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks || document.getElementById('btn-currency-toggle')) return;
@@ -214,7 +191,7 @@ function inyectarSelectorMonedaNavbar() {
         MONEDA_ACTUAL = MONEDA_ACTUAL === "USD" ? "VES" : "USD";
         localStorage.setItem('human_store_display_currency', MONEDA_ACTUAL);
         document.getElementById('btn-currency-toggle').innerText = `💵 Ver en: ${MONEDA_ACTUAL}`;
-        showToast(MONEDA_ACTUAL === "VES" ? "🇻🇪 Ver precios en Bolívares (BCV)" : "💵 Catálogo adaptado a Dólares (USD)");
+        showToast(MONEDA_ACTUAL === "VES" ? "  🇻🇪 Catálogo adaptado a Bolívares (BCV)" : "💵 Catálogo adaptado a Dólares (USD)");
         
         const cat = localStorage.getItem('human_store_active_category') || 'all';
         const query = localStorage.getItem('human_store_search_query') || "";
@@ -222,7 +199,6 @@ function inyectarSelectorMonedaNavbar() {
     };
 }
 
-// --- SISTEMA BCV ---
 async function obtenerTasaBCV() {
     const apiSources = [
         'https://ve.dolarapi.com/v1/dolares/oficial',
@@ -247,7 +223,6 @@ async function obtenerTasaBCV() {
     actualizarTodo();
 }
 
-// --- MODIFICACIÓN DE TIEMPO A 10 SEGUNDOS ---
 function showToast(mensaje) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -255,7 +230,6 @@ function showToast(mensaje) {
     toast.innerText = mensaje;
     container.appendChild(toast);
     
-    // El mensaje se mantendrá visible por 10 segundos (10000ms) antes de desvanecerse
     setTimeout(() => { toast.classList.add('toast-fade-out'); }, 10000);
     setTimeout(() => { toast.remove(); }, 10500);
 }
@@ -273,19 +247,13 @@ function renderProducts(lista) {
     lista.forEach(p => {
         const esFav = favoritos.some(f => f.id === p.id);
         const estaAgotado = p.stock <= 0;
-        
         let precioHtml = "";
+
         if (MONEDA_ACTUAL === "USD") {
-            precioHtml = `
-                <span class="price-usd" style="display:none;"></span>
-                <span class="price-bs">$${p.precio.toFixed(2)} USD</span>
-            `;
+            precioHtml = `<span class="price-bs">$${p.precio.toFixed(2)} USD</span>`;
         } else {
             let precioEnBs = p.precio * TASA_BCV;
-            precioHtml = `
-                <span class="price-usd" style="display:none;"></span>
-                <span class="price-bs">${precioEnBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</span>
-            `;
+            precioHtml = `<span class="price-bs">${precioEnBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</span>`;
         }
 
         const div = document.createElement('div');
@@ -327,10 +295,10 @@ window.abrirDetalle = (id) => {
     body.innerHTML = `
         <div class="product-images"><img src="${p.img}" class="main-img"></div>
         <div class="product-info">
-            <h2 style="font-family: 'Orbitron'; color: var(--primary)">${p.nombre}</h2>
-            <h3 class="price-bs" style="font-size: 2.2rem; color:var(--secondary)">$${p.precio}</h3>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main)">${p.nombre}</h2>
+            <h3 class="price-bs" style="font-size: 2.2rem; color:var(--secondary)">$${p.precio} USD</h3>
             <p style="font-size: 1.1rem">Precio en Moneda Local: <strong>${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</strong></p>
-            <p style="margin: 20px 0; color: #64748B">Este producto de alta calidad cuenta con control estricto de inventario en tiempo real.</p>
+            <p style="margin: 20px 0; color: var(--text-sub)">Este producto cuenta con control estricto de inventario y garantía oficial de HUMAN STORE.</p>
             <p style="font-weight:bold; margin-bottom:15px; color:${!estaAgotado ? '#10B981' : '#EF4444'}">Existencias reales: ${p.stock} unidades.</p>
             <button class="btn-primary" ${estaAgotado ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">${!estaAgotado ? 'Añadir al Carrito' : 'Agotado'}</button>
         </div>`;
@@ -342,8 +310,8 @@ function cerrarModalGeneral() {
     document.getElementById('modal-detalle').style.display = 'none';
     document.getElementById('modal-terminos').style.display = 'none';
     document.getElementById('modal-favoritos').style.display = 'none';
-    if(document.getElementById('modal-perfil')) document.getElementById('modal-perfil').style.display = 'none';
-    if(document.getElementById('modal-historial-pedidos')) document.getElementById('modal-historial-pedidos').style.display = 'none';
+    document.getElementById('modal-perfil').style.display = 'none';
+    document.getElementById('modal-historial-pedidos').style.display = 'none';
     localStorage.removeItem('human_store_opened_modal');
     localStorage.removeItem('human_store_opened_product');
 }
@@ -352,7 +320,8 @@ function cerrarModalGeneral() {
 window.agregarCarrito = (id) => {
     if (!usuarioLogueado) {
         showToast("🔑 Identifícate para una experiencia de compra completa");
-        document.getElementById('welcome-screen').style.display = 'flex';
+        const welcomeScr = document.getElementById('welcome-screen');
+        if(welcomeScr) { welcomeScr.style.display = 'flex'; welcomeScr.style.opacity = '1'; }
         return;
     }
     const original = productos.find(p => p.id === id);
@@ -373,7 +342,7 @@ window.agregarCarrito = (id) => {
 };
 
 function actualizarTodo() {
-    localStorage.setItem('amzon_cart', JSON.stringify(carrito));
+    localStorage.setItem('human_store_cart', JSON.stringify(carrito));
     const list = document.getElementById('cart-items');
     let total = 0, count = 0;
     
@@ -393,7 +362,7 @@ function actualizarTodo() {
                             <button class="qty-btn" onclick="cambiarCant(${i}, 1)">+</button>
                         </div>
                     </div>
-                    <div style="font-weight:bold; color: var(--primary)">$${(item.precio * item.qty).toFixed(2)}</div>
+                    <div style="font-weight:bold; color: var(--text-main)">$${(item.precio * item.qty).toFixed(2)}</div>
                     <button class="btn-remove" onclick="quitar(${i})">×</button>
                 </div>`;
         });
@@ -402,7 +371,7 @@ function actualizarTodo() {
     }
     
     if(document.getElementById('total-usd')) document.getElementById('total-usd').innerText = total.toFixed(2);
-    if(document.getElementById('total-bs')) document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE');
+    if(document.getElementById('total-bs')) document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2 });
     if(document.getElementById('cart-count')) document.getElementById('cart-count').innerText = count;
 }
 
@@ -428,14 +397,14 @@ function irASeccionCheckout(mostrarToast = true) {
     const list = document.getElementById('checkout-items-list');
     list.innerHTML = "";
     carrito.forEach(i => {
-        list.innerHTML += `<p>• ${i.nombre} (x${i.qty}) - $${(i.precio * i.qty).toFixed(2)}</p>`;
+        list.innerHTML += `<p>• ${i.nombre} (x${i.qty}) - $${(i.precio * i.qty).toFixed(2)} USD</p>`;
     });
     
     let totalUsdCalculado = 0;
     carrito.forEach(item => totalUsdCalculado += (item.precio * item.qty));
 
     document.getElementById('checkout-total-usd').innerText = `$${totalUsdCalculado.toFixed(2)}`;
-    document.getElementById('checkout-total-bs').innerText = `${(totalUsdCalculado * TASA_BCV).toLocaleString('es-VE')} Bs.`;
+    document.getElementById('checkout-total-bs').innerText = `${(totalUsdCalculado * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2 })} Bs.`;
     if (mostrarToast) showToast("📋 Resumen cargado");
 }
 
@@ -495,7 +464,99 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
     setTimeout(() => { window.open(`https://wa.me/584120000000?text=${msg}`, '_blank'); }, 1000);
 };
 
-// --- AUTENTICACIÓN ---
+// --- CORE ACCIÓN DE AUTENTICACIÓN ---
+function procesarAccionAuth() {
+    const u = document.getElementById('usuario').value.trim();
+    const p = document.getElementById('password').value.trim();
+    const btnAuth = document.getElementById('btn-auth-action');
+
+    if (modoRecuperar) {
+        if (!u) return showToast("⚠️ Ingresa tu correo electrónico");
+        if (!u.toLowerCase().endsWith("@gmail.com")) return showToast("❌ Formato inválido");
+
+        if (!pasoVerificacion && codigoGeneradoSimulado === "") {
+            btnAuth.disabled = true; btnAuth.innerText = "Enviando...";
+            setTimeout(() => {
+                correoTemporalRecuperacion = u; 
+                codigoGeneradoSimulado = generarCodigoOTP(); 
+                pasoVerificacion = true;
+                document.getElementById('usuario').style.display = "none"; 
+                document.getElementById('verification-code-area').style.display = "block"; 
+                btnAuth.disabled = false; 
+                btnAuth.innerText = "Verificar Código";
+                showToast(`📱 Código enviado: ${codigoGeneradoSimulado}`);
+            }, 1000);
+            return;
+        }
+        if (pasoVerificacion && document.getElementById('new-password-area').style.display === "none") {
+            const codigoIngresado = document.getElementById('auth-verification-code').value.trim();
+            if (codigoIngresado !== codigoGeneradoSimulado) return showToast("🔒 Código incorrecto");
+            document.getElementById('verification-code-area').style.display = "none"; 
+            document.getElementById('new-password-area').style.display = "block";
+            btnAuth.innerText = "Actualizar Contraseña"; 
+            return showToast("🔑 Código verificado con éxito");
+        }
+        if (document.getElementById('new-password-area').style.display === "block") {
+            const nuevaPass = document.getElementById('new-password').value.trim();
+            const nuevaPassConf = document.getElementById('new-password-confirm').value.trim();
+            if (!nuevaPass || !nuevaPassConf) return showToast("⚠️ Rellena los campos");
+            if (nuevaPass !== nuevaPassConf) return showToast("❌ Las contraseñas no coinciden");
+            localStorage.setItem(`user_${correoTemporalRecuperacion}`, nuevaPass);
+            showToast("🔒 ¡Contraseña actualizada!"); 
+            cancelarFlujosEspeciales(); 
+            document.getElementById('tab-login').click();
+        }
+        return;
+    }
+
+    if (modoRegistro) {
+        const nombres = document.getElementById('reg-nombres').value.trim();
+        const apellidos = document.getElementById('reg-apellidos').value.trim();
+        const codigoPais = document.getElementById('reg-country-code').value;
+        const telefono = document.getElementById('reg-telefono').value.trim();
+
+        if (!pasoVerificacion) {
+            if (!nombres || !apellidos || !telefono || !u || !p) return showToast("⚠️ Completa los campos");
+            if (!u.toLowerCase().endsWith("@gmail.com")) return showToast("❌ Correo debe ser @gmail.com");
+            if (localStorage.getItem(`user_${u}`) !== null) return showToast("⚠️ Correo ya registrado");
+
+            datosRegistroTemporales = { correo: u, clave: p, telefono: `${codigoPais}${telefono}`, nombres, apellidos };
+            codigoGeneradoSimulado = generarCodigoOTP(); 
+            pasoVerificacion = true;
+            
+            document.getElementById('extended-register-fields').style.display = "none"; 
+            document.getElementById('usuario').style.display = "none"; 
+            document.getElementById('login-password-area').style.display = "none";
+            document.getElementById('verification-code-area').style.display = "block"; 
+            btnAuth.innerText = "Confirmar Registro";
+            return showToast(`🎉 Código enviado a tu teléfono: ${codigoGeneradoSimulado}`);
+        } else {
+            const codigoIngresado = document.getElementById('auth-verification-code').value.trim();
+            if (codigoIngresado !== codigoGeneradoSimulado) return showToast("🔒 Código inválido");
+            localStorage.setItem(`user_${datosRegistroTemporales.correo}`, datosRegistroTemporales.clave);
+            localStorage.setItem(`userdata_${datosRegistroTemporales.correo}`, JSON.stringify(datosRegistroTemporales));
+            showToast("🎉 ¡Registro completado!"); 
+            cancelarFlujosEspeciales(); 
+            document.getElementById('tab-login').click();
+        }
+        return;
+    }
+
+    if (!u || !p) return showToast("⚠️ Por favor completa los campos");
+
+    const passStored = localStorage.getItem(`user_${u}`);
+    if (passStored === null) return showToast("❌ El usuario no existe.");
+    if (passStored !== p) return showToast("🔒 Contraseña incorrecta");
+
+    usuarioLogueado = true; usuarioActualCorreo = u;
+    localStorage.setItem('human_store_logged', 'true'); localStorage.setItem('human_store_user_email', u);
+    
+    configurarMenuUsuarioDesplegable();
+    const welcomeScr = document.getElementById('welcome-screen');
+    welcomeScr.style.opacity = "0";
+    setTimeout(() => { welcomeScr.style.display = "none"; showToast("👋 ¡Bienvenido a HUMAN STORE!"); }, 500);
+}
+
 function actualizarBotonLoginNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
@@ -514,101 +575,13 @@ function actualizarBotonLoginNavbar() {
         li.onclick = () => {
             cancelarFlujosEspeciales();
             document.getElementById('tab-login').click(); 
-            document.getElementById('welcome-screen').style.display = 'flex';
+            const welcomeScr = document.getElementById('welcome-screen');
+            welcomeScr.style.display = 'flex';
+            welcomeScr.style.opacity = "1";
         };
         navLinks.appendChild(li);
     }
 }
-
-const btnAuth = document.getElementById('btn-auth-action');
-const welcome = document.getElementById('welcome-screen');
-const inputUsuario = document.getElementById('usuario');
-const inputPassword = document.getElementById('password');
-const fieldsetRegistro = document.getElementById('extended-register-fields');
-const areaPasswordLogin = document.getElementById('login-password-area');
-const areaCodigoVerificacion = document.getElementById('verification-code-area');
-const areaNuevaPassword = document.getElementById('new-password-area');
-const linkOlvidoPass = document.getElementById('link-forgot-password');
-const linkVolverLogin = document.getElementById('link-back-to-auth');
-const navTabsAutenticacion = document.getElementById('auth-nav-tabs');
-
-function generarCodigoOTP() { return Math.floor(100000 + Math.random() * 900000).toString(); }
-
-btnAuth.onclick = () => {
-    const u = inputUsuario.value.trim();
-    if (modoRecuperar) {
-        if (!u) return showToast("⚠️ Ingresa tu correo electrónico");
-        if (!u.toLowerCase().endsWith("@gmail.com")) return showToast("❌ Formato inválido");
-
-        if (!pasoVerificacion && codigoGeneradoSimulado === "") {
-            localStorage.setItem(`user_${u}`, "12345678");
-            btnAuth.disabled = true; btnAuth.innerText = "Enviando...";
-            setTimeout(() => {
-                correoTemporalRecuperacion = u; codigoGeneradoSimulado = generarCodigoOTP(); pasoVerificacion = true;
-                inputUsuario.style.display = "none"; areaCodigoVerificacion.style.display = "block";
-                btnAuth.disabled = false; btnAuth.innerText = "Verificar Código";
-                showToast(`📱 Código enviado: ${codigoGeneradoSimulado}`);
-            }, 1000);
-            return;
-        }
-        if (pasoVerificacion && areaNuevaPassword.style.display === "none") {
-            const codigoIngresado = document.getElementById('auth-verification-code').value.trim();
-            if (codigoIngresado !== codigoGeneradoSimulado) return showToast("🔒 Código incorrecto");
-            areaCodigoVerificacion.style.display = "none"; areaNuevaPassword.style.display = "block";
-            btnAuth.innerText = "Actualizar Contraseña"; return showToast("🔑 Código verificado con éxito");
-        }
-        if (areaNuevaPassword.style.display === "block") {
-            const nuevaPass = document.getElementById('new-password').value.trim();
-            const nuevaPassConf = document.getElementById('new-password-confirm').value.trim();
-            if (!nuevaPass || !nuevaPassConf) return showToast("⚠️ Rellena los campos");
-            if (nuevaPass !== nuevaPassConf) return showToast("❌ Las contraseñas no coinciden");
-            localStorage.setItem(`user_${correoTemporalRecuperacion}`, nuevaPass);
-            showToast("🔒 ¡Contraseña actualizada!"); cancelarFlujosEspeciales(); document.getElementById('tab-login').click();
-        }
-        return;
-    }
-
-    if (modoRegistro) {
-        const nombres = document.getElementById('reg-nombres').value.trim();
-        const apellidos = document.getElementById('reg-apellidos').value.trim();
-        const codigoPais = document.getElementById('reg-country-code').value;
-        const telefono = document.getElementById('reg-telefono').value.trim();
-        const p = inputPassword.value.trim();
-
-        if (!pasoVerificacion) {
-            if (!nombres || !apellidos || !telefono || !u || !p) return showToast("⚠️ Completa los campos");
-            if (!u.toLowerCase().endsWith("@gmail.com")) return showToast("❌ Correo debe ser @gmail.com");
-            if (localStorage.getItem(`user_${u}`) !== null) return showToast("⚠️ Correo ya registrado");
-
-            datosRegistroTemporales = { correo: u, clave: p, telefono: `${codigoPais}${telefono}`, nombres, apellidos };
-            codigoGeneradoSimulado = generarCodigoOTP(); pasoVerificacion = true;
-            fieldsetRegistro.style.display = "none"; inputUsuario.style.display = "none"; areaPasswordLogin.style.display = "none";
-            areaCodigoVerificacion.style.display = "block"; btnAuth.innerText = "Confirmar Registro";
-            return showToast(`🎉 Código enviado a tu teléfono: ${codigoGeneradoSimulado}`);
-        } else {
-            const codigoIngresado = document.getElementById('auth-verification-code').value.trim();
-            if (codigoIngresado !== codigoGeneradoSimulado) return showToast("🔒 Código inválido");
-            localStorage.setItem(`user_${datosRegistroTemporales.correo}`, datosRegistroTemporales.clave);
-            localStorage.setItem(`userdata_${datosRegistroTemporales.correo}`, JSON.stringify(datosRegistroTemporales));
-            showToast("🎉 ¡Registro completado!"); cancelarFlujosEspeciales(); document.getElementById('tab-login').click();
-        }
-        return;
-    }
-
-    const p = inputPassword.value.trim();
-    if (!u || !p) return showToast("⚠️ Por favor completa los campos");
-
-    const passStored = localStorage.getItem(`user_${u}`);
-    if (passStored === null) return showToast("❌ El usuario no existe.");
-    if (passStored !== p) return showToast("🔒 Contraseña incorrecta");
-
-    usuarioLogueado = true; usuarioActualCorreo = u;
-    localStorage.setItem('human_store_logged', 'true'); localStorage.setItem('human_store_user_email', u);
-    
-    configurarMenuUsuarioDesplegable();
-    welcome.style.opacity = "0";
-    setTimeout(() => { welcome.style.display = "none"; showToast("👋 ¡Bienvenido a HUMAN STORE!"); }, 500);
-};
 
 function configurarMenuUsuarioDesplegable() {
     const navLinks = document.querySelector('.nav-links');
@@ -620,6 +593,8 @@ function configurarMenuUsuarioDesplegable() {
     const datosGuardados = localStorage.getItem(`userdata_${usuarioActualCorreo}`);
     let primerNombre = datosGuardados ? JSON.parse(datosGuardados).nombres.split(" ")[0] : (usuarioActualCorreo.split("@")[0] || "Premium");
 
+    let textoLinkTema = TEMA_ACTUAL === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro';
+
     const liContainer = document.createElement('li');
     liContainer.className = 'nav-item user-menu-container'; liContainer.id = 'user-dropdown-wrapper'; liContainer.style.listStyle = 'none';
     liContainer.innerHTML = `
@@ -627,6 +602,7 @@ function configurarMenuUsuarioDesplegable() {
         <div class="user-dropdown-menu" id="dropdownUserMenu">
             <a href="#" id="link-ver-perfil">👤 Mi Perfil</a>
             <a href="#" id="link-mis-pedidos">📦 Mis Pedidos</a>
+            <a href="#" id="link-toggle-tema" style="border-top: 1px solid #334155; color: #FBBF24;">${textoLinkTema}</a>
             <a href="#" id="link-cerrar-sesion" style="border-top: 1px solid #334155; color: #EF4444;">🚪 Cerrar Sesión</a>
         </div>
     `;
@@ -635,75 +611,106 @@ function configurarMenuUsuarioDesplegable() {
     const trigger = document.getElementById('dropdownUserTrigger');
     const menu = document.getElementById('dropdownUserMenu');
     
-    trigger.onclick = (e) => { e.stopPropagation(); menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; };
+    if(trigger) {
+        trigger.onclick = (e) => { 
+            e.stopPropagation(); 
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block'; 
+        };
+    }
+    
     window.addEventListener('click', () => { if(menu) menu.style.display = 'none'; });
 
-    document.getElementById('link-ver-perfil').onclick = (e) => {
-        e.preventDefault(); e.stopPropagation(); menu.style.display = 'none';
-        localStorage.setItem('human_store_opened_modal', 'perfil');
-        const pBody = document.getElementById('perfil-body');
-        const infoUser = localStorage.getItem(`userdata_${usuarioActualCorreo}`);
-        if (infoUser) {
-            const data = JSON.parse(infoUser);
-            pBody.innerHTML = `
-                <div class="profile-info-box">
-                    <div class="profile-field"><span class="profile-label">Nombres:</span><span class="profile-value">${data.nombres}</span></div>
-                    <div class="profile-field"><span class="profile-label">Apellidos:</span><span class="profile-value">${data.apellidos}</span></div>
-                    <div class="profile-field"><span class="profile-label">Correo:</span><span class="profile-value">${data.correo}</span></div>
-                    <div class="profile-field"><span class="profile-label">Teléfono:</span><span class="profile-value">${data.telefono}</span></div>
-                </div>`;
-        }
-        document.getElementById('modal-perfil').style.display = 'block';
-    };
+    if(menu) {
+        menu.onclick = (e) => {
+            const linkObjetivo = e.target.closest('a');
+            if(!linkObjetivo) return;
 
-    document.getElementById('link-mis-pedidos').onclick = (e) => {
-        e.preventDefault(); e.stopPropagation(); menu.style.display = 'none';
-        localStorage.setItem('human_store_opened_modal', 'pedidos');
-        const hBody = document.getElementById('historial-pedidos-body');
-        const listaPedidos = JSON.parse(localStorage.getItem(`pedidos_${usuarioActualCorreo}`)) || [];
+            const idObjetivo = linkObjetivo.id;
+            
+            if(idObjetivo === 'link-toggle-tema') {
+                e.preventDefault(); e.stopPropagation();
+                TEMA_ACTUAL = TEMA_ACTUAL === 'light' ? 'dark' : 'light';
+                localStorage.setItem('human_store_theme', TEMA_ACTUAL);
+                document.body.className = `theme-${TEMA_ACTUAL}`;
+                linkObjetivo.innerText = TEMA_ACTUAL === 'light' ? '🌙 Modo Oscuro' : '☀️ Modo Claro';
+                showToast(TEMA_ACTUAL === 'dark' ? "🌙 Interfaz Premium adaptada al Modo Oscuro" : "☀️ Interfaz Premium adaptada al Modo Claro");
+                
+                const activeCat = localStorage.getItem('human_store_active_category') || 'all';
+                const query = localStorage.getItem('human_store_search_query') || "";
+                ejecutarFiltradoCombinado(query, activeCat);
+                menu.style.display = 'none';
+            }
 
-        if (listaPedidos.length === 0) {
-            hBody.innerHTML = `<p style="text-align:center; color:#94A3B8; padding: 30px;">📭 Historial de compras vacío.</p>`;
-        } else {
-            hBody.innerHTML = "";
-            listaPedidos.forEach(ped => {
-                let itemsHtml = ped.items.map(i => `<li>• ${i.nombre} <strong>(x${i.qty})</strong></li>`).join("");
-                hBody.innerHTML += `
-                    <div class="pedido-card">
-                        <div class="pedido-header"><span>🆔 #ID: <strong>${ped.idPedido}</strong></span><span>📅 ${ped.fecha}</span></div>
-                        <ul style="margin: 0; padding-left: 15px; font-size: 0.9rem; color: #1E293B;">${itemsHtml}</ul>
-                        <div class="pedido-totales"><span style="color: #64748B;">Total:</span><span style="color: #10B981;">${ped.totalUsd} / ${ped.totalBs}</span></div>
-                    </div>`;
-            });
-        }
-        document.getElementById('modal-historial-pedidos').style.display = 'block';
-    };
+            if(idObjetivo === 'link-ver-perfil') {
+                e.preventDefault(); e.stopPropagation(); menu.style.display = 'none';
+                localStorage.setItem('human_store_opened_modal', 'perfil');
+                const pBody = document.getElementById('perfil-body');
+                const infoUser = localStorage.getItem(`userdata_${usuarioActualCorreo}`);
+                if (infoUser) {
+                    const data = JSON.parse(infoUser);
+                    pBody.innerHTML = `
+                        <div class="profile-info-box">
+                            <div class="profile-field"><span class="profile-label">Nombres:</span><span class="profile-value">${data.nombres}</span></div>
+                            <div class="profile-field"><span class="profile-label">Apellidos:</span><span class="profile-value">${data.apellidos}</span></div>
+                            <div class="profile-field"><span class="profile-label">Correo:</span><span class="profile-value">${data.correo}</span></div>
+                            <div class="profile-field"><span class="profile-label">Teléfono:</span><span class="profile-value">${data.telefono}</span></div>
+                        </div>`;
+                } else {
+                    pBody.innerHTML = `
+                        <div class="profile-info-box">
+                            <div class="profile-field"><span class="profile-label">Correo:</span><span class="profile-value">${usuarioActualCorreo}</span></div>
+                            <div class="profile-field"><span class="profile-label">Rango:</span><span class="profile-value">Cliente Premium</span></div>
+                        </div>`;
+                }
+                document.getElementById('modal-perfil').style.display = 'block';
+            }
 
-    document.getElementById('link-cerrar-sesion').onclick = (e) => {
-        e.preventDefault(); usuarioLogueado = false; usuarioActualCorreo = "";
-        localStorage.clear(); location.reload(); 
-    };
+            if(idObjetivo === 'link-mis-pedidos') {
+                e.preventDefault(); e.stopPropagation(); menu.style.display = 'none';
+                localStorage.setItem('human_store_opened_modal', 'pedidos');
+                const hBody = document.getElementById('historial-pedidos-body');
+                const listaPedidos = JSON.parse(localStorage.getItem(`pedidos_${usuarioActualCorreo}`)) || [];
+
+                if (listaPedidos.length === 0) {
+                    hBody.innerHTML = `<p style="text-align:center; color:#94A3B8; padding: 30px;">📭 Historial de compras vacío.</p>`;
+                } else {
+                    hBody.innerHTML = "";
+                    listaPedidos.forEach(ped => {
+                        let itemsHtml = ped.items.map(i => `<li>• ${i.nombre} <strong>(x${i.qty})</strong></li>`).join("");
+                        hBody.innerHTML += `
+                            <div class="pedido-card">
+                                <div class="pedido-header"><span>🆔 #ID: <strong>${ped.idPedido}</strong></span><span>📅 ${ped.fecha}</span></div>
+                                <ul style="margin: 0; padding-left: 15px; font-size: 0.9rem;">${itemsHtml}</ul>
+                                <div class="pedido-totales"><span style="color: var(--text-sub);">Total:</span><span style="color: var(--success);">$${ped.totalUsd} / ${ped.totalBs}</span></div>
+                            </div>`;
+                    });
+                }
+                document.getElementById('modal-historial-pedidos').style.display = 'block';
+            }
+
+            if(idObjetivo === 'link-cerrar-sesion') {
+                e.preventDefault(); usuarioLogueado = false; usuarioActualCorreo = "";
+                localStorage.clear(); location.reload(); 
+            }
+        };
+    }
 }
 
 function cancelarFlujosEspeciales() {
     modoRecuperar = false; modoRegistro = false; pasoVerificacion = false;
     codigoGeneradoSimulado = ""; correoTemporalRecuperacion = ""; datosRegistroTemporales = {};
-    inputUsuario.style.display = "block"; areaPasswordLogin.style.display = "block"; fieldsetRegistro.style.display = "none"; 
-    areaCodigoVerificacion.style.display = "none"; areaNuevaPassword.style.display = "none"; navTabsAutenticacion.style.display = "flex";
-    linkOlvidoPass.style.display = "block"; linkVolverLogin.style.display = "none";
+    if(document.getElementById('usuario')) document.getElementById('usuario').style.display = "block"; 
+    if(document.getElementById('login-password-area')) document.getElementById('login-password-area').style.display = "block"; 
+    if(document.getElementById('extended-register-fields')) document.getElementById('extended-register-fields').style.display = "none"; 
+    if(document.getElementById('verification-code-area')) document.getElementById('verification-code-area').style.display = "none"; 
+    if(document.getElementById('new-password-area')) document.getElementById('new-password-area').style.display = "none"; 
+    if(document.getElementById('auth-nav-tabs')) document.getElementById('auth-nav-tabs').style.display = "flex";
+    if(document.getElementById('link-forgot-password')) document.getElementById('link-forgot-password').style.display = "block"; 
+    if(document.getElementById('link-back-to-auth')) document.getElementById('link-back-to-auth').style.display = "none";
+    document.getElementById('auth-msg').innerText = "Identifícate para gestionar tu carrito y pedidos";
 }
 
-linkOlvidoPass.onclick = (e) => {
-    e.preventDefault(); modoRecuperar = true; modoRegistro = false; pasoVerificacion = false;
-    document.getElementById('auth-msg').innerText = "Recuperación Oficial";
-    navTabsAutenticacion.style.display = "none"; fieldsetRegistro.style.display = "none"; areaPasswordLogin.style.display = "none";
-    areaCodigoVerificacion.style.display = "none"; areaNuevaPassword.style.display = "none"; linkOlvidoPass.style.display = "none";
-    linkVolverLogin.style.display = "block"; btnAuth.innerText = "Enviar Código";
-};
-
-linkVolverLogin.onclick = (e) => { e.preventDefault(); cancelarFlujosEspeciales(); document.getElementById('tab-login').click(); };
-document.getElementById('tab-login').onclick = function() { cancelarFlujosEspeciales(); this.classList.add('active'); document.getElementById('tab-register').classList.remove('active'); fieldsetRegistro.style.display = "none"; btnAuth.innerText = "Entrar"; };
-document.getElementById('tab-register').onclick = function() { cancelarFlujosEspeciales(); modoRegistro = true; this.classList.add('active'); document.getElementById('tab-login').classList.remove('active'); fieldsetRegistro.style.display = "block"; btnAuth.innerText = "Enviar Registro"; };
+function generarCodigoOTP() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
 // --- CATEGORÍAS Y BÚSQUEDA ---
 document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -732,11 +739,10 @@ document.getElementById('close-terminos').onclick = () => { modalTerminos.style.
 checkTerminos.onchange = function() { btnConfirmarTerminos.disabled = !this.checked; };
 btnConfirmarTerminos.onclick = () => { showToast("✅ Condiciones aprobadas"); modalTerminos.style.display = 'none'; };
 
-// Función auxiliar para actualizar dinámicamente el texto del botón global de favoritos
 function actualizarContadorFavoritos() {
-    const btnFavGlobal = document.getElementById('btn-search-favoritos');
-    if (btnFavGlobal) {
-        btnFavGlobal.innerHTML = `⭐ Favoritos (${favoritos.length})`;
+    const favCountEl = document.getElementById('fav-count');
+    if (favCountEl) {
+        favCountEl.innerText = favoritos.length;
     }
 }
 
@@ -751,7 +757,6 @@ window.toggleFavorito = (id) => {
     }
     localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
     
-    // Sincroniza la UI del catálogo superior y el botón global
     actualizarContadorFavoritos();
     const cat = localStorage.getItem('human_store_active_category') || 'all';
     const query = localStorage.getItem('human_store_search_query') || "";
@@ -770,13 +775,9 @@ function renderFavoritos() {
         favoritos.forEach(item => {
             let precioHtmlFavoritos = "";
             if (MONEDA_ACTUAL === "USD") {
-                precioHtmlFavoritos = `
-                    <div class="fav-item-price-main">$${item.precio.toFixed(2)} USD</div>
-                `;
+                precioHtmlFavorites = `<div class="fav-item-price-main">$${item.precio.toFixed(2)} USD</div>`;
             } else {
-                precioHtmlFavoritos = `
-                    <div class="fav-item-price-main" style="color:#10B981;">${(item.precio * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</div>
-                `;
+                precioHtmlFavorites = `<div class="fav-item-price-main" style="color:#10B981;">${(item.precio * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</div>`;
             }
 
             list.innerHTML += `
@@ -784,7 +785,7 @@ function renderFavoritos() {
                     <img src="${item.img}" class="cart-item-img">
                     <div class="cart-item-info">
                         <h4 style="margin: 0;">${item.nombre}</h4>
-                        ${precioHtmlFavoritos}
+                        ${precioHtmlFavorites}
                     </div>
                     <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem; margin-left: 10px; white-space: nowrap;" ${item.stock <= 0 ? 'disabled' : ''} onclick="agregarCarrito(${item.id})">🛒 Llevar</button>
                     <button class="btn-remove" style="margin-left: 10px;" onclick="toggleFavorito(${item.id})">×</button>
@@ -794,7 +795,7 @@ function renderFavoritos() {
 }
 
 document.getElementById('btn-llevar-todo-fav').onclick = () => {
-    if (!usuarioLogueado) { document.getElementById('modal-favoritos').style.display = 'none'; document.getElementById('welcome-screen').style.display = 'flex'; return; }
+    if (!usuarioLogueado) { cerrarModalGeneral(); document.getElementById('welcome-screen').style.display = 'flex'; return; }
     favoritos.forEach(p => { if(p.stock > 0) agregarCarrito(p.id); });
     favoritos = []; 
     localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
@@ -808,15 +809,17 @@ document.getElementById('close-favoritos').onclick = () => { document.getElement
 
 // --- ACCIONES GLOBALES ---
 document.querySelectorAll('.close').forEach(btn => btn.onclick = () => { cerrarModalGeneral(); });
-window.onclick = (e) => { if (e.target.className === 'modal' || e.target.className === 'welcome-overlay') { cerrarModalGeneral(); document.getElementById('welcome-screen').style.display = 'none'; } };
+window.onclick = (e) => { 
+    if (e.target.className === 'modal' || e.target.id === 'modal-perfil' || e.target.id === 'modal-historial-pedidos') { 
+        cerrarModalGeneral(); 
+    } 
+};
 document.getElementById('btn-ver-carrito').onclick = () => document.getElementById('modal-carrito').style.display = 'block';
 document.getElementById('btn-cancel-auth').onclick = () => { document.getElementById('welcome-screen').style.display = 'none'; };
 
-// --- INTEGRACIÓN CORRECTA Y RENDERIZADO DEL BOTÓN DE BÚSQUEDA DE FAVORITOS ---
 document.getElementById('btn-search-favoritos').addEventListener('click', () => {
     renderFavoritos(); 
     document.getElementById('modal-favoritos').style.display = 'block'; 
 });
 
-// Inicialización de la cantidad de favoritos guardados al cargar la aplicación
 actualizarContadorFavoritos();
