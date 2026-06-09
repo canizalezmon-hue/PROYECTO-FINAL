@@ -591,63 +591,152 @@ body {
     box-shadow: 0 0 18px rgba(255, 204, 0, 0.5) !important; /* Brillo Neón */
 }
 /* ==========================================================================
-   PARCHE DE EMERGENCIA: MODAL DE MIS FAVORITOS (MÓVIL)
+   SOLUCIÓN UNIVERSAL: REESTRUCTURACIÓN COMPLETA DE FAVORITOS (#fav-items)
+   Válido para Desktop, Laptop y Móvil
    ========================================================================== */
 
-/* 1. Fuerza a cada fila de producto a ser un contenedor ordenado */
-[class*="favorito" i] .item, 
-[class*="fav" i]-item, 
-.fav-product-row {
+/* 1. Ajuste del contenedor del modal para que sea simétrico */
+#modal-favoritos .modal-content {
+    max-width: 550px !important;
+    width: 90% !important;
+    padding: 25px !important;
+    background: #ffffff !important;
+    border-radius: 16px !important;
+}
+
+/* 2. Lista de favoritos con scroll suave si se acumulan muchos */
+#fav-items {
     display: flex !important;
-    flex-direction: column !important; /* Apila las cosas limpiamente en móvil */
+    flex-direction: column !important;
+    gap: 12px !important;
+    max-height: 55vh !important;
+    overflow-y: auto !important;
+    padding-right: 5px !important;
+    margin-top: 15px !important;
+}
+
+/* 3. La tarjeta del producto se vuelve una FILA HORIZONTAL limpia */
+#fav-items > div {
+    display: flex !important;
+    flex-direction: row !important;      /* Alineación en fila */
     align-items: center !important;
-    position: relative !important;
-    background: #ffffff !important;   /* Fondo limpio para contrastar */
-    padding: 15px !important;
+    justify-content: flex-start !important;
+    gap: 15px !important;
+    background: #f8fafc !important;      /* Fondo gris premium sutil */
+    border: 1px solid #e2e8f0 !important;
     border-radius: 12px !important;
-    margin-bottom: 15px !important;
+    padding: 12px 15px !important;
+    position: relative !important;       /* Rompe cualquier 'absolute' de los hijos */
+    box-sizing: border-box !important;
 }
 
-/* 2. Control de la Imagen: Evita que las cosas se metan dentro de ella */
-[class*="favorito" i] img, 
-[class*="fav" i] .product-img {
-    width: 100% !important;
-    max-width: 200px !important;
-    height: auto !important;
+/* 4. Miniatura de la IMAGEN a la izquierda */
+#fav-items > div img {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
     object-fit: contain !important;
-    position: relative !important;
-    z-index: 1 !important;
-    display: block !important;
-    margin: 0 auto 15px auto !important;
-}
-
-/* 3. Rescatar los textos del colapso */
-[class*="favorito" i] h3, 
-[class*="favorito" i] h4,
-.fav-item-title {
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 4px !important;
     position: relative !important;
     top: auto !important;
     left: auto !important;
-    color: #111111 !important;        /* Cambia a negro para que se lea en el fondo blanco */
-    text-align: center !important;
-    margin-bottom: 10px !important;
-    z-index: 2 !important;
+    margin: 0 !important;
 }
 
-/* 4. Destruir la barra negra residual */
-[class*="favorito" i] div {
-    /* Si algún contenedor vacío se está pintando de negro, esto lo limpia */
-    background-color: transparent !important; 
+/* 5. Reseteo absoluto de TEXTOS, TÍTULOS Y PRECIOS */
+#fav-items > div h3,
+#fav-items > div p,
+#fav-items > div h4,
+#fav-items > div span,
+#fav-items > div strong {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin: 2px 0 !important;
+    text-align: left !important;
+    line-height: 1.3 !important;
 }
 
-/* 5. Acomodar los botones de acción para que no floten sobre la foto */
-[class*="favorito" i] button,
-.remove-fav-btn {
+/* Nombre del producto (ocupa el espacio central disponible) */
+#fav-items > div h3, 
+#fav-items > div [class*="titulo" i] {
+    color: #0f172a !important;          /* Color oscuro legible */
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    flex: 1 !important;                  /* Empuja los botones a la derecha */
+    min-width: 120px;
+}
+
+/* Formateo de los Precios */
+#fav-items > div span, 
+#fav-items > div strong {
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+}
+
+/* Si el precio viene con estilos de color inyectados por JS, lo hacemos dorado */
+#fav-items > div strong, 
+#fav-items > div [style*="color"] {
+    color: #ffcc00 !important;          /* Tu dorado insignia */
+    font-weight: 700 !important;
+}
+
+/* 6. CONTROL DE BOTONES INTERNOS (Llevar / Eliminar) */
+/* Botón de acción principal (Ej: Agregar al carrito) */
+#fav-items > div button,
+#fav-items > div [class*="boton" i] {
     position: relative !important;
     top: auto !important;
     right: auto !important;
-    margin: 5px auto !important;
-    z-index: 2 !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    width: auto !important;
+    white-space: nowrap !important;     /* Evita que el texto del botón se parta en dos */
+    margin: 0 !important;
+}
+
+/* Botón de eliminar (La 'X' roja individual de cada tarjeta) */
+#fav-items > div .close, 
+#fav-items > div [class*="remove" i],
+#fav-items > div [class*="eliminar" i]:not(button) {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    left: auto !important;
+    bottom: auto !important;
+    color: #ef4444 !important;          /* Rojo destructivo */
+    font-size: 1.1rem !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+}
+
+/* 7. ADAPTACIÓN MÓVIL SÚPER COMPACTA (Pantallas muy pequeñas) */
+@media (max-width: 480px) {
+    #fav-items > div {
+        flex-direction: column !important; /* En teléfonos pequeños vuelve a ser columna limpia */
+        text-align: center !important;
+        padding: 15px !important;
+    }
+    #fav-items > div img {
+        margin: 0 auto 8px auto !important;
+    }
+    #fav-items > div h3 {
+        text-align: center !important;
+    }
+    #fav-items > div button {
+        width: 100% !important;         /* Botón ancho completo en móvil para fácil clic */
+    }
 }
 /* --- RESPONSIVE LOGIC --- */
 @media (max-width: 1024px) { .container { gap: 25px; padding: 40px 4%; } .filters { width: 240px; padding: 20px; } .grid { gap: 25px; } }
