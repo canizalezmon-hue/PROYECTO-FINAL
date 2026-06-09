@@ -512,61 +512,83 @@ body {
 } 
 
 
-/* 1. Apuntamos a los enlaces de redes (por etiqueta de footer o clases comunes) */
-footer a, 
-.footer a,
-[class*="foot"] a,
-[class*="redes"] a,
-[class*="social"] a,
-.links a {
-    display: inline-flex !important;
-    flex-direction: column !important; /* ¡OBLIGA al texto a ir abajo del círculo! */
-    align-items: center !important;
+/* 1. Contenedor: Alinea y separa las redes horizontalmente */
+.footer div:has(> a), 
+[class*="redes"], 
+[class*="social"], 
+.social-links {
+    display: flex !important;
     justify-content: center !important;
+    align-items: center !important;
+    gap: 40px !important;        /* Espaciado perfecto entre esferas */
+    margin-top: 25px !important;
+}
+
+/* 2. Enlaces individuales: Fuerza el orden vertical (Círculo arriba, letras abajo) */
+.footer a, 
+[class*="redes"] a, 
+[class*="social"] a {
+    display: flex !important;
+    flex-direction: column !important; /* Manda el texto al piso */
+    align-items: center !important;
     text-decoration: none !important;
-    margin: 0 15px !important;         /* Separa una red de la otra horizontalmente */
-    
-    /* DESTRUIMOS EL CÍRCULO EN EL ENLACE COMPLETO */
-    border: none !important;
     background: transparent !important;
+    border: none !important;
     border-radius: 0 !important;
     width: auto !important;
     height: auto !important;
-    overflow: visible !important;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important; /* Animación de flotado */
 }
 
-/* 2. Le creamos el círculo PERFECTO únicamente al ICONO (i, svg o span) */
-footer a i, footer a svg, footer a span,
-.footer a i, .footer a svg, .footer a span,
-[class*="foot"] a i, [class*="redes"] a i, [class*="social"] a i {
+/* 3. Reconstrucción de las Esferas (Afecta SOLO al icono interno i/svg) */
+.footer a i, .footer a svg, 
+[class*="redes"] a i, [class*="social"] a i {
     display: flex !important;
     align-items: center !important;     /* Centra el icono verticalmente */
     justify-content: center !important;    /* Centra el icono horizontalmente */
     
-    /* El tamaño del círculo */
+    /* Dimensiones del círculo */
     width: 50px !important;
     height: 50px !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important; /* El borde blanco/gris */
-    border-radius: 50% !important;       /* Lo hace redondo */
     
-    margin-bottom: 8px !important;      /* Separa el círculo del texto de abajo */
-    font-size: 20px !important;          /* Tamaño del icono por dentro */
-    box-sizing: border-box !important;
+    /* Estilo estético */
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.03) !important; /* Fondo tipo cristal */
+    
+    font-size: 18px !important;          /* Tamaño del icono */
+    color: #ffffff !important;
+    margin-bottom: 10px !important;     /* Separa el círculo del texto inferior */
     transition: all 0.3s ease !important;
-    background-color: transparent !important;
 }
 
-/* 3. Estilo para las letras (GH, IG, FB) */
-footer a, .footer a, [class*="redes"] a {
-    color: #ffcc00 !important;          /* Mantiene tu color dorado para el texto */
-    font-size: 14px !important;
+/* 4. Estilo de las letras doradas */
+.footer a, .footer a span, [class*="redes"] a {
+    color: #ffcc00 !important;          /* Tu dorado original */
+    font-size: 13px !important;
     font-weight: bold !important;
+    letter-spacing: 0.5px !important;
 }
 
-/* 4. Efecto iluminación al pasar el mouse */
-footer a:hover i, .footer a:hover i {
-    border-color: #ffcc00 !important;   /* El círculo se vuelve dorado */
-    transform: translateY(-3px) !important; /* Sube un poquito */
+/* ==========================================================================
+   MÓDULO HOVER: EFECTO DE ELEVACIÓN Y BRILLO NEÓN
+   ========================================================================== */
+
+/* Al pasar el mouse, todo el bloque sube suavemente */
+.footer a:hover, 
+[class*="redes"] a:hover, 
+[class*="social"] a:hover {
+    transform: translateY(-6px) !important;
+}
+
+/* El círculo se ilumina y emite un aura gamer dorada */
+.footer a:hover i, 
+[class*="redes"] a:hover i, 
+[class*="social"] a:hover i {
+    border-color: #ffcc00 !important;
+    color: #ffcc00 !important;
+    background: rgba(255, 204, 0, 0.1) !important;
+    box-shadow: 0 0 18px rgba(255, 204, 0, 0.5) !important; /* Brillo Neón */
 }
 
 /* --- RESPONSIVE LOGIC --- */
