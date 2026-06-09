@@ -509,7 +509,71 @@ body {
 #cart-items div, 
 .checkout-items-scroll div {
     background-color: transparent !important; 
+} 
+
+
+/* ==========================================================================
+   BLOQUE DE EMERGENCIA CORREGIDO (REEMPLAZA EL ANTERIOR COMPLETAMENTE)
+   ========================================================================== */
+
+/* 1. TARJETAS DEL CATÁLOGO: Contenedor principal */
+.grid .card, .product-card {
+    position: relative !important;
+    overflow: hidden !important; /* Fuerza a la foto a respetar las esquinas redondeadas */
 }
+
+/* 2. FOTO DEL PRODUCTO: En el catálogo */
+.card-img { 
+    width: 100% !important; 
+    height: 200px !important;       
+    object-fit: cover !important;   /* Recorta y cuadra la imagen sin barras negras */
+    border-radius: 12px 12px 0 0 !important; 
+    margin-bottom: 15px !important;
+    position: relative !important;
+    z-index: 1 !important;          
+    padding: 0 !important;          
+}
+
+/* 3. BOTÓN DE FAVORITOS (ESTRELLA): CORREGIDO 
+   (Solo atacamos clases específicas de la estrella para no romper el botón de carrito) */
+.search-fav-btn,
+.fav-btn,
+.favorite-btn,
+[class*="fav"] { 
+    position: absolute !important;
+    top: 15px !important;
+    right: 15px !important;
+    z-index: 10 !important; /* Capa alta: flota sobre la imagen */
+}
+
+/* 4. FOTOS DEL CARRITO: Miniaturas cuadradas perfectas */
+#cart-items img, 
+.checkout-items-scroll img,
+#cart-items .card-img,
+.checkout-items-scroll .card-img {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+    
+    object-fit: cover !important;   
+    border-radius: 8px !important;  
+    display: block !important;
+    flex-shrink: 0 !important;      /* Evita que flexbox estire la imagen */
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 5. CONTENEDORES DEL CARRITO: Limpieza de fondos residuales */
+#cart-items div, 
+.checkout-items-scroll div {
+    background-color: transparent !important; 
+}
+
+
+
 /* --- RESPONSIVE LOGIC --- */
 @media (max-width: 1024px) { .container { gap: 25px; padding: 40px 4%; } .filters { width: 240px; padding: 20px; } .grid { gap: 25px; } }
 @media (max-width: 768px) {
