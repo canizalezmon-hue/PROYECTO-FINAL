@@ -737,6 +737,124 @@ body {
     #fav-items > div button {
         width: 100% !important;         /* Botón ancho completo en móvil para fácil clic */
     }
+} 
+
+/* ==========================================================================
+   REDISTRIBUCIÓN ESTRUCTURAL: CARRITO Y FAVORITOS UNIFICADOS
+   ========================================================================== */
+
+/* 1. Contenedor de la fila (Tarjeta de cada producto) */
+#cart-items > div,
+#fav-items > div {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Alineación horizontal base */
+    gap: 15px !important;
+    position: relative !important; /* Base para la X absoluta */
+    
+    /* Zona segura de 50px a la derecha para que la X nunca pise el precio */
+    padding: 12px 50px 12px 12px !important; 
+    
+    background: #1e293b !important; /* Tu fondo oscuro/gris de la app */
+    border: 1px solid #334155 !important;
+    border-radius: 14px !important;
+    box-sizing: border-box !important;
+    margin-bottom: 10px !important;
+    min-height: 85px !important;
+}
+
+/* 2. Optimización de la Imagen (Evita el efecto de tubo vertical largo) */
+#cart-items > div img,
+#fav-items > div img {
+    width: 65px !important;
+    height: 65px !important;
+    min-width: 65px !important;
+    min-height: 65px !important;
+    object-fit: cover !important; /* Recorta la imagen proporcionalmente sin deformar */
+    border-radius: 10px !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: 0 !important;
+}
+
+/* 3. Título del producto (Ocupa el espacio del medio y empuja el resto) */
+#cart-items > div h3,
+#fav-items > div h3,
+#cart-items > div [class*="titulo" i],
+#fav-items > div [class*="titulo" i] {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    text-align: left !important;
+    line-height: 1.3 !important;
+    flex: 1 !important; /* Crucial: empuja dinámicamente precios y botones a la derecha */
+}
+
+/* 4. Alineación de Controles Intermedios (Botones - 1 + o LLEVAR) */
+#cart-items > div .contador,
+#cart-items > div [class*="quantity" i],
+#fav-items > div button,
+#fav-items > div [class*="boton" i] {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin: 0 5px !important;
+    white-space: nowrap !important; /* Evita que el texto de los botones se parta */
+}
+
+/* 5. Precios (Se acomodan de forma limpia al lado derecho de los controles) */
+#cart-items > div span, 
+#fav-items > div span,
+#cart-items > div strong, 
+#fav-items > div strong,
+#cart-items > div [class*="price" i],
+#fav-items > div [class*="price" i] {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important; /* Eliminamos cualquier subida extraña */
+    margin: 0 0 0 auto !important; /* Fuerza el empuje al extremo derecho permitido por el padding */
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #ffcc00 !important; /* Tu dorado insignia */
+    white-space: nowrap !important;
+    text-align: right !important;
+}
+
+/* 6. RE-POSICIONAMIENTO SEGURO DE LA EQUIS (X) RECTIFICADA */
+#cart-items > div [class*="close"i], 
+#fav-items > div [class*="close"i],
+#cart-items > div [class*="remove"i], 
+#fav-items > div [class*="remove"i],
+#cart-items > div .delete, 
+#fav-items > div .delete {
+    display: flex !important; /* La mantenemos viva y visible */
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    
+    /* Posicionamiento absoluto exacto dentro de la zona segura */
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important; /* Centrado vertical matemático perfecto */
+    
+    color: #ef4444 !important; /* Rojo vibrante */
+    font-size: 1.2rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    margin: 0 !important;
+    z-index: 5 !important;
+    transition: color 0.2s ease;
+}
+
+#cart-items > div [class*="close"i]:hover,
+#fav-items > div [class*="close"i]:hover {
+    color: #f87171 !important; /* Feedback visual al pasar el mouse */
 }
 /* --- RESPONSIVE LOGIC --- */
 @media (max-width: 1024px) { .container { gap: 25px; padding: 40px 4%; } .filters { width: 240px; padding: 20px; } .grid { gap: 25px; } }
