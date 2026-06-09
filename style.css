@@ -411,6 +411,34 @@ body {
     color: #e0e0e0;
 }
 
+
+/* ==========================================================================
+   UPDATES PREMIUM - CONTROL VISUAL DE ELEMENTOS
+   ========================================================================== */
+
+/* Punto 3: Buscador Blanco Limpio y legible */
+.search-bar input {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    font-weight: 500;
+}
+.search-bar input::placeholder {
+    color: #64748b !important;
+}
+
+/* Punto 4: Mensaje de error amplio y perfectamente centrado */
+.no-results-message {
+    width: 100%;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f87171; /* Un rojo suave elegante */
+    padding: 60px 20px;
+    box-sizing: border-box;
+}
+
 /* --- RESPONSIVE LOGIC --- */
 @media (max-width: 1024px) { .container { gap: 25px; padding: 40px 4%; } .filters { width: 240px; padding: 20px; } .grid { gap: 25px; } }
 @media (max-width: 768px) {
