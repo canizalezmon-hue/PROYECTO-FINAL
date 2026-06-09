@@ -590,7 +590,65 @@ body {
     background: rgba(255, 204, 0, 0.1) !important;
     box-shadow: 0 0 18px rgba(255, 204, 0, 0.5) !important; /* Brillo Neón */
 }
+/* ==========================================================================
+   PARCHE DE EMERGENCIA: MODAL DE MIS FAVORITOS (MÓVIL)
+   ========================================================================== */
 
+/* 1. Fuerza a cada fila de producto a ser un contenedor ordenado */
+[class*="favorito" i] .item, 
+[class*="fav" i]-item, 
+.fav-product-row {
+    display: flex !important;
+    flex-direction: column !important; /* Apila las cosas limpiamente en móvil */
+    align-items: center !important;
+    position: relative !important;
+    background: #ffffff !important;   /* Fondo limpio para contrastar */
+    padding: 15px !important;
+    border-radius: 12px !important;
+    margin-bottom: 15px !important;
+}
+
+/* 2. Control de la Imagen: Evita que las cosas se metan dentro de ella */
+[class*="favorito" i] img, 
+[class*="fav" i] .product-img {
+    width: 100% !important;
+    max-width: 200px !important;
+    height: auto !important;
+    object-fit: contain !important;
+    position: relative !important;
+    z-index: 1 !important;
+    display: block !important;
+    margin: 0 auto 15px auto !important;
+}
+
+/* 3. Rescatar los textos del colapso */
+[class*="favorito" i] h3, 
+[class*="favorito" i] h4,
+.fav-item-title {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    color: #111111 !important;        /* Cambia a negro para que se lea en el fondo blanco */
+    text-align: center !important;
+    margin-bottom: 10px !important;
+    z-index: 2 !important;
+}
+
+/* 4. Destruir la barra negra residual */
+[class*="favorito" i] div {
+    /* Si algún contenedor vacío se está pintando de negro, esto lo limpia */
+    background-color: transparent !important; 
+}
+
+/* 5. Acomodar los botones de acción para que no floten sobre la foto */
+[class*="favorito" i] button,
+.remove-fav-btn {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin: 5px auto !important;
+    z-index: 2 !important;
+}
 /* --- RESPONSIVE LOGIC --- */
 @media (max-width: 1024px) { .container { gap: 25px; padding: 40px 4%; } .filters { width: 240px; padding: 20px; } .grid { gap: 25px; } }
 @media (max-width: 768px) {
