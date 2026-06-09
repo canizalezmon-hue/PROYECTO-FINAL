@@ -690,7 +690,10 @@ function configurarMenuUsuarioDesplegable() {
 
             if(idObjetivo === 'link-cerrar-sesion') {
                 e.preventDefault(); usuarioLogueado = false; usuarioActualCorreo = "";
-                localStorage.clear(); location.reload(); 
+                // CORRECCIÓN 1: Removemos las claves de sesión activa sin destruir las cuentas registradas en LocalStorage
+                localStorage.removeItem('human_store_logged');
+                localStorage.removeItem('human_store_user_email');
+                location.reload(); 
             }
         };
     }
@@ -773,7 +776,8 @@ function renderFavoritos() {
         list.innerHTML = ""; 
         document.getElementById('fav-actions-area').style.display = 'block';
         favoritos.forEach(item => {
-            let precioHtmlFavoritos = "";
+            // CORRECCIÓN 2: Solucionado error de tipeo en la variable (precioHtmlFavoritos vs precioHtmlFavorites) para evitar ReferenceError
+            let precioHtmlFavorites = "";
             if (MONEDA_ACTUAL === "USD") {
                 precioHtmlFavorites = `<div class="fav-item-price-main">$${item.precio.toFixed(2)} USD</div>`;
             } else {
