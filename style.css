@@ -512,67 +512,62 @@ body {
 } 
 
 
-/* ==========================================================================
-   BLOQUE DE EMERGENCIA CORREGIDO (REEMPLAZA EL ANTERIOR COMPLETAMENTE)
-   ========================================================================== */
-
-/* 1. TARJETAS DEL CATÁLOGO: Contenedor principal */
-.grid .card, .product-card {
-    position: relative !important;
-    overflow: hidden !important; /* Fuerza a la foto a respetar las esquinas redondeadas */
-}
-
-/* 2. FOTO DEL PRODUCTO: En el catálogo */
-.card-img { 
-    width: 100% !important; 
-    height: 200px !important;       
-    object-fit: cover !important;   /* Recorta y cuadra la imagen sin barras negras */
-    border-radius: 12px 12px 0 0 !important; 
-    margin-bottom: 15px !important;
-    position: relative !important;
-    z-index: 1 !important;          
-    padding: 0 !important;          
-}
-
-/* 3. BOTÓN DE FAVORITOS (ESTRELLA): CORREGIDO 
-   (Solo atacamos clases específicas de la estrella para no romper el botón de carrito) */
-.search-fav-btn,
-.fav-btn,
-.favorite-btn,
-[class*="fav"] { 
-    position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
-    z-index: 10 !important; /* Capa alta: flota sobre la imagen */
-}
-
-/* 4. FOTOS DEL CARRITO: Miniaturas cuadradas perfectas */
-#cart-items img, 
-.checkout-items-scroll img,
-#cart-items .card-img,
-.checkout-items-scroll .card-img {
-    width: 70px !important;
-    height: 70px !important;
-    min-width: 70px !important;
-    min-height: 70px !important;
-    max-width: 70px !important;
-    max-height: 70px !important;
+/* 1. Apuntamos a los enlaces de redes (por etiqueta de footer o clases comunes) */
+footer a, 
+.footer a,
+[class*="foot"] a,
+[class*="redes"] a,
+[class*="social"] a,
+.links a {
+    display: inline-flex !important;
+    flex-direction: column !important; /* ¡OBLIGA al texto a ir abajo del círculo! */
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    margin: 0 15px !important;         /* Separa una red de la otra horizontalmente */
     
-    object-fit: cover !important;   
-    border-radius: 8px !important;  
-    display: block !important;
-    flex-shrink: 0 !important;      /* Evita que flexbox estire la imagen */
-    margin: 0 !important;
-    padding: 0 !important;
+    /* DESTRUIMOS EL CÍRCULO EN EL ENLACE COMPLETO */
+    border: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
 }
 
-/* 5. CONTENEDORES DEL CARRITO: Limpieza de fondos residuales */
-#cart-items div, 
-.checkout-items-scroll div {
-    background-color: transparent !important; 
+/* 2. Le creamos el círculo PERFECTO únicamente al ICONO (i, svg o span) */
+footer a i, footer a svg, footer a span,
+.footer a i, .footer a svg, .footer a span,
+[class*="foot"] a i, [class*="redes"] a i, [class*="social"] a i {
+    display: flex !important;
+    align-items: center !important;     /* Centra el icono verticalmente */
+    justify-content: center !important;    /* Centra el icono horizontalmente */
+    
+    /* El tamaño del círculo */
+    width: 50px !important;
+    height: 50px !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important; /* El borde blanco/gris */
+    border-radius: 50% !important;       /* Lo hace redondo */
+    
+    margin-bottom: 8px !important;      /* Separa el círculo del texto de abajo */
+    font-size: 20px !important;          /* Tamaño del icono por dentro */
+    box-sizing: border-box !important;
+    transition: all 0.3s ease !important;
+    background-color: transparent !important;
 }
 
+/* 3. Estilo para las letras (GH, IG, FB) */
+footer a, .footer a, [class*="redes"] a {
+    color: #ffcc00 !important;          /* Mantiene tu color dorado para el texto */
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
 
+/* 4. Efecto iluminación al pasar el mouse */
+footer a:hover i, .footer a:hover i {
+    border-color: #ffcc00 !important;   /* El círculo se vuelve dorado */
+    transform: translateY(-3px) !important; /* Sube un poquito */
+}
 
 /* --- RESPONSIVE LOGIC --- */
 @media (max-width: 1024px) { .container { gap: 25px; padding: 40px 4%; } .filters { width: 240px; padding: 20px; } .grid { gap: 25px; } }
