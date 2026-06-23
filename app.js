@@ -17,35 +17,35 @@ let codigoGeneradoSimulado = "";
 let correoTemporalRecuperacion = "";
 let datosRegistroTemporales = {};
 
-// --- ETIQUETA: CONFIGURACIÓN DE INVENTARIO EXTENDIDO PARA TIENDA GENERAL ---
+// --- ETIQUETA: CONFIGURACIÓN DE INVENTARIO EXTENDIDO PARA TIENDA GENERAL (CON VARIANTES Y GALERÍAS) ---
 const catalogoInicial = [
-    { id: 1, nombre: "Laptop Gamer X-Pro", precio: 1200, cat: "electronica", stock: 5, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500" },
-    { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
-    { id: 3, nombre: "Lámpara Led Inteligente", precio: 45, cat: "hogar", stock: 4, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
-    { id: 4, nombre: "Chaqueta Urban Style", precio: 80, cat: "ropa", stock: 12, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
+    { id: 1, nombre: "Laptop Gamer X-Pro", precio: 1200, cat: "electronica", stock: 2, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500", opciones: { "RAM": ["16GB", "32GB"], "Color": ["Negro", "Plata"] }, galeria: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500", "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=500", "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500"] },
+    { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500", opciones: { "Color": ["Negro", "Blanco"] }, galeria: ["https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500", "https://images.unsplash.com/photo-1615663245857-ac9310d5b1ff?w=500"] },
+    { id: 3, nombre: "Lámpara Led Inteligente", precio: 45, cat: "hogar", stock: 4, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500", opciones: { "Luz": ["Cálida", "Fría", "RGB"] }, galeria: ["https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500", "https://images.unsplash.com/photo-1513506003901-1e6a229e9d15?w=500"] },
+    { id: 4, nombre: "Chaqueta Urban Style", precio: 80, cat: "ropa", stock: 12, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500", opciones: { "Talla": ["S", "M", "L", "XL"], "Color": ["Negro", "Gris Oscuro"] } },
     
     // Ropa
-    { id: 5, nombre: "Jean Slim Fit Classic", precio: 45, cat: "ropa", stock: 15, img: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500" },
-    { id: 6, nombre: "Pantalón Cargo Urban", precio: 55, cat: "ropa", stock: 8, img: "https://images.unsplash.com/photo-1517423738875-5ce310acd3da?w=500" },
-    { id: 7, nombre: "Franela Oversize Black", precio: 20, cat: "ropa", stock: 20, img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" },
-    { id: 8, nombre: "Franela Minimalist White", precio: 18, cat: "ropa", stock: 25, img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500" },
-    { id: 9, nombre: "Mono Jogger Tech Fleece", precio: 50, cat: "ropa", stock: 10, img: "https://images.unsplash.com/photo-1551854838-212c50b4c184?w=500" },
-    { id: 10, nombre: "Mono Deportivo Casual", precio: 35, cat: "ropa", stock: 14, img: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=500" },
-    { id: 11, nombre: "Suéter Hoodie Heavyweight", precio: 60, cat: "ropa", stock: 7, img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500" },
-    { id: 12, nombre: "Suéter Knit Premium", precio: 65, cat: "ropa", stock: 6, img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500" },
+    { id: 5, nombre: "Jean Slim Fit Classic", precio: 45, cat: "ropa", stock: 3, img: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500", opciones: { "Talla": ["28", "30", "32", "34"] } },
+    { id: 6, nombre: "Pantalón Cargo Urban", precio: 55, cat: "ropa", stock: 8, img: "https://images.unsplash.com/photo-1517423738875-5ce310acd3da?w=500", opciones: { "Talla": ["S", "M", "L"] } },
+    { id: 7, nombre: "Franela Oversize Black", precio: 20, cat: "ropa", stock: 20, img: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500", opciones: { "Talla": ["M", "L", "XL"] } },
+    { id: 8, nombre: "Franela Minimalist White", precio: 18, cat: "ropa", stock: 25, img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500", opciones: { "Talla": ["S", "M", "L", "XL"] } },
+    { id: 9, nombre: "Mono Jogger Tech Fleece", precio: 50, cat: "ropa", stock: 10, img: "https://images.unsplash.com/photo-1551854838-212c50b4c184?w=500", opciones: { "Talla": ["M", "L"] } },
+    { id: 10, nombre: "Mono Deportivo Casual", precio: 35, cat: "ropa", stock: 4, img: "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=500", opciones: { "Talla": ["S", "M", "L"] } },
+    { id: 11, nombre: "Suéter Hoodie Heavyweight", precio: 60, cat: "ropa", stock: 7, img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500", opciones: { "Talla": ["M", "L", "XL"], "Color": ["Negro", "Azul Marino"] } },
+    { id: 12, nombre: "Suéter Knit Premium", precio: 65, cat: "ropa", stock: 6, img: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=500", opciones: { "Talla": ["S", "M", "L"] } },
 
     // Electrónica
-    { id: 13, nombre: "Audífonos Gamer HyperX Cloud", precio: 85, cat: "electronica", stock: 12, img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500" },
-    { id: 14, nombre: "Audífonos Gamer Logitech G-Pro", precio: 110, cat: "electronica", stock: 8, img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500" },
-    { id: 15, nombre: "Reloj Inteligente Cubitt CT4", precio: 55, cat: "electronica", stock: 15, img: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500" },
-    { id: 16, nombre: "Reloj Inteligente Cubitt Aura", precio: 70, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500" },
+    { id: 13, nombre: "Audífonos Gamer HyperX Cloud", precio: 85, cat: "electronica", stock: 12, img: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500", opciones: { "Color": ["Rojo", "Negro"] } },
+    { id: 14, nombre: "Audífonos Gamer Logitech G-Pro", precio: 110, cat: "electronica", stock: 5, img: "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=500", opciones: { "Edición": ["Estándar", "League of Legends"] } },
+    { id: 15, nombre: "Reloj Inteligente Cubitt CT4", precio: 55, cat: "electronica", stock: 15, img: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500", opciones: { "Correa": ["Silicona Negra", "Metal Plata"] } },
+    { id: 16, nombre: "Reloj Inteligente Cubitt Aura", precio: 70, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=500", opciones: { "Correa": ["Rosa", "Gris"] } },
     { id: 17, nombre: "Control DualSense PS5 Black", precio: 75, cat: "electronica", stock: 9, img: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500" },
     { id: 18, nombre: "Control DualSense PS5 White", precio: 70, cat: "electronica", stock: 14, img: "https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=500" },
 
     // Hogar
     { id: 19, nombre: "Colchón Semi-Ortopédico Matrimonial", precio: 180, cat: "hogar", stock: 6, img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=500" },
     { id: 20, nombre: "Colchón Semi-Ortopédico Individual", precio: 130, cat: "hogar", stock: 8, img: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500" },
-    { id: 21, nombre: "Juego de Muebles Minimalista", precio: 450, cat: "hogar", stock: 3, img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500" },
+    { id: 21, nombre: "Juego de Muebles Minimalista", precio: 450, cat: "hogar", stock: 3, img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500", opciones: { "Tela": ["Microfibra Gris", "Cuero Sintético Negro"] } },
     { id: 22, nombre: "Juego de Muebles Esquinero Moderno", precio: 520, cat: "hogar", stock: 2, img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=500" },
     { id: 23, nombre: "Lámpara de Noche Touch Modern", precio: 30, cat: "hogar", stock: 15, img: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=500" },
     { id: 24, nombre: "Lámpara de Noche Vintage de Madera", precio: 35, cat: "hogar", stock: 11, img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" }
@@ -53,24 +53,24 @@ const catalogoInicial = [
 
 // --- ETIQUETA: INICIALIZACIÓN DE DB CON GENERADOR DE OFERTAS ALEATORIAS ---
 let productosExistentes = JSON.parse(localStorage.getItem('human_store_products_db'));
+let dbVersion = localStorage.getItem('human_store_db_version');
 
-// Si no existe la DB o no tiene el nuevo formato de precioOriginal, generamos los descuentos
-if(!productosExistentes || productosExistentes.length !== catalogoInicial.length || !productosExistentes[0].hasOwnProperty('precioOriginal')) {
+// Si no existe, o si es una versión anterior, reiniciamos la BD.
+if(!productosExistentes || dbVersion !== "v7") {
     
     let catalogoConDescuentos = catalogoInicial.map(p => ({ ...p, precioOriginal: p.precio, descuento: 0 }));
 
-    // Cada bloque de 4 productos, elegimos 1 al azar para meterle descuento (15% al 35%)
     for (let i = 0; i < catalogoConDescuentos.length; i += 4) {
         let maxIndex = Math.min(i + 3, catalogoConDescuentos.length - 1);
         let randomIndex = Math.floor(Math.random() * (maxIndex - i + 1)) + i;
         let randomDesc = Math.floor(Math.random() * (35 - 15 + 1)) + 15; 
         
         catalogoConDescuentos[randomIndex].descuento = randomDesc;
-        // Calculamos y sobreescribimos el precio actual
         catalogoConDescuentos[randomIndex].precio = Number((catalogoConDescuentos[randomIndex].precioOriginal * (1 - (randomDesc / 100))).toFixed(2));
     }
 
     localStorage.setItem('human_store_products_db', JSON.stringify(catalogoConDescuentos));
+    localStorage.setItem('human_store_db_version', "v7"); 
     productosExistentes = catalogoConDescuentos;
 }
 
@@ -86,7 +86,32 @@ function getSimulatedRating(id) {
     return { rating, reviews, starsStr };
 }
 
-// --- ETIQUETA: MOTOR DE SUGERENCIAS INTELIGENTES PARA EL CARRITO ---
+// --- ETIQUETA: SKELETON LOADERS (CARGA FANTASMA) ---
+function mostrarSkeletons() {
+    const grid = document.getElementById('product-grid');
+    if(!grid) return;
+    grid.innerHTML = "";
+    // Generamos 6 tarjetas fantasma
+    for(let i=0; i<6; i++){
+        grid.innerHTML += `
+            <div class="skeleton-card">
+                <div class="skeleton-item skeleton-img"></div>
+                <div class="skeleton-item skeleton-title"></div>
+                <div class="skeleton-item skeleton-stars"></div>
+                <div class="skeleton-item skeleton-price"></div>
+                <div class="skeleton-item skeleton-btn"></div>
+            </div>
+        `;
+    }
+}
+
+// --- ETIQUETA: SELECTOR DINÁMICO DE VARIANTES (INTERACTIVIDAD) ---
+window.selectVariant = (btn) => {
+    const siblings = btn.parentElement.querySelectorAll('.var-btn');
+    siblings.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+};
+
 function actualizarSugerenciasCarrito() {
     const container = document.getElementById('cart-suggestions-container');
     const list = document.getElementById('cart-suggestions-list');
@@ -132,17 +157,20 @@ function actualizarSugerenciasCarrito() {
     });
 }
 
-// --- ETIQUETA: CONTROLADOR PRELOADER E INICIALIZADOR DE SESIÓN ---
 window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');
     const app = document.getElementById('app-container');
 
     obtenerTasaBCV();
+    
+    // 1. Mostrar Skeletons ocultos detrás del telón para cuando aparezca la app
+    mostrarSkeletons();
 
+    // 2. Controlar el Preloader de imagen
     setTimeout(() => {
-        preloader.style.transition = "opacity 1s ease, filter 1s ease";
+        preloader.style.transition = "opacity 0.8s ease, filter 0.8s ease";
         preloader.style.opacity = "0";
-        preloader.style.filter = "blur(20px)";
+        preloader.style.filter = "blur(10px)";
         
         setTimeout(() => {
             preloader.style.display = "none";
@@ -151,39 +179,43 @@ window.addEventListener('load', () => {
             
             inyectarSelectorMonedaNavbar();
 
-            const ultimaSeccion = localStorage.getItem('human_store_current_view') || 'store';
-            if (ultimaSeccion === 'checkout' && usuarioLogueado && carrito.length > 0) {
-                irASeccionCheckout(false); 
-            } else {
-                irASeccionTienda();
-            }
-
-            const categoriaGuardada = localStorage.getItem('human_store_active_category') || 'all';
-            const textoBuscadoGuardado = localStorage.getItem('human_store_search_query') || "";
-            
-            const savedPrice = localStorage.getItem('human_store_price_max');
-            if (savedPrice && document.getElementById('price-slider')) {
-                document.getElementById('price-slider').value = savedPrice;
-                document.getElementById('price-slider-value').innerText = `$${savedPrice}`;
-            }
-            
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if(btn.dataset.category === categoriaGuardada) {
-                    document.querySelector('.filter-btn.active').classList.remove('active');
-                    btn.classList.add('active');
+            // 3. Ya viendo los Skeletons, esperamos un poco más para cargar la data real
+            setTimeout(() => {
+                const ultimaSeccion = localStorage.getItem('human_store_current_view', 'store');
+                if (ultimaSeccion === 'checkout' && usuarioLogueado && carrito.length > 0) {
+                    irASeccionCheckout(false); 
+                } else {
+                    irASeccionTienda();
                 }
-            });
 
-            if(textoBuscadoGuardado || savedPrice) {
-                if (textoBuscadoGuardado) document.getElementById('input-search').value = textoBuscadoGuardado;
-                ejecutarFiltradoCombinado(textoBuscadoGuardado, categoriaGuardada);
-            } else {
-                renderProducts(categoriaGuardada === 'all' ? productos : productos.filter(p => p.cat === categoriaGuardada));
-            }
+                const categoriaGuardada = localStorage.getItem('human_store_active_category') || 'all';
+                const textoBuscadoGuardado = localStorage.getItem('human_store_search_query') || "";
+                
+                const savedPrice = localStorage.getItem('human_store_price_max');
+                if (savedPrice && document.getElementById('price-slider')) {
+                    document.getElementById('price-slider').value = savedPrice;
+                    document.getElementById('price-slider-value').innerText = `$${savedPrice}`;
+                }
+                
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    if(btn.dataset.category === categoriaGuardada) {
+                        document.querySelector('.filter-btn.active').classList.remove('active');
+                        btn.classList.add('active');
+                    }
+                });
 
-            actualizarTodo();
-        }, 1000);
-    }, 1500);
+                if(textoBuscadoGuardado || savedPrice) {
+                    if (textoBuscadoGuardado) document.getElementById('input-search').value = textoBuscadoGuardado;
+                    ejecutarFiltradoCombinado(textoBuscadoGuardado, categoriaGuardada);
+                } else {
+                    renderProducts(categoriaGuardada === 'all' ? productos : productos.filter(p => p.cat === categoriaGuardada));
+                }
+
+                actualizarTodo();
+            }, 800); 
+
+        }, 800);
+    }, 1200); 
 
     conectarEventosAutenticacion();
 
@@ -213,6 +245,7 @@ if(checkoutDelivery) {
     });
 }
 
+// --- ETIQUETA: LÓGICA DE AUTOCOMPLETADO DE MÉTODOS DE PAGO EN EL CHECKOUT ---
 if(checkoutPayment) {
     checkoutPayment.addEventListener('change', (e) => {
         const val = e.target.value;
@@ -221,9 +254,34 @@ if(checkoutPayment) {
         paypalInfo.style.display = 'none';
         binanceInfo.style.display = 'none';
 
-        if (val === 'Pago Móvil') pagoMovilInfo.style.display = 'block';
-        if (val === 'Zelle') zelleInfo.style.display = 'block';
-        if (val === 'PayPal') paypalInfo.style.display = 'block';
+        if(document.getElementById('pm-autofill-msg')) document.getElementById('pm-autofill-msg').style.display = 'none';
+        if(document.getElementById('zelle-autofill-msg')) document.getElementById('zelle-autofill-msg').style.display = 'none';
+        if(document.getElementById('paypal-autofill-msg')) document.getElementById('paypal-autofill-msg').style.display = 'none';
+
+        const savedPayRaw = localStorage.getItem(`paymentData_${usuarioActualCorreo}`);
+        const savedPay = savedPayRaw ? JSON.parse(savedPayRaw) : null;
+
+        if (val === 'Pago Móvil') {
+            pagoMovilInfo.style.display = 'block';
+            if(savedPay && savedPay.pm) {
+                document.getElementById('pm-telefono-origen').value = savedPay.pm;
+                document.getElementById('pm-autofill-msg').style.display = 'inline-block';
+            }
+        }
+        if (val === 'Zelle') {
+            zelleInfo.style.display = 'block';
+            if(savedPay && savedPay.zelle) {
+                document.getElementById('zelle-email').value = savedPay.zelle;
+                document.getElementById('zelle-autofill-msg').style.display = 'inline-block';
+            }
+        }
+        if (val === 'PayPal') {
+            paypalInfo.style.display = 'block';
+            if(savedPay && savedPay.paypal) {
+                document.getElementById('paypal-email').value = savedPay.paypal;
+                document.getElementById('paypal-autofill-msg').style.display = 'inline-block';
+            }
+        }
         if (val === 'Binance') binanceInfo.style.display = 'block';
     });
 }
@@ -345,7 +403,6 @@ function showToast(mensaje, duracion = 3000) {
     setTimeout(() => { toast.remove(); }, duracion + 500);
 }
 
-// --- ETIQUETA: RENDERIZADO DINÁMICO DE PRODUCTOS Y OFERTAS ---
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
@@ -391,6 +448,9 @@ function renderProducts(lista) {
 
         const badgeDescuento = p.descuento > 0 ? `<div class="badge-discount">-${p.descuento}% OFF</div>` : '';
         const badgeAgotado = estaAgotado ? '<div class="badge-sold-out">AGOTADO</div>' : '';
+        
+        // GATILLO: AVISO DE BAJO STOCK EN EL CATÁLOGO
+        const gatilloStock = (!estaAgotado && p.stock <= 5) ? `<div class="urgency-stock">🔥 ¡Últimas ${p.stock} disponibles!</div>` : '';
 
         const div = document.createElement('div');
         div.className = `product-card ${estaAgotado ? 'card-sold-out' : ''}`;
@@ -407,10 +467,11 @@ function renderProducts(lista) {
             </div>
 
             ${precioHtml}
+            ${gatilloStock}
             <p style="font-size: 0.8rem; font-weight: bold; color: ${!estaAgotado ? '#10B981' : '#EF4444'}">
-                ${!estaAgotado ? `Disponible en Stock (${p.stock} ud.)` : 'Agotado'}
+                ${!estaAgotado ? `Disponible en Stock` : 'Agotado'}
             </p>
-            <button class="btn-add" ${estaAgotado ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">
+            <button class="btn-add" ${estaAgotado ? 'disabled' : ''} onclick="agregarCarrito(${p.id}, false)">
                 ${estaAgotado ? 'Sin Existencias' : 'Añadir al Carrito'}
             </button>
         `;
@@ -419,6 +480,8 @@ function renderProducts(lista) {
 }
 
 function ejecutarFiltradoCombinado(texto, categoria) {
+    mostrarSkeletons(); 
+    
     const precioMax = parseFloat(document.getElementById('price-slider')?.value) || Infinity;
     let filtrados = productos;
     
@@ -426,10 +489,91 @@ function ejecutarFiltradoCombinado(texto, categoria) {
     if (texto) filtrados = filtrados.filter(p => p.nombre.toLowerCase().includes(texto.toLowerCase()));
     filtrados = filtrados.filter(p => p.precio <= precioMax);
     
-    renderProducts(filtrados);
+    setTimeout(() => {
+        renderProducts(filtrados);
+    }, 500); 
 }
 
-// --- ETIQUETA: DETALLES DE PRODUCTO CON INFORMACIÓN DE OFERTA ---
+// --- ETIQUETA: PERSISTENCIA E INICIALIZACIÓN DE PREGUNTAS SEMILLA (Q&A) ---
+function obtenerPreguntasProducto(id) {
+    let localData = localStorage.getItem(`human_store_qa_${id}`);
+    if (localData) return JSON.parse(localData);
+    
+    let seed = [
+        { usuario: "cliente_premium@gmail.com", texto: "¿Tienen disponibilidad inmediata para envío a Caracas?", fecha: "22/06/2026", respuesta: "¡Hola! Sí, contamos con stock listo en tienda para despacho inmediato vía delivery." },
+        { usuario: "tech_user98@gmail.com", texto: "¿El producto cuenta con garantía oficial de fábrica?", fecha: "15/06/2026", respuesta: "Hola, totalmente. Todos nuestros productos de HUMAN STORE incluyen 3 meses de garantía por desperfectos de fábrica." }
+    ];
+    localStorage.setItem(`human_store_qa_${id}`, JSON.stringify(seed));
+    return seed;
+}
+
+window.hacerPregunta = (id) => {
+    const input = document.getElementById('input-nueva-pregunta');
+    if (!input) return;
+    const texto = input.value.trim();
+    if (!texto) return showToast("⚠️ Escribe una pregunta válida.");
+    if (!usuarioLogueado) {
+        showToast("🔑 Inicia sesión para dejar una consulta oficial");
+        document.getElementById('welcome-screen').style.display = 'flex';
+        return;
+    }
+    
+    let preguntas = JSON.parse(localStorage.getItem(`human_store_qa_${id}`)) || [];
+    preguntas.unshift({
+        usuario: usuarioActualCorreo,
+        texto: texto,
+        fecha: new Date().toLocaleDateString('es-VE'),
+        respuesta: null
+    });
+    localStorage.setItem(`human_store_qa_${id}`, JSON.stringify(preguntas));
+    showToast("❓ Consulta publicada con éxito");
+    input.value = "";
+    window.refreshQAList(id);
+
+    // SIMULACIÓN DE RESPUESTA AUTOMÁTICA DEL VENDEDOR (PRUEBA SOCIAL EN VIVO)
+    setTimeout(() => {
+        let currentPreguntas = JSON.parse(localStorage.getItem(`human_store_qa_${id}`)) || [];
+        if (currentPreguntas.length > 0 && !currentPreguntas[0].respuesta) {
+            currentPreguntas[0].respuesta = "¡Hola! Gracias por tu consulta. Confirmamos stock e indicaciones técnicas. Puedes procesar tu orden al carrito y un asesor te atenderá de inmediato por WhatsApp.";
+            localStorage.setItem(`human_store_qa_${id}`, JSON.stringify(currentPreguntas));
+            
+            const openedProduct = localStorage.getItem('human_store_opened_product');
+            if (openedProduct && String(openedProduct) === String(id) && document.getElementById('modal-detalle').style.display === 'block') {
+                window.refreshQAList(id);
+            }
+        }
+    }, 2000);
+};
+
+window.refreshQAList = (id) => {
+    const listEl = document.getElementById('qa-items-list');
+    if (!listEl) return;
+    let preguntas = JSON.parse(localStorage.getItem(`human_store_qa_${id}`)) || [];
+    
+    listEl.innerHTML = preguntas.map(q => {
+        let respHtml = q.respuesta ? `
+            <div class="qa-answer-block">
+                <p class="qa-answer-text"><span>↩️</span> ${q.respuesta}</p>
+            </div>
+        ` : `
+            <div class="qa-answer-block pending">
+                <p class="qa-answer-text italic">⏳ Esperando respuesta de HUMAN STORE...</p>
+            </div>
+        `;
+        return `
+            <div class="qa-item-row">
+                <div class="qa-question-header">
+                    <span class="qa-user-tag">👤 ${q.usuario.split('@')[0]}</span>
+                    <span class="qa-date-tag">${q.fecha}</span>
+                </div>
+                <p class="qa-question-text">${q.texto}</p>
+                ${respHtml}
+            </div>
+        `;
+    }).join('');
+};
+
+// --- ETIQUETA: DETALLES DEL PRODUCTO (CON INYECCIÓN DE VARIANTES, GALERÍA Y Q&A) ---
 window.abrirDetalle = (id) => {
     const p = productos.find(i => i.id === id);
     if(!p) return;
@@ -460,10 +604,51 @@ window.abrirDetalle = (id) => {
         `;
     }
 
+    // CONSTRUCCIÓN DINÁMICA DE BOTONES DE VARIANTES
+    let variantsHtml = "";
+    if (p.opciones) {
+        variantsHtml = `<div class="product-variants" style="margin-top: 15px; border-top: 1px dashed var(--border-color); padding-top: 15px;">`;
+        for (let [opType, opValues] of Object.entries(p.opciones)) {
+            variantsHtml += `
+                <div class="variant-group">
+                    <span style="display:block; font-weight:700; margin-bottom:8px; font-size:0.85rem; color:var(--text-sub); text-transform:uppercase;">${opType}:</span>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        ${opValues.map((val, idx) => `<button class="var-btn ${idx===0 ? 'active' : ''}" data-type="${opType}" data-val="${val}" onclick="selectVariant(this)">${val}</button>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        variantsHtml += `</div>`;
+    }
+
+    // CONSTRUCCIÓN DE GALERÍA MULTIVISTA
+    let galeria = p.galeria || [p.img];
+    let thumbnailsHtml = "";
+    if(galeria.length > 1) {
+        thumbnailsHtml = `<div class="thumbnails-wrapper">
+            ${galeria.map((imgSrc, idx) => `
+                <img src="${imgSrc}" class="thumbnail-img ${idx === 0 ? 'active-thumb' : ''}" onclick="cambiarImagenPrincipal(this, '${imgSrc}')">
+            `).join('')}
+        </div>`;
+    }
+
+    // GATILLOS DE URGENCIA PARA EL MODAL (PRUEBA SOCIAL + STOCK)
+    const espectadoresAleatorios = Math.floor(Math.random() * (18 - 4 + 1)) + 4;
+    const gatilloViewers = !estaAgotado ? `<div class="urgency-viewers"><span class="blink-dot"></span> ${espectadoresAleatorios} personas están viendo esto ahora</div>` : '';
+    const gatilloStockModal = (!estaAgotado && p.stock <= 5) ? `<div class="urgency-stock" style="font-size: 0.9rem; padding: 8px 12px;">⏳ ¡No lo dejes escapar! Solo quedan ${p.stock} en nuestro almacén.</div>` : '';
+
+    // Cargar preguntas asociadas del localStorage
+    obtenerPreguntasProducto(p.id);
+
     body.innerHTML = `
         <div class="product-images" style="position:relative;">
-            ${p.descuento > 0 ? `<div class="badge-discount" style="top: 20px; left: 20px; font-size: 1rem; padding: 8px 15px;">-${p.descuento}% OFF</div>` : ''}
-            <img src="${p.img}" class="main-img">
+            ${p.descuento > 0 ? `<div class="badge-discount" style="top: 20px; left: 20px; z-index: 10; font-size: 1rem; padding: 8px 15px;">-${p.descuento}% OFF</div>` : ''}
+            <div class="product-gallery-container">
+                <div class="main-image-wrapper" id="zoom-wrapper" onmousemove="zoomIn(event)" onmouseleave="zoomOut()">
+                    <img src="${p.img}" class="main-img" id="main-product-img">
+                </div>
+                ${thumbnailsHtml}
+            </div>
         </div>
         <div class="product-info">
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 5px;">${p.nombre}</h2>
@@ -472,14 +657,32 @@ window.abrirDetalle = (id) => {
                 <span class="stars">${rate.starsStr}</span>
                 <span class="reviews-count" style="font-size: 0.95rem;">${rate.rating} de 5 estrellas (${rate.reviews} valoraciones)</span>
             </div>
-
+            
+            ${gatilloViewers}
             ${priceDetailsHtml}
+            ${variantsHtml}
             
             <p style="margin: 20px 0; color: var(--text-sub)">Este producto cuenta con control estricto de inventario y garantía oficial de HUMAN STORE.</p>
+            
+            ${gatilloStockModal}
             <p style="font-weight:bold; margin-bottom:15px; color:${!estaAgotado ? '#10B981' : '#EF4444'}">Existencias reales: ${p.stock} unidades.</p>
-            <button class="btn-primary" ${estaAgotado ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">${!estaAgotado ? 'Añadir al Carrito' : 'Agotado'}</button>
-        </div>`;
+            
+            <button class="btn-primary" ${estaAgotado ? 'disabled' : ''} onclick="agregarCarrito(${p.id}, true)">${!estaAgotado ? 'Confirmar y Añadir al Carrito' : 'Agotado'}</button>
+        </div>
+        
+        <!-- SECCIÓN DE PREGUNTAS Y RESPUESTAS INCORPORADA -->
+        <div class="qa-container-block">
+            <h3 class="qa-title">✨ Consultas sobre el producto</h3>
+            <div class="qa-form-wrapper">
+                <input type="text" id="input-nueva-pregunta" class="checkout-input" placeholder="Escribe tu duda (Ej: ¿Es compatible con PS5?, ¿Hacen envíos hoy?)">
+                <button class="btn-checkout qa-btn-ask" onclick="hacerPregunta(${p.id})">Preguntar</button>
+            </div>
+            <div id="qa-items-list" class="qa-items-feed"></div>
+        </div>
+    `;
+    
     document.getElementById('modal-detalle').style.display = 'block';
+    window.refreshQAList(p.id);
 };
 
 function cerrarModalGeneral() {
@@ -493,7 +696,8 @@ function cerrarModalGeneral() {
     localStorage.removeItem('human_store_opened_product');
 }
 
-window.agregarCarrito = (id) => {
+// --- ETIQUETA: LÓGICA DE AGREGADO CON COMPATIBILIDAD DE VARIANTES ---
+window.agregarCarrito = (id, desdeModal = false) => {
     if (!usuarioLogueado) {
         showToast("🔑 Identifícate para una experiencia de compra completa");
         const welcomeScr = document.getElementById('welcome-screen');
@@ -503,7 +707,26 @@ window.agregarCarrito = (id) => {
     const original = productos.find(p => p.id === id);
     if(original.stock <= 0) return showToast("❌ Producto agotado");
 
-    const existe = carrito.find(i => i.id === id);
+    let varText = "";
+    if (original.opciones) {
+        if (!desdeModal) {
+            abrirDetalle(id);
+            return showToast("⚠️ Por favor escoge tu talla o capacidad antes de comprar.");
+        }
+        
+        const selected = [];
+        document.querySelectorAll('.variant-group').forEach(group => {
+            const activeBtn = group.querySelector('.var-btn.active');
+            if(activeBtn) {
+                selected.push(`${activeBtn.dataset.type}: ${activeBtn.dataset.val}`);
+            }
+        });
+        varText = selected.join(" | ");
+    }
+
+    const cartId = id + (varText ? `-${varText}` : "");
+    const existe = carrito.find(i => i.cartId === cartId);
+
     if(existe) {
         if(existe.qty < original.stock) { 
             existe.qty++; showToast("🛒 Carrito actualizado"); 
@@ -511,8 +734,9 @@ window.agregarCarrito = (id) => {
             showToast("❌ Stock máximo superado"); 
         }
     } else {
-        carrito.push({...original, qty: 1});
+        carrito.push({...original, qty: 1, cartId: cartId, variantesTexto: varText});
         showToast("🛒 Añadido al carrito");
+        if(desdeModal) cerrarModalGeneral(); 
     }
     actualizarTodo();
 };
@@ -527,11 +751,15 @@ function actualizarTodo() {
         carrito.forEach((item, i) => {
             total += (item.precio * item.qty);
             count += item.qty;
+            
+            let varsHtmlInfo = item.variantesTexto ? `<div style="font-size: 0.75rem; color: var(--text-sub); margin-top: 2px;">${item.variantesTexto}</div>` : "";
+
             list.innerHTML += `
                 <div class="cart-item">
                     <img src="${item.img}" class="cart-item-img">
                     <div class="cart-item-info">
                         <h4>${item.nombre}</h4>
+                        ${varsHtmlInfo}
                         <div class="cart-qty-controls">
                             <button class="qty-btn" onclick="cambiarCant(${i}, -1)">-</button>
                             <span style="font-weight: 900">${item.qty}</span>
@@ -550,6 +778,28 @@ function actualizarTodo() {
     if(document.getElementById('total-bs')) document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2 });
     if(document.getElementById('cart-count')) document.getElementById('cart-count').innerText = count;
 
+    const umbralEnvio = 50;
+    const shippingText = document.getElementById('shipping-progress-text');
+    const shippingFill = document.getElementById('shipping-bar-fill');
+    
+    if (shippingText && shippingFill) {
+        if (total === 0) {
+            shippingText.innerHTML = `Agrega <strong>$${umbralEnvio.toFixed(2)}</strong> para 🚚 Envío Gratis`;
+            shippingFill.style.width = '0%';
+            shippingFill.classList.remove('success');
+        } else if (total < umbralEnvio) {
+            const faltante = umbralEnvio - total;
+            const porcentaje = (total / umbralEnvio) * 100;
+            shippingText.innerHTML = `¡Te faltan <strong>$${faltante.toFixed(2)}</strong> para 🚚 Envío Gratis!`;
+            shippingFill.style.width = `${porcentaje}%`;
+            shippingFill.classList.remove('success');
+        } else {
+            shippingText.innerHTML = `¡Felicidades! Tienes <strong>🚚 Envío Gratis</strong>`;
+            shippingFill.style.width = '100%';
+            shippingFill.classList.add('success');
+        }
+    }
+
     actualizarSugerenciasCarrito();
 }
 
@@ -563,7 +813,7 @@ window.cambiarCant = (index, delta) => {
     actualizarTodo();
 };
 
-window.quitar = (i) => { carrito.splice(i, 1); showToast("🗑️ Producto removido"); actualizarTodo(); };
+window.quitar = (index) => { carrito.splice(index, 1); showToast("🗑️ Producto removido"); actualizarTodo(); };
 
 function irASeccionCheckout(mostrarToast = true) {
     document.getElementById('modal-carrito').style.display = 'none';
@@ -574,7 +824,8 @@ function irASeccionCheckout(mostrarToast = true) {
     const list = document.getElementById('checkout-items-list');
     list.innerHTML = "";
     carrito.forEach(i => {
-        list.innerHTML += `<p>• ${i.nombre} (x${i.qty}) - $${(i.precio * i.qty).toFixed(2)} USD</p>`;
+        let textVars = i.variantesTexto ? ` <i>(${i.variantesTexto})</i>` : "";
+        list.innerHTML += `<p style="margin-bottom: 5px;">• ${i.nombre}${textVars} (x${i.qty}) - $${(i.precio * i.qty).toFixed(2)} USD</p>`;
     });
     
     let totalUsdCalculado = 0;
@@ -614,9 +865,11 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
 
     let paymentDetailsText = "";
     if (paymentMethod === "Pago Móvil") {
+        const telEmisor = document.getElementById('pm-telefono-origen').value.trim();
         const ref = document.getElementById('pm-referencia').value.trim();
-        if(!ref || ref.length < 4) return showToast("⚠️ Ingresa los últimos números de referencia del Pago Móvil");
-        paymentDetailsText = `%0A🧾 *Referencia:* ${ref}`;
+        if(!telEmisor) return showToast("⚠️ Ingresa tu número emisor de Pago Móvil");
+        if(!ref || ref.length < 4) return showToast("⚠️ Ingresa los últimos números de referencia");
+        paymentDetailsText = `%0A📱 *Teléfono Emisor:* ${telEmisor}%0A🧾 *Referencia:* ${ref}`;
     } else if (paymentMethod === "Zelle") {
         const zmail = document.getElementById('zelle-email').value.trim();
         if(!zmail) return showToast("⚠️ Ingresa el correo Zelle desde donde harás el pago");
@@ -644,7 +897,12 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
         idPedido: Math.floor(100000 + Math.random() * 900000),
         fecha: new Date().toLocaleDateString('es-VE'),
         hora: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' }),
-        items: carrito.map(i => ({ nombre: i.nombre, qty: i.qty, subtotal: i.precio * i.qty })),
+        items: carrito.map(i => ({ 
+            nombre: i.nombre, 
+            qty: i.qty, 
+            subtotal: i.precio * i.qty, 
+            variantes: i.variantesTexto 
+        })),
         totalUsd: totalUsd,
         totalBs: totalBs,
         metodoPago: paymentMethod,     
@@ -662,7 +920,7 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
                 `🚚 *Entrega:* ${deliveryMethod}` + addressText + `%0A` +
                 `💳 *Pago:* ${paymentMethod}` + paymentDetailsText + `%0A%0A` +
                 `*🛒 ARTÍCULOS:*%0A` +
-                carrito.map(i => `▪️ ${i.nombre} (x${i.qty})%0A`).join("") + 
+                carrito.map(i => `▪️ ${i.nombre} ${i.variantesTexto ? `[${i.variantesTexto}]` : ''} (x${i.qty})%0A`).join("") + 
                 `%0A💰 *TOTAL:* $${totalUsd} / ${totalBs} Bs.`;
     
     carrito = [];
@@ -796,6 +1054,15 @@ function actualizarBotonLoginNavbar() {
     }
 }
 
+window.guardarMetodosPago = () => {
+    const pm = document.getElementById('prof-pm-phone').value.trim();
+    const zelle = document.getElementById('prof-zelle-email').value.trim();
+    const paypal = document.getElementById('prof-paypal-email').value.trim();
+    const datos = { pm, zelle, paypal };
+    localStorage.setItem(`paymentData_${usuarioActualCorreo}`, JSON.stringify(datos));
+    showToast("💾 Métodos de pago guardados exitosamente");
+};
+
 function configurarMenuUsuarioDesplegable() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
@@ -859,9 +1126,15 @@ function configurarMenuUsuarioDesplegable() {
                 localStorage.setItem('human_store_opened_modal', 'perfil');
                 const pBody = document.getElementById('perfil-body');
                 const infoUser = localStorage.getItem(`userdata_${usuarioActualCorreo}`);
+                
+                const savedPayRaw = localStorage.getItem(`paymentData_${usuarioActualCorreo}`);
+                const savedPay = savedPayRaw ? JSON.parse(savedPayRaw) : { pm: "", zelle: "", paypal: "" };
+
+                let profileHtml = "";
+
                 if (infoUser) {
                     const data = JSON.parse(infoUser);
-                    pBody.innerHTML = `
+                    profileHtml = `
                         <div class="profile-info-box">
                             <div class="profile-field"><span class="profile-label">Nombres:</span><span class="profile-value">${data.nombres}</span></div>
                             <div class="profile-field"><span class="profile-label">Apellidos:</span><span class="profile-value">${data.apellidos}</span></div>
@@ -869,12 +1142,32 @@ function configurarMenuUsuarioDesplegable() {
                             <div class="profile-field"><span class="profile-label">Teléfono:</span><span class="profile-value">${data.telefono}</span></div>
                         </div>`;
                 } else {
-                    pBody.innerHTML = `
+                    profileHtml = `
                         <div class="profile-info-box">
                             <div class="profile-field"><span class="profile-label">Correo:</span><span class="profile-value">${usuarioActualCorreo}</span></div>
                             <div class="profile-field"><span class="profile-label">Rango:</span><span class="profile-value">Cliente Premium</span></div>
                         </div>`;
                 }
+
+                profileHtml += `
+                    <div class="profile-payment-box" style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed var(--border-color);">
+                        <h4 style="color: var(--secondary); margin-bottom: 15px; font-family: 'Orbitron'; font-size: 1rem;">💳 Mis Métodos Guardados</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 15px;">Guarda tus datos para agilizar el proceso de compra.</p>
+                        
+                        <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-main);">Teléfono emisor (Pago Móvil)</label>
+                        <input type="tel" id="prof-pm-phone" class="checkout-input" style="margin-bottom:10px; padding: 10px;" placeholder="Ej: 04141234567" value="${savedPay.pm}">
+                        
+                        <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-main);">Correo asociado a Zelle</label>
+                        <input type="email" id="prof-zelle-email" class="checkout-input" style="margin-bottom:10px; padding: 10px;" placeholder="Ej: micorreo@zelle.com" value="${savedPay.zelle}">
+                        
+                        <label style="font-size: 0.8rem; font-weight: bold; color: var(--text-main);">Correo asociado a PayPal</label>
+                        <input type="email" id="prof-paypal-email" class="checkout-input" style="margin-bottom:15px; padding: 10px;" placeholder="Ej: micorreo@paypal.com" value="${savedPay.paypal}">
+                        
+                        <button class="btn-primary" onclick="guardarMetodosPago()" style="padding: 12px;">Guardar Datos de Pago</button>
+                    </div>
+                `;
+
+                pBody.innerHTML = profileHtml;
                 document.getElementById('modal-perfil').style.display = 'block';
             }
 
@@ -889,12 +1182,15 @@ function configurarMenuUsuarioDesplegable() {
                 } else {
                     hBody.innerHTML = "";
                     listaPedidos.forEach(ped => {
-                        let itemsHtml = ped.items.map(i => `<li>• ${i.nombre} <strong>(x${i.qty})</strong></li>`).join("");
+                        let itemsHtml = ped.items.map(i => {
+                            let vt = i.variantes ? ` <br><span style="font-size:0.75rem; color:var(--secondary)">[${i.variantes}]</span>` : "";
+                            return `<li style="margin-bottom:8px;">• ${i.nombre} <strong>(x${i.qty})</strong>${vt}</li>`;
+                        }).join("");
                         
                         hBody.innerHTML += `
                             <div class="pedido-card">
                                 <div class="pedido-header"><span>🆔 #ID: <strong>${ped.idPedido}</strong></span><span>📅 ${ped.fecha}</span></div>
-                                <ul style="margin: 0; padding-left: 15px; font-size: 0.9rem;">${itemsHtml}</ul>
+                                <ul style="margin: 0; padding-left: 15px; font-size: 0.9rem; list-style-type: none;">${itemsHtml}</ul>
                                 <div class="pedido-totales"><span style="color: var(--text-sub);">Total:</span><span style="color: var(--success);">$${ped.totalUsd} / ${ped.totalBs}</span></div>
                                 <button class="btn-pdf" onclick="descargarRecibo('${ped.idPedido}')">📄 Descargar Recibo PDF</button>
                             </div>`;
@@ -1015,7 +1311,7 @@ function renderFavoritos() {
                         <h4 style="margin: 0;">${item.nombre}</h4>
                         ${precioHtmlFavorites}
                     </div>
-                    <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem; margin-left: 10px; white-space: nowrap;" ${item.stock <= 0 ? 'disabled' : ''} onclick="agregarCarrito(${item.id})">🛒 Llevar</button>
+                    <button class="btn-primary" style="padding:6px 12px; font-size:0.8rem; margin-left: 10px; white-space: nowrap;" ${item.stock <= 0 ? 'disabled' : ''} onclick="agregarCarrito(${item.id}, false)">🛒 Llevar</button>
                     <button class="btn-remove" style="margin-left: 10px;" onclick="toggleFavorito(${item.id})">×</button>
                 </div>`;
         });
@@ -1024,7 +1320,7 @@ function renderFavoritos() {
 
 document.getElementById('btn-llevar-todo-fav').onclick = () => {
     if (!usuarioLogueado) { cerrarModalGeneral(); document.getElementById('welcome-screen').style.display = 'flex'; return; }
-    favoritos.forEach(p => { if(p.stock > 0) agregarCarrito(p.id); });
+    favoritos.forEach(p => { if(p.stock > 0) agregarCarrito(p.id, false); });
     favoritos = []; 
     localStorage.setItem('human_store_favs', JSON.stringify(favoritos));
     actualizarContadorFavoritos();
@@ -1082,8 +1378,9 @@ window.descargarRecibo = (idPedidoStr) => {
         const tableRows = [];
 
         pedidoData.items.forEach(item => {
+            const nombreConVariante = item.variantes ? `${item.nombre}\n(${item.variantes})` : item.nombre;
             const rowData = [
-                item.nombre,
+                nombreConVariante,
                 item.qty.toString(),
                 `$${item.subtotal.toFixed(2)}`
             ];
@@ -1117,3 +1414,27 @@ window.descargarRecibo = (idPedidoStr) => {
         showToast("❌ Error al generar el PDF. Verifica tu conexión.");
     }
 }
+
+window.cambiarImagenPrincipal = (elem, src) => {
+    document.getElementById('main-product-img').src = src;
+    document.querySelectorAll('.thumbnail-img').forEach(img => img.classList.remove('active-thumb'));
+    elem.classList.add('active-thumb');
+};
+
+window.zoomIn = (e) => {
+    const wrapper = document.getElementById('zoom-wrapper');
+    const img = document.getElementById('main-product-img');
+    const { left, top, width, height } = wrapper.getBoundingClientRect();
+    
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    
+    img.style.transformOrigin = `${x}% ${y}%`;
+    img.style.transform = "scale(2.5)"; 
+};
+
+window.zoomOut = () => {
+    const img = document.getElementById('main-product-img');
+    img.style.transformOrigin = "center center";
+    img.style.transform = "scale(1)";
+};
