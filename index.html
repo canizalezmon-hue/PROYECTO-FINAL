@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QLLQD0F0TM"></script>
+    <!-- ETIQUETA: CONFIGURACIÓN DE GOOGLE ANALYTICS -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QLLQD0F0TM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -9,28 +10,37 @@
     
       gtag('config', 'G-QLLQD0F0TM');
     </script>
+    
+    <!-- LIBRERÍAS JSPDF PARA GENERAR RECIBOS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HUMAN STORE | Componentes & Setup Premium</title> 
 
-        <meta name="description" content="Explora nuestra tienda online con el mejor catálogo de productos. Añade tus artículos favoritos al carrito y compra de forma rápida y segura.">
+    <!-- ETIQUETA: METADATOS PARA SEO Y BÚSQUEDAS -->
+    <meta name="description" content="Explora nuestra tienda online con el mejor catálogo de productos. Añade tus artículos favoritos al carrito y compra de forma rápida y segura.">
     <meta name="keywords" content="tienda online, comprar productos, carrito de compras, ofertas, tecnología, moda, mejores precios">
     <meta name="author" content="Tu Tienda Online">  
 
-        <meta property="og:title" content="Tu Tienda Online | El mejor catálogo a un clic" />
+    <!-- ETIQUETA: PROTOCOLO OPEN GRAPH PARA COMPARTIR EN REDES -->
+    <meta property="og:title" content="Tu Tienda Online | El mejor catálogo a un clic" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://tutienda.com" />
     <meta property="og:image" content="https://tutienda.com/assets/banner-compartir.jpg" />
     <meta property="og:description" content="Descubre ofertas exclusivas, guarda tus favoritos y gestiona tu carrito de compras de manera fácil y segura." />
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- ETIQUETA: VINCULACIÓN DE FUENTES GOOGLE FONTS Y HOJA DE ESTILOS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-light">
 
-        <div id="preloader">
+    <!-- ETIQUETA: PANTALLA DE CARGA (PRELOADER INICIAL) -->
+    <div id="preloader">
         <div class="loader-content">
             <div class="logo-large">HUMAN STORE</div>
             <div class="loader-bar"></div>
@@ -38,10 +48,13 @@
         </div>
     </div>
 
-        <div id="toast-container"></div>
+    <!-- ETIQUETA: CONTENEDOR FLOTANTE PARA ALERTAS (TOASTS) -->
+    <div id="toast-container"></div>
 
-        <div id="welcome-screen" class="welcome-screen" style="display: none;">
-                <div class="scene" style="--n: 6;">
+    <!-- ETIQUETA: INTERFAZ DE BIENVENIDA Y AUTENTICACIÓN (LOGIN/REGISTRO/RECUPERACIÓN) -->
+    <div id="welcome-screen" class="welcome-screen" style="display: none;">
+        <!-- Carrusel 3D Animado de Fondo -->
+        <div class="scene" style="--n: 6;">
             <div class="a3d">
                 <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop" class="card" style="--i: 0" alt="Calzado">
                 <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=600&auto=format&fit=crop" class="card" style="--i: 1" alt="Tecnología">
@@ -52,22 +65,25 @@
             </div>
         </div>
 
-                <div class="welcome-box">
+        <!-- Caja del Formulario Central -->
+        <div class="welcome-box">
             <div class="logo-large">HUMAN STORE</div>
             <p id="auth-msg" style="margin-bottom: 20px;">Identifícate para gestionar tu carrito y pedidos</p>
 
-                        <div id="auth-nav-tabs" class="auth-tabs">
+            <!-- CONTENEDOR DE PESTAÑAS DOS BOTONES SEPARADOS -->
+            <div id="auth-nav-tabs" class="auth-tabs">
                 <button id="tab-login" class="tab-btn active">Ingresar</button>
                 <button id="tab-register" class="tab-btn">Registrarse</button>
             </div>
 
             <div id="auth-form">
-                                <div id="extended-register-fields" style="display: none; flex-direction: column;">
+                <!-- Campos Adicionales para Registro Nuevo -->
+                <div id="extended-register-fields" style="display: none; flex-direction: column;">
                     <input type="text" id="reg-nombres" placeholder="Nombres">
                     <input type="text" id="reg-apellidos" placeholder="Apellidos">
 
                     <div class="phone-container">
-                        <select id="reg-country-code">
+                        <select id="reg-country-code" class="checkout-input-select">
                             <option value="+58">🇻🇪 +58</option>
                             <option value="+1">🇺🇸 +1</option>
                             <option value="+34">🇪🇸 +34</option>
@@ -78,18 +94,21 @@
                     </div>
                 </div>
 
-                                <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
+                <!-- Credenciales Base -->
+                <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
 
                 <div id="login-password-area">
                     <input type="password" id="password" placeholder="Contraseña" required>
                 </div>
 
-                                <div id="verification-code-area" style="display: none; margin-bottom: 20px;">
+                <!-- Campo para Código OTP de Verificación -->
+                <div id="verification-code-area" style="display: none; margin-bottom: 20px;">
                     <p style="font-size: 0.8rem; margin-bottom: 8px;">Introduce el código de 6 dígitos enviado</p>
                     <input type="text" id="auth-verification-code" placeholder="Código de Verificación (Ej: 123456)" maxlength="6">
                 </div>
 
-                                <div id="new-password-area" style="display: none;">
+                <!-- Campos de Cambio de Clave en Recuperación -->
+                <div id="new-password-area" style="display: none;">
                     <input type="password" id="new-password" placeholder="Nueva Contraseña">
                     <input type="password" id="new-password-confirm" placeholder="Confirmar Nueva Contraseña">
                 </div>
@@ -97,7 +116,8 @@
                 <button id="btn-auth-action" class="btn-auth">Entrar</button>
             </div>
 
-                        <div class="auth-support-links" style="margin-top: 20px; font-size: 0.85rem;">
+            <!-- Links auxiliares de Soporte -->
+            <div class="auth-support-links" style="margin-top: 20px; font-size: 0.85rem;">
                 <a href="#" id="link-forgot-password" style="text-decoration: none; font-weight: 600; display: block; margin-bottom: 10px;">¿Olvidaste tu contraseña?</a>
                 <a href="#" id="link-back-to-auth" style="color: var(--accent); text-decoration: none; font-weight: 700; display: none; margin-bottom: 10px;">← Volver al Login</a>
             </div>
@@ -106,8 +126,10 @@
         </div>
     </div>
 
-        <div id="app-container" class="hidden-app">
-                <nav class="navbar">
+    <!-- ETIQUETA: CONTENEDOR DE LA TIENDA ACTIVA -->
+    <div id="app-container" class="hidden-app">
+        <!-- Barra de Navegación (Navbar) -->
+        <nav class="navbar">
             <div class="logo" onclick="location.reload()" style="cursor:pointer">HUMAN STORE</div>
 
             <div class="search-bar">
@@ -128,23 +150,37 @@
             </ul>
         </nav>
 
-                <div class="hero-banner">
+        <!-- Banner Publicitario Principal (Hero) -->
+        <div class="hero-banner">
             <div class="hero-content">
                 <h1>Potencia Tu Setup Al Máximo</h1>
                 <p>Descubre componentes premium con envíos a todo el país.</p>
             </div>
         </div>
 
-                <div id="store-content" class="container">
-                        <aside class="filters">
+        <!-- Catálogo Principal de Ventas -->
+        <div id="store-content" class="container">
+            <!-- Barra Lateral: Filtros -->
+            <aside class="filters">
                 <h3>Categorías</h3>
                 <button class="filter-btn active" data-category="all">Todos los Productos</button>
                 <button class="filter-btn" data-category="electronica">Electrónica</button>
                 <button class="filter-btn" data-category="hogar">Hogar</button>
                 <button class="filter-btn" data-category="ropa">Ropa</button>
+
+                <!-- FILTRO DE PRECIO AVANZADO -->
+                <h3 style="margin-top: 35px; border-top: 1px dashed var(--border-color); padding-top: 20px;">Presupuesto Máx.</h3>
+                <div class="price-filter-container">
+                    <input type="range" id="price-slider" min="10" max="1500" step="10" value="1500">
+                    <div class="price-display">
+                        <span>$0</span>
+                        <span id="price-slider-value">$1500</span>
+                    </div>
+                </div>
             </aside>
 
-                        <main style="flex: 1; display: flex; flex-direction: column;">
+            <!-- Rejilla Dinámica de Productos -->
+            <main style="flex: 1; display: flex; flex-direction: column;">
                 <div id="search-error-msg" class="no-results-message" style="display: none;">
                     ❌ No se encontraron productos que coincidan con tu búsqueda.
                 </div>
@@ -152,11 +188,13 @@
             </main>
         </div>
 
-                <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
+        <!-- ETIQUETA: PANTALLA DE PROCESAMIENTO DE PAGO (CHECKOUT) -->
+        <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
             <button id="btn-back-store" class="btn-primary" style="width: fit-content; margin-bottom: 20px; cursor:pointer">← Volver a la Tienda</button>
 
             <div class="checkout-layout">
-                                <div class="checkout-box summary-box">
+                <!-- Bloque de Resumen del Carrito -->
+                <div class="checkout-box summary-box">
                     <h2 class="checkout-title">Resumen de Compra</h2>
                     <div id="checkout-items-list" class="checkout-items-scroll"></div>
                     <div class="checkout-totals">
@@ -171,12 +209,71 @@
                     </div>
                 </div>
 
-                                <div class="checkout-box payment-box">
+                <!-- Bloque de Despacho e Integración Final -->
+                <div class="checkout-box payment-box">
                     <h2 class="checkout-title">Confirmación Final</h2>
-                    <p>Tu pedido será enviado vía WhatsApp para coordinar el pago y la entrega.</p>
+                    <p style="margin-bottom: 20px; color: var(--text-sub);">Completa estos datos para agilizar tu compra vía WhatsApp.</p>
+
+                    <!-- FORMULARIO PRE-WHATSAPP AVANZADO -->
+                    <div id="pre-whatsapp-form" style="margin-bottom: 25px; text-align: left;">
+                        
+                        <label style="font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; display: block; color: var(--text-main);">🚚 Método de Entrega:</label>
+                        <div class="select-wrapper">
+                            <select id="checkout-delivery" class="checkout-input checkout-input-select" style="margin-bottom: 15px;">
+                                <option value="Pick-up (Tienda Física)">Tienda Física (Pick-up)</option>
+                                <option value="Delivery (Caracas)">Delivery (Caracas)</option>
+                                <option value="Envío Nacional (MRW/Zoom)">Envío Nacional (MRW/Zoom)</option>
+                            </select>
+                        </div>
+
+                        <div id="delivery-address-area" style="display: none; margin-bottom: 15px;">
+                            <label style="font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; display: block; color: var(--text-main);">📍 Dirección de Entrega:</label>
+                            <textarea id="checkout-address" class="checkout-input" rows="2" placeholder="Ej: Av. Principal, Edificio X, Apto Y..."></textarea>
+                        </div>
+
+                        <label style="font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; display: block; color: var(--text-main);">💳 Método de Pago Preferido:</label>
+                        <div class="select-wrapper">
+                            <select id="checkout-payment" class="checkout-input checkout-input-select" style="margin-bottom: 15px;">
+                                <option value="" disabled selected>Seleccione una opción...</option>
+                                <option value="Pago Móvil">Pago Móvil (Bs)</option>
+                                <option value="Zelle">Zelle (USD)</option>
+                                <option value="PayPal">PayPal (USD)</option>
+                                <option value="Binance">Binance Pay (USDT)</option>
+                                <option value="Efectivo Divisas">Efectivo (Pick-up / Delivery)</option>
+                            </select>
+                        </div>
+
+                        <!-- Cajas Dinámicas de Información y Captura de Datos -->
+                        <div id="pago-movil-info" class="payment-dynamic-box" style="display: none;">
+                            <p style="color: var(--secondary); margin-top:0;"><strong>📱 Datos para Pago Móvil:</strong></p>
+                            <p><strong>Banco:</strong> Venezuela (0102)</p>
+                            <p><strong>Teléfono:</strong> 0412-0000000</p>
+                            <p><strong>Cédula:</strong> V-12.345.678</p>
+                            <input type="text" id="pm-referencia" class="checkout-input mt-2" placeholder="Ingresa los últimos 6 números de referencia" maxlength="6">
+                        </div>
+
+                        <div id="zelle-info" class="payment-dynamic-box" style="display: none;">
+                            <p style="color: var(--secondary); margin-top:0;"><strong>💵 Pago por Zelle:</strong></p>
+                            <p>Los datos Zelle te llegarán al chat automáticamente. Por favor, indica abajo el correo electrónico desde donde realizarás el pago:</p>
+                            <input type="email" id="zelle-email" class="checkout-input mt-2" placeholder="ejemplo@correo.com">
+                        </div>
+
+                        <div id="paypal-info" class="payment-dynamic-box" style="display: none;">
+                            <p style="color: var(--secondary); margin-top:0;"><strong>🌐 Pago por PayPal:</strong></p>
+                            <p>Generaremos tu formato de cobro. Por favor, indica tu correo asociado a PayPal para enviarte la solicitud:</p>
+                            <input type="email" id="paypal-email" class="checkout-input mt-2" placeholder="tu-correo@paypal.com">
+                        </div>
+
+                        <div id="binance-info" class="payment-dynamic-box" style="display: none;">
+                            <p style="color: var(--secondary); margin-top:0;"><strong>🟡 Pago por Binance Pay:</strong></p>
+                            <p>Realiza tu pago en USDT a nuestro identificador (Pay ID). Haz clic en el botón de WhatsApp cuando el pago esté hecho.</p>
+                            <div class="binance-id-box">HUMANSTORE265</div>
+                        </div>
+
+                    </div>
 
                     <div class="payment-options">
-                        <button class="pay-method-btn active">
+                        <button class="pay-method-btn active" style="pointer-events: none;">
                             <i>📱</i> WhatsApp Oficial
                         </button>
                     </div>
@@ -186,7 +283,8 @@
             </div>
         </div>
 
-                <footer class="main-footer">
+        <!-- ETIQUETA: PIE DE PÁGINA CORPORATIVO (FOOTER) -->
+        <footer class="main-footer">
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="logo" style="font-size: 1.5rem; margin-bottom: 10px;">HUMAN STORE</div>
@@ -229,19 +327,24 @@
         </footer>
     </div>
 
-            <div id="modal-detalle" class="modal">
+    <!-- ETIQUETA: CONTENEDORES MODALES EMERGENTES (MODALS) -->
+
+    <!-- Modal: Ficha Detallada del Producto -->
+    <div id="modal-detalle" class="modal">
         <div class="modal-content-lg">
             <span class="close" id="close-detalle">×</span>
             <div id="detalle-body" class="product-layout"></div>
         </div>
     </div>
 
-        <div id="modal-carrito" class="modal">
+    <!-- Modal: Carrito Desplegable -->
+    <div id="modal-carrito" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <span class="close" id="close-carrito">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 20px;">Tu Carrito de Compras</h2>
             <div id="cart-items"></div>
 
+            <!-- MOTOR DE SUGERENCIAS INTELIGENTES -->
             <div id="cart-suggestions-container" style="display: none; border-top: 2px dashed var(--border-color); padding-top: 15px; margin-top: 10px; margin-bottom: 15px;">
                 <h4 style="font-family: 'Orbitron'; font-size: 0.95rem; color: var(--secondary); margin-bottom: 15px;">🔥 Sugerencias Inteligentes para ti:</h4>
                 <div id="cart-suggestions-list" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;"></div>
@@ -261,7 +364,8 @@
         </div>
     </div>
 
-        <div id="modal-terminos" class="modal">
+    <!-- Modal: Términos Contractuales de Compra -->
+    <div id="modal-terminos" class="modal">
         <div class="modal-content" style="max-width: 650px;">
             <span class="close" id="close-terminos">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 15px; font-size: 1.4rem;">Términos de Compra</h2>
@@ -282,7 +386,8 @@
         </div>
     </div>
 
-        <div id="modal-favoritos" class="modal">
+    <!-- Modal: Panel de Favoritos Guardados -->
+    <div id="modal-favoritos" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <span class="close" id="close-favoritos">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 20px;">Mis Favoritos</h2>
@@ -293,7 +398,8 @@
         </div>
     </div>
 
-        <div id="modal-perfil" class="modal">
+    <!-- Modal: Perfil Técnico de la Cuenta -->
+    <div id="modal-perfil" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <span class="close" id="close-perfil">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">👤 Perfil de Usuario</h2>
@@ -301,7 +407,8 @@
         </div>
     </div>
 
-        <div id="modal-historial-pedidos" class="modal">
+    <!-- Modal: Historial Logs de Pedidos Realizados -->
+    <div id="modal-historial-pedidos" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close" id="close-historial">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">📦 Mis Pedidos</h2>
