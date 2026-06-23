@@ -184,6 +184,7 @@
                 <div id="search-error-msg" class="no-results-message" style="display: none;">
                     ❌ No se encontraron productos que coincidan con tu búsqueda.
                 </div>
+                <!-- Aquí se inyectan los Skeletons y los Productos -->
                 <div id="product-grid" class="grid"></div>
             </main>
         </div>
@@ -249,18 +250,22 @@
                             <p><strong>Banco:</strong> Venezuela (0102)</p>
                             <p><strong>Teléfono:</strong> 0412-0000000</p>
                             <p><strong>Cédula:</strong> V-12.345.678</p>
+                            <span id="pm-autofill-msg" style="display:none; color:var(--success); font-size:0.75rem; font-weight:bold;">✨ Dato recuperado</span>
+                            <input type="tel" id="pm-telefono-origen" class="checkout-input mt-2" placeholder="Tu número emisor (Ej: 04141234567)">
                             <input type="text" id="pm-referencia" class="checkout-input mt-2" placeholder="Ingresa los últimos 6 números de referencia" maxlength="6">
                         </div>
 
                         <div id="zelle-info" class="payment-dynamic-box" style="display: none;">
                             <p style="color: var(--secondary); margin-top:0;"><strong>💵 Pago por Zelle:</strong></p>
                             <p>Los datos Zelle te llegarán al chat automáticamente. Por favor, indica abajo el correo electrónico desde donde realizarás el pago:</p>
+                            <span id="zelle-autofill-msg" style="display:none; color:var(--success); font-size:0.75rem; font-weight:bold;">✨ Dato recuperado</span>
                             <input type="email" id="zelle-email" class="checkout-input mt-2" placeholder="ejemplo@correo.com">
                         </div>
 
                         <div id="paypal-info" class="payment-dynamic-box" style="display: none;">
                             <p style="color: var(--secondary); margin-top:0;"><strong>🌐 Pago por PayPal:</strong></p>
                             <p>Generaremos tu formato de cobro. Por favor, indica tu correo asociado a PayPal para enviarte la solicitud:</p>
+                            <span id="paypal-autofill-msg" style="display:none; color:var(--success); font-size:0.75rem; font-weight:bold;">✨ Dato recuperado</span>
                             <input type="email" id="paypal-email" class="checkout-input mt-2" placeholder="tu-correo@paypal.com">
                         </div>
 
@@ -342,6 +347,15 @@
         <div class="modal-content" style="max-width: 550px;">
             <span class="close" id="close-carrito">×</span>
             <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 20px;">Tu Carrito de Compras</h2>
+            
+            <!-- BARRA DE PROGRESO DE ENVÍO GRATUITO -->
+            <div class="shipping-progress-container">
+                <p id="shipping-progress-text" class="shipping-text">Calculando envío...</p>
+                <div class="shipping-bar-bg">
+                    <div id="shipping-bar-fill" class="shipping-bar-fill"></div>
+                </div>
+            </div>
+
             <div id="cart-items"></div>
 
             <!-- MOTOR DE SUGERENCIAS INTELIGENTES -->
