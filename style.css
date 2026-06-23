@@ -1,7 +1,7 @@
 /* ==========================================================================
    1. IMPORTACIÓN DE FUENTES EXTERNAS
    ========================================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=700;900&family=Montserrat:wght=400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Montserrat:wght@400;600;700;900&display=swap');
 
 /* ==========================================================================
    2. CONFIGURACIÓN DINÁMICA DE TEMAS CORREGIDA (LIGHT / DARK)
@@ -1058,7 +1058,7 @@ body {
 .main-img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 20px; }
 #cart-items, #fav-items { max-height: 420px; overflow-y: auto; padding-right: 12px; margin-bottom: 25px; }
 .cart-item { display: grid; grid-template-columns: 70px 1fr auto auto; align-items: center; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--border-color); }
-#cart-items img, .checkout-items-scroll img { width: 70px !important;    height: 70px !important;   object-fit: cover;         border-radius: 8px;        display: block; flex-shrink: 0; }
+#cart-items img, .checkout-items-scroll img { width: 70px !important;    height: 70px !important;   object-fit: cover;        border-radius: 8px;        display: block; flex-shrink: 0; }
 .cart-item-info h4 { margin: 0; font-size: 1rem; color: var(--text-main); }
 .cart-qty-controls { display: flex; align-items: center; gap: 15px; margin-top: 8px; }
 .qty-btn { background: var(--bg-main); border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-weight: 900; transition: 0.2s; color: var(--text-main); }
@@ -1174,3 +1174,176 @@ body {
 .suggestion-card span { font-size: 0.85rem; font-weight: 800; color: var(--secondary); }
 .btn-add-suggestion { background: var(--bg-main); color: var(--text-main); border: 1px solid var(--secondary); padding: 6px; font-size: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; font-family: 'Montserrat'; }
 .btn-add-suggestion:hover { background: var(--secondary); color: var(--primary); }
+
+/* ==========================================================================
+   28. FILTRO DE PRECIO AVANZADO (SLIDER)
+   ========================================================================== */
+.price-filter-container { margin-top: 15px; }
+#price-slider { -webkit-appearance: none; width: 100%; height: 6px; background: var(--border-color); border-radius: 5px; outline: none; transition: 0.3s; margin-bottom: 15px; }
+#price-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--secondary); cursor: pointer; border: 2px solid var(--primary); box-shadow: 0 0 10px rgba(212, 175, 55, 0.4); transition: 0.3s; }
+#price-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.price-display { display: flex; justify-content: space-between; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--text-main); font-weight: 700; }
+#price-slider-value { color: var(--secondary); font-size: 1rem; }
+
+/* ==========================================================================
+   29. BOTÓN GENERADOR DE PDF (HISTORIAL)
+   ========================================================================== */
+.btn-pdf { 
+    width: 100%; 
+    margin-top: 12px; 
+    padding: 10px; 
+    border-radius: 8px; 
+    background: rgba(212, 175, 55, 0.1); 
+    color: var(--secondary); 
+    font-family: 'Montserrat'; 
+    font-weight: 800; 
+    font-size: 0.85rem; 
+    border: 1px solid var(--secondary); 
+    cursor: pointer; 
+    transition: 0.3s; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px; 
+}
+.btn-pdf:hover { 
+    background: var(--secondary); 
+    color: var(--primary); 
+}
+
+/* ==========================================================================
+   30. FORMULARIO PRE-WHATSAPP (CHECKOUT AVANZADO) Y SELECTS
+   ========================================================================== */
+.checkout-input {
+    width: 100%;
+    padding: 14px 18px;
+    background: var(--bg-input);
+    border: 2px solid var(--border-input);
+    border-radius: 12px;
+    color: var(--text-input);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: 0.3s ease;
+    resize: vertical;
+}
+.checkout-input:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+}
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+.select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 18px;
+    top: 36%;
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: var(--secondary);
+}
+.checkout-input-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    padding-right: 40px;
+}
+
+/* ==========================================================================
+   31. CAJAS DINÁMICAS DE INFORMACIÓN DE PAGO
+   ========================================================================== */
+.payment-dynamic-box {
+    background: var(--bg-main);
+    border-left: 4px solid var(--secondary);
+    padding: 15px 20px;
+    border-radius: 0 12px 12px 0;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    animation: fadeIn 0.4s ease;
+}
+.payment-dynamic-box p {
+    margin: 5px 0;
+}
+.binance-id-box {
+    background: #1A1A1A;
+    color: #FCD535;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-top: 10px;
+    border: 1px solid #FCD535;
+}
+.mt-2 { margin-top: 10px; }
+
+/* ==========================================================================
+   32. SISTEMA DE RESEÑAS Y ESTRELLAS (PRUEBA SOCIAL)
+   ========================================================================== */
+.product-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 5px 0 10px 0;
+}
+.detail-rating {
+    justify-content: flex-start;
+    margin: 10px 0 20px 0;
+}
+.stars {
+    color: #F59E0B; 
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+}
+.reviews-count {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   33. SISTEMA DE DESCUENTOS Y OFERTAS AUTOMÁTICAS
+   ========================================================================== */
+.badge-discount {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #EF4444;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    z-index: 5;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
+    letter-spacing: 1px;
+}
+.card-sold-out .badge-discount {
+    top: 45px; /* Evitar que choque con la etiqueta de AGOTADO */
+}
+.price-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 5px 0;
+}
+.price-original {
+    color: var(--text-sub);
+    font-size: 0.95rem;
+    text-decoration: line-through;
+    font-weight: 600;
+    opacity: 0.7;
+}
+.price-discount {
+    color: var(--success) !important;
+    font-size: 1.2rem !important;
+    font-weight: 900;
+}
