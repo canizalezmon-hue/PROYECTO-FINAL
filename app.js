@@ -51,15 +51,40 @@ const catalogoInicial = [
     { id: 24, nombre: "Lámpara de Noche Vintage de Madera", precio: 35, cat: "hogar", stock: 11, img: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500" }
 ];
 
-// Inicialización de la base de datos local
+// --- ETIQUETA: INICIALIZACIÓN DE DB CON GENERADOR DE OFERTAS ALEATORIAS ---
 let productosExistentes = JSON.parse(localStorage.getItem('human_store_products_db'));
-if(!productosExistentes || productosExistentes.length !== catalogoInicial.length) {
-    localStorage.setItem('human_store_products_db', JSON.stringify(catalogoInicial));
-}
-let productos = JSON.parse(localStorage.getItem('human_store_products_db'));
 
+// Si no existe la DB o no tiene el nuevo formato de precioOriginal, generamos los descuentos
+if(!productosExistentes || productosExistentes.length !== catalogoInicial.length || !productosExistentes[0].hasOwnProperty('precioOriginal')) {
+    
+    let catalogoConDescuentos = catalogoInicial.map(p => ({ ...p, precioOriginal: p.precio, descuento: 0 }));
+
+    // Cada bloque de 4 productos, elegimos 1 al azar para meterle descuento (15% al 35%)
+    for (let i = 0; i < catalogoConDescuentos.length; i += 4) {
+        let maxIndex = Math.min(i + 3, catalogoConDescuentos.length - 1);
+        let randomIndex = Math.floor(Math.random() * (maxIndex - i + 1)) + i;
+        let randomDesc = Math.floor(Math.random() * (35 - 15 + 1)) + 15; 
+        
+        catalogoConDescuentos[randomIndex].descuento = randomDesc;
+        // Calculamos y sobreescribimos el precio actual
+        catalogoConDescuentos[randomIndex].precio = Number((catalogoConDescuentos[randomIndex].precioOriginal * (1 - (randomDesc / 100))).toFixed(2));
+    }
+
+    localStorage.setItem('human_store_products_db', JSON.stringify(catalogoConDescuentos));
+    productosExistentes = catalogoConDescuentos;
+}
+
+let productos = productosExistentes;
 let carrito = JSON.parse(localStorage.getItem('human_store_cart')) || [];
 let favoritos = JSON.parse(localStorage.getItem('human_store_favs')) || [];
+
+function getSimulatedRating(id) {
+    const rating = (4.0 + (id % 10) * 0.1).toFixed(1); 
+    const reviews = (id * 37) % 250 + 45; 
+    const fullStars = Math.floor(rating);
+    let starsStr = "★".repeat(fullStars) + "☆".repeat(5 - fullStars);
+    return { rating, reviews, starsStr };
+}
 
 // --- ETIQUETA: MOTOR DE SUGERENCIAS INTELIGENTES PARA EL CARRITO ---
 function actualizarSugerenciasCarrito() {
@@ -75,18 +100,15 @@ function actualizarSugerenciasCarrito() {
     const idsEnCarrito = carrito.map(item => item.id);
     const categoriasEnCarrito = [...new Set(carrito.map(item => item.cat))];
 
-    // Buscar productos relacionados (misma categoría, con stock y que no estén ya en el carro)
     let sugerencias = productos.filter(p => 
         categoriasEnCarrito.includes(p.cat) && p.stock > 0 && !idsEnCarrito.includes(p.id)
     );
 
-    // Si no hay suficientes para llenar (mínimo 3), rellenamos con otros aleatorios del catálogo
     if (sugerencias.length < 3) {
         const extras = productos.filter(p => p.stock > 0 && !idsEnCarrito.includes(p.id) && !sugerencias.includes(p));
         sugerencias = sugerencias.concat(extras);
     }
 
-    // Elegir 3 al azar
     sugerencias = sugerencias.sort(() => 0.5 - Math.random()).slice(0, 3);
 
     if (sugerencias.length === 0) {
@@ -139,6 +161,12 @@ window.addEventListener('load', () => {
             const categoriaGuardada = localStorage.getItem('human_store_active_category') || 'all';
             const textoBuscadoGuardado = localStorage.getItem('human_store_search_query') || "";
             
+            const savedPrice = localStorage.getItem('human_store_price_max');
+            if (savedPrice && document.getElementById('price-slider')) {
+                document.getElementById('price-slider').value = savedPrice;
+                document.getElementById('price-slider-value').innerText = `$${savedPrice}`;
+            }
+            
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if(btn.dataset.category === categoriaGuardada) {
                     document.querySelector('.filter-btn.active').classList.remove('active');
@@ -146,8 +174,8 @@ window.addEventListener('load', () => {
                 }
             });
 
-            if(textoBuscadoGuardado) {
-                document.getElementById('input-search').value = textoBuscadoGuardado;
+            if(textoBuscadoGuardado || savedPrice) {
+                if (textoBuscadoGuardado) document.getElementById('input-search').value = textoBuscadoGuardado;
                 ejecutarFiltradoCombinado(textoBuscadoGuardado, categoriaGuardada);
             } else {
                 renderProducts(categoriaGuardada === 'all' ? productos : productos.filter(p => p.cat === categoriaGuardada));
@@ -166,7 +194,40 @@ window.addEventListener('load', () => {
     }
 });
 
-// --- ETIQUETA: MANEJO DEL SUB-SISTEMA FORMULARIOS AUTH ---
+const checkoutDelivery = document.getElementById('checkout-delivery');
+const deliveryAddressArea = document.getElementById('delivery-address-area');
+const checkoutPayment = document.getElementById('checkout-payment');
+
+const pagoMovilInfo = document.getElementById('pago-movil-info');
+const zelleInfo = document.getElementById('zelle-info');
+const paypalInfo = document.getElementById('paypal-info');
+const binanceInfo = document.getElementById('binance-info');
+
+if(checkoutDelivery) {
+    checkoutDelivery.addEventListener('change', (e) => {
+        if(e.target.value.includes('Delivery') || e.target.value.includes('Nacional')) {
+            deliveryAddressArea.style.display = 'block';
+        } else {
+            deliveryAddressArea.style.display = 'none';
+        }
+    });
+}
+
+if(checkoutPayment) {
+    checkoutPayment.addEventListener('change', (e) => {
+        const val = e.target.value;
+        pagoMovilInfo.style.display = 'none';
+        zelleInfo.style.display = 'none';
+        paypalInfo.style.display = 'none';
+        binanceInfo.style.display = 'none';
+
+        if (val === 'Pago Móvil') pagoMovilInfo.style.display = 'block';
+        if (val === 'Zelle') zelleInfo.style.display = 'block';
+        if (val === 'PayPal') paypalInfo.style.display = 'block';
+        if (val === 'Binance') binanceInfo.style.display = 'block';
+    });
+}
+
 function conectarEventosAutenticacion() {
     const btnAuthAction = document.getElementById('btn-auth-action');
     if(btnAuthAction) btnAuthAction.onclick = () => procesarAccionAuth();
@@ -187,7 +248,6 @@ function conectarEventosAutenticacion() {
         modoRegistro = true;
         tRegister.classList.add('active');
         if(tLogin) tLogin.classList.remove('active');
-        /* CORRECCIÓN: Aseguramos visualización flex estructurada para renderizar inputs */
         document.getElementById('extended-register-fields').style.display = "flex";
         btnAuthAction.innerText = "Enviar Registro";
     };
@@ -229,7 +289,6 @@ function conectarEventosAutenticacion() {
     }
 }
 
-// --- ETIQUETA: INYECTOR INTERACTIVO SELECTOR MONEDA INTERNA ---
 function inyectarSelectorMonedaNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks || document.getElementById('btn-currency-toggle')) return;
@@ -251,7 +310,6 @@ function inyectarSelectorMonedaNavbar() {
     };
 }
 
-// --- ETIQUETA: CONECTIVIDAD API TASAS CAMBIARIAS DE VENEZUELA ---
 async function obtenerTasaBCV() {
     const apiSources = [
         'https://ve.dolarapi.com/v1/dolares/oficial',
@@ -276,7 +334,6 @@ async function obtenerTasaBCV() {
     actualizarTodo();
 }
 
-// --- ETIQUETA: DISPARADOR ALERTAS ELEMENTOS FLOTANTES ---
 function showToast(mensaje, duracion = 3000) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -288,7 +345,7 @@ function showToast(mensaje, duracion = 3000) {
     setTimeout(() => { toast.remove(); }, duracion + 500);
 }
 
-// --- ETIQUETA: MOTOR DE COMPILACIÓN DINÁMICA DE LA TIENDA ---
+// --- ETIQUETA: RENDERIZADO DINÁMICO DE PRODUCTOS Y OFERTAS ---
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
@@ -303,20 +360,52 @@ function renderProducts(lista) {
         const estaAgotado = p.stock <= 0;
         let precioHtml = "";
 
+        const rate = getSimulatedRating(p.id);
+
+        let originalUsd = p.precioOriginal || p.precio; 
+        let finalUsd = p.precio;
+
         if (MONEDA_ACTUAL === "USD") {
-            precioHtml = `<span class="price-bs">$${p.precio.toFixed(2)} USD</span>`;
+            if (p.descuento > 0) {
+                precioHtml = `
+                    <div class="price-container">
+                        <del class="price-original">$${originalUsd.toFixed(2)}</del>
+                        <span class="price-bs price-discount">$${finalUsd.toFixed(2)} USD</span>
+                    </div>`;
+            } else {
+                precioHtml = `<div class="price-container"><span class="price-bs">$${finalUsd.toFixed(2)} USD</span></div>`;
+            }
         } else {
-            let precioEnBs = p.precio * TASA_BCV;
-            precioHtml = `<span class="price-bs">${precioEnBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bs.</span>`;
+            let originalBs = originalUsd * TASA_BCV;
+            let finalBs = finalUsd * TASA_BCV;
+            if (p.descuento > 0) {
+                precioHtml = `
+                    <div class="price-container">
+                        <del class="price-original">${originalBs.toLocaleString('es-VE', { minimumFractionDigits: 2 })} Bs.</del>
+                        <span class="price-bs price-discount">${finalBs.toLocaleString('es-VE', { minimumFractionDigits: 2 })} Bs.</span>
+                    </div>`;
+            } else {
+                precioHtml = `<div class="price-container"><span class="price-bs">${finalBs.toLocaleString('es-VE', { minimumFractionDigits: 2 })} Bs.</span></div>`;
+            }
         }
+
+        const badgeDescuento = p.descuento > 0 ? `<div class="badge-discount">-${p.descuento}% OFF</div>` : '';
+        const badgeAgotado = estaAgotado ? '<div class="badge-sold-out">AGOTADO</div>' : '';
 
         const div = document.createElement('div');
         div.className = `product-card ${estaAgotado ? 'card-sold-out' : ''}`;
         div.innerHTML = `
-            ${estaAgotado ? '<div class="badge-sold-out">AGOTADO</div>' : ''}
+            ${badgeAgotado}
+            ${badgeDescuento}
             <button class="btn-fav ${esFav ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavorito(${p.id})">★</button>
             <img src="${p.img}" class="card-img" onclick="abrirDetalle(${p.id})">
-            <h4 onclick="abrirDetalle(${p.id})" style="cursor:pointer">${p.nombre}</h4>
+            <h4 onclick="abrirDetalle(${p.id})" style="cursor:pointer; margin-bottom: 5px;">${p.nombre}</h4>
+            
+            <div class="product-rating">
+                <span class="stars">${rate.starsStr}</span>
+                <span class="reviews-count">${rate.rating} (${rate.reviews})</span>
+            </div>
+
             ${precioHtml}
             <p style="font-size: 0.8rem; font-weight: bold; color: ${!estaAgotado ? '#10B981' : '#EF4444'}">
                 ${!estaAgotado ? `Disponible en Stock (${p.stock} ud.)` : 'Agotado'}
@@ -329,15 +418,18 @@ function renderProducts(lista) {
     });
 }
 
-// --- ETIQUETA: SISTEMA COMBINADO DE CONTROLADOR DE ENTRADAS ---
 function ejecutarFiltradoCombinado(texto, categoria) {
+    const precioMax = parseFloat(document.getElementById('price-slider')?.value) || Infinity;
     let filtrados = productos;
+    
     if (categoria !== 'all') filtrados = filtrados.filter(p => p.cat === categoria);
     if (texto) filtrados = filtrados.filter(p => p.nombre.toLowerCase().includes(texto.toLowerCase()));
+    filtrados = filtrados.filter(p => p.precio <= precioMax);
+    
     renderProducts(filtrados);
 }
 
-// --- ETIQUETA: VENTANA EXTENDIDA FICHA TÉCNICA PRODUCTO ---
+// --- ETIQUETA: DETALLES DE PRODUCTO CON INFORMACIÓN DE OFERTA ---
 window.abrirDetalle = (id) => {
     const p = productos.find(i => i.id === id);
     if(!p) return;
@@ -347,13 +439,42 @@ window.abrirDetalle = (id) => {
 
     const body = document.getElementById('detalle-body');
     const estaAgotado = p.stock <= 0;
+    const rate = getSimulatedRating(p.id);
+
+    let priceDetailsHtml = "";
+    if (p.descuento > 0) {
+        priceDetailsHtml = `
+            <div style="display:flex; align-items:center; gap: 15px; margin-bottom: 5px;">
+                <h3 class="price-bs" style="font-size: 2.2rem; color:var(--success); margin:0;">$${p.precio} USD</h3>
+                <div style="display:flex; flex-direction:column; align-items:flex-start;">
+                    <del style="color:var(--text-sub); font-size:1.2rem;">$${p.precioOriginal} USD</del>
+                    <span style="background:var(--danger); color:white; padding:2px 8px; border-radius:4px; font-size:0.8rem; font-weight:bold; margin-top:3px;">Ahorras ${p.descuento}%</span>
+                </div>
+            </div>
+            <p style="font-size: 1.1rem; margin-top:0;">Precio en Moneda Local: <strong>${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</strong></p>
+        `;
+    } else {
+        priceDetailsHtml = `
+            <h3 class="price-bs" style="font-size: 2.2rem; color:var(--secondary); margin-bottom: 5px;">$${p.precio} USD</h3>
+            <p style="font-size: 1.1rem; margin-top:0;">Precio en Moneda Local: <strong>${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</strong></p>
+        `;
+    }
 
     body.innerHTML = `
-        <div class="product-images"><img src="${p.img}" class="main-img"></div>
+        <div class="product-images" style="position:relative;">
+            ${p.descuento > 0 ? `<div class="badge-discount" style="top: 20px; left: 20px; font-size: 1rem; padding: 8px 15px;">-${p.descuento}% OFF</div>` : ''}
+            <img src="${p.img}" class="main-img">
+        </div>
         <div class="product-info">
-            <h2 style="font-family: 'Orbitron'; color: var(--text-main)">${p.nombre}</h2>
-            <h3 class="price-bs" style="font-size: 2.2rem; color:var(--secondary)">$${p.precio} USD</h3>
-            <p style="font-size: 1.1rem">Precio en Moneda Local: <strong>${(p.precio * TASA_BCV).toLocaleString('es-VE')} Bs.</strong></p>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 5px;">${p.nombre}</h2>
+            
+            <div class="product-rating detail-rating">
+                <span class="stars">${rate.starsStr}</span>
+                <span class="reviews-count" style="font-size: 0.95rem;">${rate.rating} de 5 estrellas (${rate.reviews} valoraciones)</span>
+            </div>
+
+            ${priceDetailsHtml}
+            
             <p style="margin: 20px 0; color: var(--text-sub)">Este producto cuenta con control estricto de inventario y garantía oficial de HUMAN STORE.</p>
             <p style="font-weight:bold; margin-bottom:15px; color:${!estaAgotado ? '#10B981' : '#EF4444'}">Existencias reales: ${p.stock} unidades.</p>
             <button class="btn-primary" ${estaAgotado ? 'disabled' : ''} onclick="agregarCarrito(${p.id})">${!estaAgotado ? 'Añadir al Carrito' : 'Agotado'}</button>
@@ -361,7 +482,6 @@ window.abrirDetalle = (id) => {
     document.getElementById('modal-detalle').style.display = 'block';
 };
 
-// --- ETIQUETA: RESET COMPLETO DE VENTANAS ACTIVAS ---
 function cerrarModalGeneral() {
     document.getElementById('modal-carrito').style.display = 'none';
     document.getElementById('modal-detalle').style.display = 'none';
@@ -373,7 +493,6 @@ function cerrarModalGeneral() {
     localStorage.removeItem('human_store_opened_product');
 }
 
-// --- ETIQUETA: OPERACIONES DE ASIGNACIÓN INTERNA DEL CARRITO ---
 window.agregarCarrito = (id) => {
     if (!usuarioLogueado) {
         showToast("🔑 Identifícate para una experiencia de compra completa");
@@ -398,7 +517,6 @@ window.agregarCarrito = (id) => {
     actualizarTodo();
 };
 
-// --- ETIQUETA: CALCULO OPERACIONAL MONTOS Y UNIDADES (VINCULADO CON RENDER DE POPUP) ---
 function actualizarTodo() {
     localStorage.setItem('human_store_cart', JSON.stringify(carrito));
     const list = document.getElementById('cart-items');
@@ -432,11 +550,9 @@ function actualizarTodo() {
     if(document.getElementById('total-bs')) document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2 });
     if(document.getElementById('cart-count')) document.getElementById('cart-count').innerText = count;
 
-    // Llamado al motor de sugerencias cada vez que se actualiza el carrito
     actualizarSugerenciasCarrito();
 }
 
-// --- ETIQUETA: INCREMENTO/DECREMENTO DE EXISTENCIAS EN CARRITO ---
 window.cambiarCant = (index, delta) => {
     const item = carrito[index];
     const original = productos.find(p => p.id === item.id);
@@ -449,7 +565,6 @@ window.cambiarCant = (index, delta) => {
 
 window.quitar = (i) => { carrito.splice(i, 1); showToast("🗑️ Producto removido"); actualizarTodo(); };
 
-// --- ETIQUETA: CARGADOR DE SÍNTESIS DE COMPRA ---
 function irASeccionCheckout(mostrarToast = true) {
     document.getElementById('modal-carrito').style.display = 'none';
     document.getElementById('store-content').style.display = 'none';
@@ -483,9 +598,36 @@ document.getElementById('btn-go-checkout').onclick = () => {
 };
 document.getElementById('btn-back-store').onclick = () => { irASeccionTienda(); };
 
-// --- ETIQUETA: LIQUIDACIÓN DE INVENTARIO Y DESPACHO WHATSAPP ---
 document.getElementById('btn-finalizar-pago').onclick = () => {
-    showToast("📱 Liquidando stock y conectando a WhatsApp...");
+    
+    const deliveryMethod = document.getElementById('checkout-delivery').value;
+    const paymentMethod = document.getElementById('checkout-payment').value;
+    const address = document.getElementById('checkout-address').value.trim();
+
+    if(!paymentMethod) {
+        return showToast("⚠️ Por favor selecciona un método de pago");
+    }
+
+    if((deliveryMethod.includes('Delivery') || deliveryMethod.includes('Nacional')) && address === "") {
+        return showToast("⚠️ Por favor ingresa tu dirección de entrega detallada");
+    }
+
+    let paymentDetailsText = "";
+    if (paymentMethod === "Pago Móvil") {
+        const ref = document.getElementById('pm-referencia').value.trim();
+        if(!ref || ref.length < 4) return showToast("⚠️ Ingresa los últimos números de referencia del Pago Móvil");
+        paymentDetailsText = `%0A🧾 *Referencia:* ${ref}`;
+    } else if (paymentMethod === "Zelle") {
+        const zmail = document.getElementById('zelle-email').value.trim();
+        if(!zmail) return showToast("⚠️ Ingresa el correo Zelle desde donde harás el pago");
+        paymentDetailsText = `%0A📧 *Correo Zelle:* ${zmail}`;
+    } else if (paymentMethod === "PayPal") {
+        const pmail = document.getElementById('paypal-email').value.trim();
+        if(!pmail) return showToast("⚠️ Ingresa tu correo de PayPal");
+        paymentDetailsText = `%0A📧 *Correo PayPal:* ${pmail}`;
+    }
+
+    showToast("📱 Procesando pedido y conectando a WhatsApp...");
     let totalUsd = document.getElementById('total-usd').innerText;
     let totalBs = document.getElementById('total-bs').innerText;
 
@@ -504,14 +646,22 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
         hora: new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' }),
         items: carrito.map(i => ({ nombre: i.nombre, qty: i.qty, subtotal: i.precio * i.qty })),
         totalUsd: totalUsd,
-        totalBs: totalBs
+        totalBs: totalBs,
+        metodoPago: paymentMethod,     
+        metodoEntrega: deliveryMethod  
     };
 
     let pedidosHistorial = JSON.parse(localStorage.getItem(`pedidos_${usuarioActualCorreo}`)) || [];
     pedidosHistorial.unshift(nuevoPedido); 
     localStorage.setItem(`pedidos_${usuarioActualCorreo}`, JSON.stringify(pedidosHistorial));
 
+    let addressText = address ? `%0A📍 *Dirección:* ${address}` : "";
+
     const msg = `🛍️ *NUEVO PEDIDO CONFIRMADO - HUMAN STORE*%0A%0A` + 
+                `👤 *Cliente:* ${usuarioActualCorreo}%0A` +
+                `🚚 *Entrega:* ${deliveryMethod}` + addressText + `%0A` +
+                `💳 *Pago:* ${paymentMethod}` + paymentDetailsText + `%0A%0A` +
+                `*🛒 ARTÍCULOS:*%0A` +
                 carrito.map(i => `▪️ ${i.nombre} (x${i.qty})%0A`).join("") + 
                 `%0A💰 *TOTAL:* $${totalUsd} / ${totalBs} Bs.`;
     
@@ -527,7 +677,6 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
     setTimeout(() => { window.open(`https://wa.me/584120000000?text=${msg}`, '_blank'); }, 1000);
 };
 
-// --- ETIQUETA: MOTOR CORE ACCIÓN DE VERIFICACIÓN AUTENTICACIÓN ---
 function procesarAccionAuth() {
     const u = document.getElementById('usuario').value.trim();
     const p = document.getElementById('password').value.trim();
@@ -621,7 +770,6 @@ function procesarAccionAuth() {
     setTimeout(() => { welcomeScr.style.display = "none"; showToast("👋 ¡Bienvenido a HUMAN STORE!"); }, 500);
 }
 
-// --- ETIQUETA: CONTROL INTERFAZ BOTON LOGIN NAVBAR ---
 function actualizarBotonLoginNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
@@ -648,7 +796,6 @@ function actualizarBotonLoginNavbar() {
     }
 }
 
-// --- ETIQUETA: COMPILACIÓN DEL MENÚ PANEL DESPLEGABLE ---
 function configurarMenuUsuarioDesplegable() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
@@ -743,11 +890,13 @@ function configurarMenuUsuarioDesplegable() {
                     hBody.innerHTML = "";
                     listaPedidos.forEach(ped => {
                         let itemsHtml = ped.items.map(i => `<li>• ${i.nombre} <strong>(x${i.qty})</strong></li>`).join("");
+                        
                         hBody.innerHTML += `
                             <div class="pedido-card">
                                 <div class="pedido-header"><span>🆔 #ID: <strong>${ped.idPedido}</strong></span><span>📅 ${ped.fecha}</span></div>
                                 <ul style="margin: 0; padding-left: 15px; font-size: 0.9rem;">${itemsHtml}</ul>
                                 <div class="pedido-totales"><span style="color: var(--text-sub);">Total:</span><span style="color: var(--success);">$${ped.totalUsd} / ${ped.totalBs}</span></div>
+                                <button class="btn-pdf" onclick="descargarRecibo('${ped.idPedido}')">📄 Descargar Recibo PDF</button>
                             </div>`;
                     });
                 }
@@ -764,7 +913,6 @@ function configurarMenuUsuarioDesplegable() {
     }
 }
 
-// --- ETIQUETA: RESET DE FLUJOS TEMPORALES DE CONTRASEÑA ---
 function cancelarFlujosEspeciales() {
     modoRecuperar = false; modoRegistro = false; pasoVerificacion = false; 
     if(document.getElementById('usuario')) document.getElementById('usuario').style.display = "block"; 
@@ -780,7 +928,6 @@ function cancelarFlujosEspeciales() {
 
 function generarCodigoOTP() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
-// --- ETIQUETA: DISPARADORES ASIDE CATEGORÍAS Y FILTRO DE ENTRADA ---
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.onclick = () => {
         document.querySelector('.filter-btn.active').classList.remove('active');
@@ -798,7 +945,20 @@ document.getElementById('input-search').oninput = (e) => {
     ejecutarFiltradoCombinado(query, cat);
 };
 
-// --- ETIQUETA: COMPORTAMIENTO MÓDULO LEGAL Y CHECKBOX DE APROBACIÓN ---
+const priceSlider = document.getElementById('price-slider');
+const priceDisplay = document.getElementById('price-slider-value');
+if (priceSlider) {
+    priceSlider.oninput = (e) => {
+        priceDisplay.innerText = `$${e.target.value}`;
+    };
+    priceSlider.onchange = (e) => {
+        localStorage.setItem('human_store_price_max', e.target.value);
+        const cat = localStorage.getItem('human_store_active_category') || 'all';
+        const query = localStorage.getItem('human_store_search_query') || "";
+        ejecutarFiltradoCombinado(query, cat);
+    };
+}
+
 const modalTerminos = document.getElementById('modal-terminos');
 const checkTerminos = document.getElementById('check-terminos');
 const btnConfirmarTerminos = document.getElementById('btn-confirmar-terminos');
@@ -814,7 +974,6 @@ function actualizarContadorFavoritos() {
     }
 }
 
-// --- ETIQUETA: GESTIÓN INTERNA DE INTERFACES DE FAVORITOS ---
 window.toggleFavorito = (id) => {
     const index = favoritos.findIndex(f => f.id === id);
     if (index > -1) { 
@@ -876,7 +1035,6 @@ document.getElementById('btn-llevar-todo-fav').onclick = () => {
 document.getElementById('footer-ver-favoritos').onclick = (e) => { e.preventDefault(); renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; };
 document.getElementById('close-favoritos').onclick = () => { document.getElementById('modal-favoritos').style.display = 'none'; };
 
-// --- ETIQUETA: DETECTORES DE SELECCIÓN Y DISPARADORES DOM GLOBALES ---
 document.querySelectorAll('.close').forEach(btn => btn.onclick = () => { cerrarModalGeneral(); });
 window.onclick = (e) => { 
     if (e.target.className === 'modal' || e.target.id === 'modal-perfil' || e.target.id === 'modal-historial-pedidos') { 
@@ -892,3 +1050,70 @@ document.getElementById('btn-search-favoritos').addEventListener('click', () => 
 });
 
 actualizarContadorFavoritos();
+
+window.descargarRecibo = (idPedidoStr) => {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        const pedidosLista = JSON.parse(localStorage.getItem(`pedidos_${usuarioActualCorreo}`)) || [];
+        const pedidoData = pedidosLista.find(p => String(p.idPedido) === String(idPedidoStr));
+        
+        if(!pedidoData) {
+            showToast("❌ Error: No se encontraron los datos de este pedido.");
+            return;
+        }
+
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(22);
+        doc.setTextColor(212, 175, 55); 
+        doc.text("HUMAN STORE", 105, 20, { align: "center" });
+        
+        doc.setFontSize(12);
+        doc.setTextColor(50, 50, 50);
+        doc.text("Recibo de Compra Oficial", 105, 28, { align: "center" });
+
+        doc.setFontSize(10);
+        doc.text(`Nro de Orden: #${pedidoData.idPedido}`, 14, 45);
+        doc.text(`Fecha y Hora: ${pedidoData.fecha} - ${pedidoData.hora}`, 14, 52);
+        doc.text(`Cliente: ${usuarioActualCorreo}`, 14, 59);
+
+        const tableColumn = ["Producto", "Cant.", "Subtotal"];
+        const tableRows = [];
+
+        pedidoData.items.forEach(item => {
+            const rowData = [
+                item.nombre,
+                item.qty.toString(),
+                `$${item.subtotal.toFixed(2)}`
+            ];
+            tableRows.push(rowData);
+        });
+
+        doc.autoTable({
+            startY: 68,
+            head: [tableColumn],
+            body: tableRows,
+            theme: 'striped',
+            headStyles: { fillColor: [15, 23, 42] }, 
+            alternateRowStyles: { fillColor: [245, 245, 245] }
+        });
+
+        const finalY = doc.lastAutoTable.finalY || 68;
+        doc.setFont("helvetica", "bold");
+        doc.text(`Total Cancelado (USD): $${pedidoData.totalUsd}`, 14, finalY + 15);
+        doc.text(`Total Equivalente (Bs): ${pedidoData.totalBs}`, 14, finalY + 22);
+
+        doc.setFont("helvetica", "italic");
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Gracias por preferir calidad y estilo. HUMAN STORE.", 105, finalY + 40, { align: "center" });
+
+        doc.save(`Recibo_HumanStore_Orden_${pedidoData.idPedido}.pdf`);
+        showToast("📄 Recibo descargado exitosamente");
+        
+    } catch(err) {
+        console.error(err);
+        showToast("❌ Error al generar el PDF. Verifica tu conexión.");
+    }
+}
