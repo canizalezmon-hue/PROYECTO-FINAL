@@ -1,4 +1,4 @@
-// --- VARIABLES DE ESTADO CON PERSISTENCIA ---
+// --- ETIQUETA: VARIABLES DE ESTADO CON PERSISTENCIA ---
 let TASA_BCV = parseFloat(localStorage.getItem('last_bcv_rate')) || 36.50; 
 let usuarioLogueado = localStorage.getItem('human_store_logged') === 'true';
 let usuarioActualCorreo = localStorage.getItem('human_store_user_email') || ""; 
@@ -17,7 +17,7 @@ let codigoGeneradoSimulado = "";
 let correoTemporalRecuperacion = "";
 let datosRegistroTemporales = {};
 
-// CONFIGURACIÓN DE INVENTARIO EXTENDIDO PARA TIENDA GENERAL
+// --- ETIQUETA: CONFIGURACIÓN DE INVENTARIO EXTENDIDO PARA TIENDA GENERAL ---
 const catalogoInicial = [
     { id: 1, nombre: "Laptop Gamer X-Pro", precio: 1200, cat: "electronica", stock: 5, img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500" },
     { id: 2, nombre: "Mouse Pro Wireless", precio: 25, cat: "electronica", stock: 10, img: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500" },
@@ -61,7 +61,56 @@ let productos = JSON.parse(localStorage.getItem('human_store_products_db'));
 let carrito = JSON.parse(localStorage.getItem('human_store_cart')) || [];
 let favoritos = JSON.parse(localStorage.getItem('human_store_favs')) || [];
 
-// --- LÓGICA DE CARGA (PRELOADER) ---
+// --- ETIQUETA: MOTOR DE SUGERENCIAS INTELIGENTES PARA EL CARRITO ---
+function actualizarSugerenciasCarrito() {
+    const container = document.getElementById('cart-suggestions-container');
+    const list = document.getElementById('cart-suggestions-list');
+    if (!container || !list) return;
+
+    if (carrito.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    const idsEnCarrito = carrito.map(item => item.id);
+    const categoriasEnCarrito = [...new Set(carrito.map(item => item.cat))];
+
+    // Buscar productos relacionados (misma categoría, con stock y que no estén ya en el carro)
+    let sugerencias = productos.filter(p => 
+        categoriasEnCarrito.includes(p.cat) && p.stock > 0 && !idsEnCarrito.includes(p.id)
+    );
+
+    // Si no hay suficientes para llenar (mínimo 3), rellenamos con otros aleatorios del catálogo
+    if (sugerencias.length < 3) {
+        const extras = productos.filter(p => p.stock > 0 && !idsEnCarrito.includes(p.id) && !sugerencias.includes(p));
+        sugerencias = sugerencias.concat(extras);
+    }
+
+    // Elegir 3 al azar
+    sugerencias = sugerencias.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+    if (sugerencias.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+    list.innerHTML = "";
+
+    sugerencias.forEach(p => {
+        let precioStr = MONEDA_ACTUAL === "USD" ? `$${p.precio.toFixed(2)} USD` : `${(p.precio * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2 })} Bs.`;
+        list.innerHTML += `
+            <div class="suggestion-card">
+                <img src="${p.img}" alt="${p.nombre}">
+                <h5 title="${p.nombre}">${p.nombre}</h5>
+                <span>${precioStr}</span>
+                <button class="btn-add-suggestion" onclick="agregarCarrito(${p.id})">+ Agregar</button>
+            </div>
+        `;
+    });
+}
+
+// --- ETIQUETA: CONTROLADOR PRELOADER E INICIALIZADOR DE SESIÓN ---
 window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');
     const app = document.getElementById('app-container');
@@ -117,6 +166,7 @@ window.addEventListener('load', () => {
     }
 });
 
+// --- ETIQUETA: MANEJO DEL SUB-SISTEMA FORMULARIOS AUTH ---
 function conectarEventosAutenticacion() {
     const btnAuthAction = document.getElementById('btn-auth-action');
     if(btnAuthAction) btnAuthAction.onclick = () => procesarAccionAuth();
@@ -137,7 +187,8 @@ function conectarEventosAutenticacion() {
         modoRegistro = true;
         tRegister.classList.add('active');
         if(tLogin) tLogin.classList.remove('active');
-        document.getElementById('extended-register-fields').style.display = "block";
+        /* CORRECCIÓN: Aseguramos visualización flex estructurada para renderizar inputs */
+        document.getElementById('extended-register-fields').style.display = "flex";
         btnAuthAction.innerText = "Enviar Registro";
     };
 
@@ -178,6 +229,7 @@ function conectarEventosAutenticacion() {
     }
 }
 
+// --- ETIQUETA: INYECTOR INTERACTIVO SELECTOR MONEDA INTERNA ---
 function inyectarSelectorMonedaNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks || document.getElementById('btn-currency-toggle')) return;
@@ -199,6 +251,7 @@ function inyectarSelectorMonedaNavbar() {
     };
 }
 
+// --- ETIQUETA: CONECTIVIDAD API TASAS CAMBIARIAS DE VENEZUELA ---
 async function obtenerTasaBCV() {
     const apiSources = [
         'https://ve.dolarapi.com/v1/dolares/oficial',
@@ -223,18 +276,19 @@ async function obtenerTasaBCV() {
     actualizarTodo();
 }
 
-function showToast(mensaje) {
+// --- ETIQUETA: DISPARADOR ALERTAS ELEMENTOS FLOTANTES ---
+function showToast(mensaje, duracion = 3000) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';
     toast.innerText = mensaje;
     container.appendChild(toast);
     
-    setTimeout(() => { toast.classList.add('toast-fade-out'); }, 10000);
-    setTimeout(() => { toast.remove(); }, 10500);
+    setTimeout(() => { toast.classList.add('toast-fade-out'); }, duracion);
+    setTimeout(() => { toast.remove(); }, duracion + 500);
 }
 
-// --- RENDERING TIENDA ---
+// --- ETIQUETA: MOTOR DE COMPILACIÓN DINÁMICA DE LA TIENDA ---
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid');
     grid.innerHTML = "";
@@ -275,6 +329,7 @@ function renderProducts(lista) {
     });
 }
 
+// --- ETIQUETA: SISTEMA COMBINADO DE CONTROLADOR DE ENTRADAS ---
 function ejecutarFiltradoCombinado(texto, categoria) {
     let filtrados = productos;
     if (categoria !== 'all') filtrados = filtrados.filter(p => p.cat === categoria);
@@ -282,6 +337,7 @@ function ejecutarFiltradoCombinado(texto, categoria) {
     renderProducts(filtrados);
 }
 
+// --- ETIQUETA: VENTANA EXTENDIDA FICHA TÉCNICA PRODUCTO ---
 window.abrirDetalle = (id) => {
     const p = productos.find(i => i.id === id);
     if(!p) return;
@@ -305,6 +361,7 @@ window.abrirDetalle = (id) => {
     document.getElementById('modal-detalle').style.display = 'block';
 };
 
+// --- ETIQUETA: RESET COMPLETO DE VENTANAS ACTIVAS ---
 function cerrarModalGeneral() {
     document.getElementById('modal-carrito').style.display = 'none';
     document.getElementById('modal-detalle').style.display = 'none';
@@ -316,7 +373,7 @@ function cerrarModalGeneral() {
     localStorage.removeItem('human_store_opened_product');
 }
 
-// --- CARRITO ---
+// --- ETIQUETA: OPERACIONES DE ASIGNACIÓN INTERNA DEL CARRITO ---
 window.agregarCarrito = (id) => {
     if (!usuarioLogueado) {
         showToast("🔑 Identifícate para una experiencia de compra completa");
@@ -341,13 +398,14 @@ window.agregarCarrito = (id) => {
     actualizarTodo();
 };
 
+// --- ETIQUETA: CALCULO OPERACIONAL MONTOS Y UNIDADES (VINCULADO CON RENDER DE POPUP) ---
 function actualizarTodo() {
     localStorage.setItem('human_store_cart', JSON.stringify(carrito));
     const list = document.getElementById('cart-items');
     let total = 0, count = 0;
     
     if(list) {
-        list.innerHTML = carrito.length ? "" : "<p style='text-align:center; color:#94A3B8; padding: 20px;'>Tu carrito está vacío.</p>";
+        list.innerHTML = carrito.length ? "" : "<p style='text-align:center; color: var(--text-sub); padding: 20px;'>Tu carrito está vacío.</p>";
         carrito.forEach((item, i) => {
             total += (item.precio * item.qty);
             count += item.qty;
@@ -373,8 +431,12 @@ function actualizarTodo() {
     if(document.getElementById('total-usd')) document.getElementById('total-usd').innerText = total.toFixed(2);
     if(document.getElementById('total-bs')) document.getElementById('total-bs').innerText = (total * TASA_BCV).toLocaleString('es-VE', { minimumFractionDigits: 2 });
     if(document.getElementById('cart-count')) document.getElementById('cart-count').innerText = count;
+
+    // Llamado al motor de sugerencias cada vez que se actualiza el carrito
+    actualizarSugerenciasCarrito();
 }
 
+// --- ETIQUETA: INCREMENTO/DECREMENTO DE EXISTENCIAS EN CARRITO ---
 window.cambiarCant = (index, delta) => {
     const item = carrito[index];
     const original = productos.find(p => p.id === item.id);
@@ -387,7 +449,7 @@ window.cambiarCant = (index, delta) => {
 
 window.quitar = (i) => { carrito.splice(i, 1); showToast("🗑️ Producto removido"); actualizarTodo(); };
 
-// --- CHECKOUT ---
+// --- ETIQUETA: CARGADOR DE SÍNTESIS DE COMPRA ---
 function irASeccionCheckout(mostrarToast = true) {
     document.getElementById('modal-carrito').style.display = 'none';
     document.getElementById('store-content').style.display = 'none';
@@ -421,6 +483,7 @@ document.getElementById('btn-go-checkout').onclick = () => {
 };
 document.getElementById('btn-back-store').onclick = () => { irASeccionTienda(); };
 
+// --- ETIQUETA: LIQUIDACIÓN DE INVENTARIO Y DESPACHO WHATSAPP ---
 document.getElementById('btn-finalizar-pago').onclick = () => {
     showToast("📱 Liquidando stock y conectando a WhatsApp...");
     let totalUsd = document.getElementById('total-usd').innerText;
@@ -464,7 +527,7 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
     setTimeout(() => { window.open(`https://wa.me/584120000000?text=${msg}`, '_blank'); }, 1000);
 };
 
-// --- CORE ACCIÓN DE AUTENTICACIÓN ---
+// --- ETIQUETA: MOTOR CORE ACCIÓN DE VERIFICACIÓN AUTENTICACIÓN ---
 function procesarAccionAuth() {
     const u = document.getElementById('usuario').value.trim();
     const p = document.getElementById('password').value.trim();
@@ -529,7 +592,8 @@ function procesarAccionAuth() {
             document.getElementById('login-password-area').style.display = "none";
             document.getElementById('verification-code-area').style.display = "block"; 
             btnAuth.innerText = "Confirmar Registro";
-            return showToast(`🎉 Código enviado a tu teléfono: ${codigoGeneradoSimulado}`);
+            
+            return showToast(`🎉 Código enviado a tu teléfono: ${codigoGeneradoSimulado}`, 10000);
         } else {
             const codigoIngresado = document.getElementById('auth-verification-code').value.trim();
             if (codigoIngresado !== codigoGeneradoSimulado) return showToast("🔒 Código inválido");
@@ -557,6 +621,7 @@ function procesarAccionAuth() {
     setTimeout(() => { welcomeScr.style.display = "none"; showToast("👋 ¡Bienvenido a HUMAN STORE!"); }, 500);
 }
 
+// --- ETIQUETA: CONTROL INTERFAZ BOTON LOGIN NAVBAR ---
 function actualizarBotonLoginNavbar() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
@@ -583,6 +648,7 @@ function actualizarBotonLoginNavbar() {
     }
 }
 
+// --- ETIQUETA: COMPILACIÓN DEL MENÚ PANEL DESPLEGABLE ---
 function configurarMenuUsuarioDesplegable() {
     const navLinks = document.querySelector('.nav-links');
     if (!navLinks) return;
@@ -672,7 +738,7 @@ function configurarMenuUsuarioDesplegable() {
                 const listaPedidos = JSON.parse(localStorage.getItem(`pedidos_${usuarioActualCorreo}`)) || [];
 
                 if (listaPedidos.length === 0) {
-                    hBody.innerHTML = `<p style="text-align:center; color:#94A3B8; padding: 30px;">📭 Historial de compras vacío.</p>`;
+                    hBody.innerHTML = `<p style="text-align:center; color: var(--text-sub); padding: 30px;">📭 Historial de compras vacío.</p>`;
                 } else {
                     hBody.innerHTML = "";
                     listaPedidos.forEach(ped => {
@@ -690,7 +756,6 @@ function configurarMenuUsuarioDesplegable() {
 
             if(idObjetivo === 'link-cerrar-sesion') {
                 e.preventDefault(); usuarioLogueado = false; usuarioActualCorreo = "";
-                // CORRECCIÓN 1: Removemos las claves de sesión activa sin destruir las cuentas registradas en LocalStorage
                 localStorage.removeItem('human_store_logged');
                 localStorage.removeItem('human_store_user_email');
                 location.reload(); 
@@ -699,9 +764,9 @@ function configurarMenuUsuarioDesplegable() {
     }
 }
 
+// --- ETIQUETA: RESET DE FLUJOS TEMPORALES DE CONTRASEÑA ---
 function cancelarFlujosEspeciales() {
-    modoRecuperar = false; modoRegistro = false; pasoVerificacion = false;
-    codigoGeneradoSimulado = ""; correoTemporalRecuperacion = ""; datosRegistroTemporales = {};
+    modoRecuperar = false; modoRegistro = false; pasoVerificacion = false; 
     if(document.getElementById('usuario')) document.getElementById('usuario').style.display = "block"; 
     if(document.getElementById('login-password-area')) document.getElementById('login-password-area').style.display = "block"; 
     if(document.getElementById('extended-register-fields')) document.getElementById('extended-register-fields').style.display = "none"; 
@@ -715,7 +780,7 @@ function cancelarFlujosEspeciales() {
 
 function generarCodigoOTP() { return Math.floor(100000 + Math.random() * 900000).toString(); }
 
-// --- CATEGORÍAS Y BÚSQUEDA ---
+// --- ETIQUETA: DISPARADORES ASIDE CATEGORÍAS Y FILTRO DE ENTRADA ---
 document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.onclick = () => {
         document.querySelector('.filter-btn.active').classList.remove('active');
@@ -733,7 +798,7 @@ document.getElementById('input-search').oninput = (e) => {
     ejecutarFiltradoCombinado(query, cat);
 };
 
-// --- CONDICIONES Y FAVORITOS ---
+// --- ETIQUETA: COMPORTAMIENTO MÓDULO LEGAL Y CHECKBOX DE APROBACIÓN ---
 const modalTerminos = document.getElementById('modal-terminos');
 const checkTerminos = document.getElementById('check-terminos');
 const btnConfirmarTerminos = document.getElementById('btn-confirmar-terminos');
@@ -749,6 +814,7 @@ function actualizarContadorFavoritos() {
     }
 }
 
+// --- ETIQUETA: GESTIÓN INTERNA DE INTERFACES DE FAVORITOS ---
 window.toggleFavorito = (id) => {
     const index = favoritos.findIndex(f => f.id === id);
     if (index > -1) { 
@@ -770,13 +836,12 @@ window.toggleFavorito = (id) => {
 function renderFavoritos() {
     const list = document.getElementById('fav-items');
     if(favoritos.length === 0) {
-        list.innerHTML = "<p style='text-align:center; padding: 20px; color:#94A3B8;'>Lista vacía.</p>";
+        list.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--text-sub);'>Lista vacía.</p>";
         document.getElementById('fav-actions-area').style.display = 'none';
     } else {
         list.innerHTML = ""; 
         document.getElementById('fav-actions-area').style.display = 'block';
         favoritos.forEach(item => {
-            // CORRECCIÓN 2: Solucionado error de tipeo en la variable (precioHtmlFavoritos vs precioHtmlFavorites) para evitar ReferenceError
             let precioHtmlFavorites = "";
             if (MONEDA_ACTUAL === "USD") {
                 precioHtmlFavorites = `<div class="fav-item-price-main">$${item.precio.toFixed(2)} USD</div>`;
@@ -811,7 +876,7 @@ document.getElementById('btn-llevar-todo-fav').onclick = () => {
 document.getElementById('footer-ver-favoritos').onclick = (e) => { e.preventDefault(); renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; };
 document.getElementById('close-favoritos').onclick = () => { document.getElementById('modal-favoritos').style.display = 'none'; };
 
-// --- ACCIONES GLOBALES ---
+// --- ETIQUETA: DETECTORES DE SELECCIÓN Y DISPARADORES DOM GLOBALES ---
 document.querySelectorAll('.close').forEach(btn => btn.onclick = () => { cerrarModalGeneral(); });
 window.onclick = (e) => { 
     if (e.target.className === 'modal' || e.target.id === 'modal-perfil' || e.target.id === 'modal-historial-pedidos') { 
