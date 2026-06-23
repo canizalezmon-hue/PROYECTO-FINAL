@@ -166,12 +166,8 @@ body {
     animation: barLoad 2.2s ease-in-out forwards; 
 }
 
-#preloader .logo-large { 
-    animation: glow 2s infinite ease-in-out; 
-}
-
 /* ==========================================================================
-   7. SECCIÓN DE LOGOTIPOS IDENTITARIOS
+   7. SECCIÓN DE LOGOTIPOS IDENTITARIOS (CORREGIDO GLOBAL)
    ========================================================================== */
 .logo { 
     font-family: 'Orbitron', sans-serif; 
@@ -199,6 +195,10 @@ body {
     margin-bottom: 20px; 
     filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); 
     word-break: break-word; 
+}
+
+#preloader .logo-large { 
+    animation: glow 2s infinite ease-in-out; 
 }
 
 .logo:hover { 
@@ -482,7 +482,7 @@ body {
 }
 
 /* ==========================================================================
-   11. DISEÑO DE FILTROS Y CONTENEDOR TIENDA
+   11. DISEÑO DE FILTROS E INTERFACES TIENDA
    ========================================================================== */
 .container { 
     display: flex; 
@@ -1142,7 +1142,7 @@ body {
 @media (max-width: 480px) { #fav-items > div { flex-direction: column !important; text-align: center !important; padding: 15px !important; } #fav-items > div img { margin: 0 auto 8px auto !important; } #fav-items > div h3 { text-align: center !important; } #fav-items > div button { width: 100% !important; } } 
 
 /* ==========================================================================
-   25. CELDAS HORIZONTALES UNIFICADAS COOREGIDAS (CARRITO Y FAVORITOS)
+   25. CELDAS HORIZONTALES UNIFICADAS COOREGIDAS (CARRITO E HISTORIAL)
    ========================================================================== */
 #cart-items > div, #fav-items > div { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; gap: 15px !important; position: relative !important; padding: 12px 50px 12px 12px !important; background: var(--bg-row-popup) !important; border: 1px solid var(--border-row-popup) !important; border-radius: 14px !important; box-sizing: border-box !important; margin-bottom: 10px !important; min-height: 85px !important; }
 #cart-items > div img, #fav-items > div img { width: 65px !important; height: 65px !important; min-width: 65px !important; min-height: 65px !important; object-fit: cover !important; border-radius: 10px !important; position: relative !important; top: auto !important; left: auto !important; margin: 0 !important; }
@@ -1325,7 +1325,7 @@ body {
     letter-spacing: 1px;
 }
 .card-sold-out .badge-discount {
-    top: 45px; /* Evitar que choque con la etiqueta de AGOTADO */
+    top: 45px; 
 }
 .price-container {
     display: flex;
@@ -1346,4 +1346,249 @@ body {
     color: var(--success) !important;
     font-size: 1.2rem !important;
     font-weight: 900;
+}
+
+/* ==========================================================================
+   34. SISTEMA DE VARIANTES (TALLAS, COLORES Y CAPACIDADES)
+   ========================================================================== */
+.variant-group { 
+    margin-bottom: 12px; 
+    text-align: left; 
+}
+.var-btn { 
+    background: var(--bg-main); 
+    border: 2px solid var(--border-color); 
+    color: var(--text-main); 
+    padding: 8px 16px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-family: 'Montserrat', sans-serif; 
+    font-weight: 700; 
+    font-size: 0.85rem; 
+    transition: all 0.3s ease; 
+}
+.var-btn:hover { 
+    border-color: var(--secondary); 
+}
+.var-btn.active { 
+    background: var(--secondary); 
+    color: var(--primary); 
+    border-color: var(--secondary); 
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); 
+}
+
+/* ==========================================================================
+   35. GALERÍA MULTIVISTA Y ZOOM
+   ========================================================================== */
+.product-gallery-container { display: flex; flex-direction: column; gap: 15px; }
+.main-image-wrapper { width: 100%; position: relative; overflow: hidden; border-radius: 20px; cursor: crosshair; background: #fff; }
+.main-image-wrapper img { width: 100%; max-height: 400px; object-fit: contain; transition: transform 0.1s ease-out; display: block; }
+.thumbnails-wrapper { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-top: 15px; }
+.thumbnails-wrapper::-webkit-scrollbar { height: 6px; }
+.thumbnails-wrapper::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 4px; }
+.thumbnail-img { width: 60px; height: 60px; object-fit: cover; border-radius: 10px; cursor: pointer; border: 2px solid transparent; transition: 0.3s; background: #fff; }
+.thumbnail-img:hover, .thumbnail-img.active-thumb { border-color: var(--secondary); transform: translateY(-2px); }
+
+/* ==========================================================================
+   36. GATILLOS DE URGENCIA VISUAL (FOMO)
+   ========================================================================== */
+.urgency-stock { 
+    font-size: 0.8rem; 
+    color: #EF4444; 
+    font-weight: 800; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 5px; 
+    margin: 5px 0 10px 0; 
+    animation: pulse-urgency 2s infinite; 
+    background: rgba(239, 68, 68, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+@keyframes pulse-urgency { 
+    0%, 100% { opacity: 1; transform: scale(1); } 
+    50% { opacity: 0.7; transform: scale(0.98); } 
+}
+
+.urgency-viewers { 
+    background: rgba(212, 175, 55, 0.1); 
+    color: var(--text-main); 
+    padding: 8px 12px; 
+    border-radius: 8px; 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-bottom: 15px; 
+    border: 1px solid rgba(212, 175, 55, 0.3); 
+}
+.blink-dot { 
+    width: 8px; 
+    height: 8px; 
+    background: #EF4444; 
+    border-radius: 50%; 
+    display: inline-block; 
+    animation: blink 1s infinite; 
+}
+@keyframes blink { 
+    0%, 100% { opacity: 1; } 
+    50% { opacity: 0.2; } 
+}
+
+/* ==========================================================================
+   37. BARRA DE PROGRESO DE ENVÍO GRATUITO
+   ========================================================================== */
+.shipping-progress-container {
+    background: var(--bg-row-popup);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.shipping-text {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin: 0 0 10px 0;
+    font-family: 'Montserrat', sans-serif;
+}
+.shipping-text strong {
+    color: var(--success);
+    font-size: 1rem;
+}
+.shipping-bar-bg {
+    width: 100%;
+    height: 10px;
+    background: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+.shipping-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--secondary);
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+}
+.shipping-bar-fill.success {
+    background: var(--success);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* ==========================================================================
+   38. SKELETON LOADERS (CARGA FANTASMA)
+   ========================================================================== */
+.skeleton-card {
+    background: var(--bg-card);
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 1px solid var(--border-card);
+    box-shadow: var(--shadow);
+}
+.skeleton-item {
+    background: linear-gradient(90deg, var(--bg-main) 25%, var(--border-color) 50%, var(--bg-main) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 8px;
+}
+.skeleton-img { width: 100%; height: 200px; border-radius: 12px; }
+.skeleton-title { width: 80%; height: 24px; margin: 0 auto; }
+.skeleton-stars { width: 50%; height: 16px; margin: 0 auto; }
+.skeleton-price { width: 40%; height: 30px; margin: 0 auto; }
+.skeleton-btn { width: 100%; height: 50px; border-radius: 14px; margin-top: auto; }
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   39. SISTEMA DE PREGUNTAS Y RESPUESTAS (MERCADO LIBRE STYLE)
+   ========================================================================== */
+.qa-container-block {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 30px;
+    border-top: 2px dashed var(--border-color);
+    padding-top: 25px;
+    text-align: left;
+}
+.qa-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: var(--secondary);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+.qa-form-wrapper {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+.qa-form-wrapper .checkout-input {
+    flex: 1;
+}
+.qa-btn-ask {
+    width: auto !important;
+    padding: 14px 30px !important;
+    white-space: nowrap;
+}
+.qa-items-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.qa-item-row {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    padding: 16px 20px;
+    border-radius: 14px;
+    animation: fadeIn 0.4s ease;
+}
+.qa-question-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+.qa-user-tag {
+    color: var(--secondary);
+}
+.qa-question-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin: 0 0 12px 0;
+}
+.qa-answer-block {
+    border-left: 3px solid var(--secondary);
+    padding-left: 15px;
+    margin-left: 10px;
+    background: rgba(212, 175, 55, 0.03);
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.qa-answer-text {
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    margin: 0;
+}
+.qa-answer-text span {
+    color: var(--secondary);
+    font-weight: 900;
+    margin-right: 5px;
+}
+.qa-answer-block.pending {
+    border-left-color: var(--danger);
+    background: rgba(239, 68, 68, 0.02);
 }
