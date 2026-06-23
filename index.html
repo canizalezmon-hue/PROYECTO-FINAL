@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QLLQD0F0TM"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QLLQD0F0TM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -13,26 +13,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HUMAN STORE | Componentes & Setup Premium</title> 
 
-    
-<meta name="description" content="Explora nuestra tienda online con el mejor catálogo de productos. Añade tus artículos favoritos al carrito y compra de forma rápida y segura.">
+        <meta name="description" content="Explora nuestra tienda online con el mejor catálogo de productos. Añade tus artículos favoritos al carrito y compra de forma rápida y segura.">
     <meta name="keywords" content="tienda online, comprar productos, carrito de compras, ofertas, tecnología, moda, mejores precios">
     <meta name="author" content="Tu Tienda Online">  
 
-    <meta property="og:title" content="Tu Tienda Online | El mejor catálogo a un clic" />
+        <meta property="og:title" content="Tu Tienda Online | El mejor catálogo a un clic" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://tutienda.com" />
     <meta property="og:image" content="https://tutienda.com/assets/banner-compartir.jpg" />
     <meta property="og:description" content="Descubre ofertas exclusivas, guarda tus favoritos y gestiona tu carrito de compras de manera fácil y segura." />
 
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-light">
 
-    <div id="preloader">
+        <div id="preloader">
         <div class="loader-content">
             <div class="logo-large">HUMAN STORE</div>
             <div class="loader-bar"></div>
@@ -40,10 +38,10 @@
         </div>
     </div>
 
-    <div id="toast-container"></div>
+        <div id="toast-container"></div>
 
-    <div id="welcome-screen" class="welcome-screen" style="display: none;">
-        <div class="scene" style="--n: 6;">
+        <div id="welcome-screen" class="welcome-screen" style="display: none;">
+                <div class="scene" style="--n: 6;">
             <div class="a3d">
                 <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600&auto=format&fit=crop" class="card" style="--i: 0" alt="Calzado">
                 <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=600&auto=format&fit=crop" class="card" style="--i: 1" alt="Tecnología">
@@ -54,21 +52,21 @@
             </div>
         </div>
 
-        <div class="welcome-box">
+                <div class="welcome-box">
             <div class="logo-large">HUMAN STORE</div>
-            <p id="auth-msg" style="margin-bottom: 20px; color: #64748B;">Identifícate para gestionar tu carrito y pedidos</p>
+            <p id="auth-msg" style="margin-bottom: 20px;">Identifícate para gestionar tu carrito y pedidos</p>
 
-            <div id="auth-nav-tabs" class="auth-tabs">
+                        <div id="auth-nav-tabs" class="auth-tabs">
                 <button id="tab-login" class="tab-btn active">Ingresar</button>
                 <button id="tab-register" class="tab-btn">Registrarse</button>
             </div>
 
             <div id="auth-form">
-                <div id="extended-register-fields" style="display: none;">
+                                <div id="extended-register-fields" style="display: none; flex-direction: column;">
                     <input type="text" id="reg-nombres" placeholder="Nombres">
                     <input type="text" id="reg-apellidos" placeholder="Apellidos">
 
-                    <div class="phone-input-group">
+                    <div class="phone-container">
                         <select id="reg-country-code">
                             <option value="+58">🇻🇪 +58</option>
                             <option value="+1">🇺🇸 +1</option>
@@ -80,18 +78,18 @@
                     </div>
                 </div>
 
-                <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
+                                <input type="email" id="usuario" placeholder="Correo @gmail.com" required>
 
                 <div id="login-password-area">
                     <input type="password" id="password" placeholder="Contraseña" required>
                 </div>
 
-                <div id="verification-code-area" style="display: none; margin-bottom: 20px;">
-                    <p style="font-size: 0.8rem; color: #64748B; margin-bottom: 8px;">Introduce el código de 6 dígitos enviado</p>
+                                <div id="verification-code-area" style="display: none; margin-bottom: 20px;">
+                    <p style="font-size: 0.8rem; margin-bottom: 8px;">Introduce el código de 6 dígitos enviado</p>
                     <input type="text" id="auth-verification-code" placeholder="Código de Verificación (Ej: 123456)" maxlength="6">
                 </div>
 
-                <div id="new-password-area" style="display: none;">
+                                <div id="new-password-area" style="display: none;">
                     <input type="password" id="new-password" placeholder="Nueva Contraseña">
                     <input type="password" id="new-password-confirm" placeholder="Confirmar Nueva Contraseña">
                 </div>
@@ -99,17 +97,17 @@
                 <button id="btn-auth-action" class="btn-auth">Entrar</button>
             </div>
 
-            <div class="auth-support-links" style="margin-top: 20px; font-size: 0.85rem;">
-                <a href="#" id="link-forgot-password" style="color: #64748B; text-decoration: none; font-weight: 600; display: block; margin-bottom: 10px;">¿Olvidaste tu contraseña?</a>
+                        <div class="auth-support-links" style="margin-top: 20px; font-size: 0.85rem;">
+                <a href="#" id="link-forgot-password" style="text-decoration: none; font-weight: 600; display: block; margin-bottom: 10px;">¿Olvidaste tu contraseña?</a>
                 <a href="#" id="link-back-to-auth" style="color: var(--accent); text-decoration: none; font-weight: 700; display: none; margin-bottom: 10px;">← Volver al Login</a>
             </div>
 
-            <button id="btn-cancel-auth" style="background: none; border: none; color: #94A3B8; margin-top: 15px; cursor: pointer; font-family: 'Montserrat';">Explorar catálogo sin sesión</button>
+            <button id="btn-cancel-auth" style="background: none; border: none; margin-top: 15px; cursor: pointer; font-family: 'Montserrat';">Explorar catálogo sin sesión</button>
         </div>
     </div>
 
-    <div id="app-container" class="hidden-app">
-        <nav class="navbar">
+        <div id="app-container" class="hidden-app">
+                <nav class="navbar">
             <div class="logo" onclick="location.reload()" style="cursor:pointer">HUMAN STORE</div>
 
             <div class="search-bar">
@@ -130,15 +128,15 @@
             </ul>
         </nav>
 
-        <div class="hero-banner">
+                <div class="hero-banner">
             <div class="hero-content">
                 <h1>Potencia Tu Setup Al Máximo</h1>
                 <p>Descubre componentes premium con envíos a todo el país.</p>
             </div>
         </div>
 
-        <div id="store-content" class="container">
-            <aside class="filters">
+                <div id="store-content" class="container">
+                        <aside class="filters">
                 <h3>Categorías</h3>
                 <button class="filter-btn active" data-category="all">Todos los Productos</button>
                 <button class="filter-btn" data-category="electronica">Electrónica</button>
@@ -146,7 +144,7 @@
                 <button class="filter-btn" data-category="ropa">Ropa</button>
             </aside>
 
-            <main style="flex: 1; display: flex; flex-direction: column;">
+                        <main style="flex: 1; display: flex; flex-direction: column;">
                 <div id="search-error-msg" class="no-results-message" style="display: none;">
                     ❌ No se encontraron productos que coincidan con tu búsqueda.
                 </div>
@@ -154,11 +152,11 @@
             </main>
         </div>
 
-        <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
+                <div id="checkout-page" class="container" style="display: none; flex-direction: column;">
             <button id="btn-back-store" class="btn-primary" style="width: fit-content; margin-bottom: 20px; cursor:pointer">← Volver a la Tienda</button>
 
             <div class="checkout-layout">
-                <div class="checkout-box summary-box">
+                                <div class="checkout-box summary-box">
                     <h2 class="checkout-title">Resumen de Compra</h2>
                     <div id="checkout-items-list" class="checkout-items-scroll"></div>
                     <div class="checkout-totals">
@@ -173,7 +171,7 @@
                     </div>
                 </div>
 
-                <div class="checkout-box payment-box">
+                                <div class="checkout-box payment-box">
                     <h2 class="checkout-title">Confirmación Final</h2>
                     <p>Tu pedido será enviado vía WhatsApp para coordinar el pago y la entrega.</p>
 
@@ -188,7 +186,7 @@
             </div>
         </div>
 
-        <footer class="main-footer">
+                <footer class="main-footer">
             <div class="footer-content">
                 <div class="footer-section">
                     <div class="logo" style="font-size: 1.5rem; margin-bottom: 10px;">HUMAN STORE</div>
@@ -231,24 +229,30 @@
         </footer>
     </div>
 
-    <div id="modal-detalle" class="modal">
+            <div id="modal-detalle" class="modal">
         <div class="modal-content-lg">
             <span class="close" id="close-detalle">×</span>
             <div id="detalle-body" class="product-layout"></div>
         </div>
     </div>
 
-    <div id="modal-carrito" class="modal">
+        <div id="modal-carrito" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <span class="close" id="close-carrito">×</span>
-            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;">Tu Carrito de Compras</h2>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 20px;">Tu Carrito de Compras</h2>
             <div id="cart-items"></div>
+
+            <div id="cart-suggestions-container" style="display: none; border-top: 2px dashed var(--border-color); padding-top: 15px; margin-top: 10px; margin-bottom: 15px;">
+                <h4 style="font-family: 'Orbitron'; font-size: 0.95rem; color: var(--secondary); margin-bottom: 15px;">🔥 Sugerencias Inteligentes para ti:</h4>
+                <div id="cart-suggestions-list" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px;"></div>
+            </div>
+
             <div class="cart-total">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                     <span>Subtotal en Divisas:</span>
                     <strong style="font-size: 1.2rem;">$<span id="total-usd">0.00</span></strong>
                 </div>
-                <div style="display: flex; justify-content: space-between; color: var(--primary); font-weight: 900; border-top: 2px solid #E2E8F0; padding-top: 15px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; color: var(--text-main); font-weight: 900; border-top: 2px solid var(--border-color); padding-top: 15px; margin-top: 10px;">
                     <span>Total a Pagar (Bs):</span>
                     <span><span id="total-bs">0.00</span> Bs.</span>
                 </div>
@@ -257,10 +261,10 @@
         </div>
     </div>
 
-    <div id="modal-terminos" class="modal">
+        <div id="modal-terminos" class="modal">
         <div class="modal-content" style="max-width: 650px;">
             <span class="close" id="close-terminos">×</span>
-            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 15px; font-size: 1.4rem;">Términos de Compra</h2>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 15px; font-size: 1.4rem;">Términos de Compra</h2>
             <div class="terms-scroll-box">
                 <h4>1. Tasa de Cambio Oficial</h4>
                 <p>Todos los precios mostrados en Bolívares (Bs.) se calculan estrictamente con base en la tasa oficial provista por el Banco Central de Venezuela (BCV) correspondiente al día valor de la transacción.</p>
@@ -278,29 +282,29 @@
         </div>
     </div>
 
-    <div id="modal-favoritos" class="modal">
+        <div id="modal-favoritos" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <span class="close" id="close-favoritos">×</span>
-            <h2 style="font-family: 'Orbitron'; color: var(--primary); margin-bottom: 20px;">Mis Favoritos</h2>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main); margin-bottom: 20px;">Mis Favoritos</h2>
             <div id="fav-items"></div>
-            <div id="fav-actions-area" style="border-top: 2px solid #E2E8F0; padding-top: 20px; margin-top: 10px; display: none;">
+            <div id="fav-actions-area" style="border-top: 2px solid var(--border-color); padding-top: 20px; margin-top: 10px; display: none;">
                 <button id="btn-llevar-todo-fav" class="btn-checkout" style="width: 100%;">Agregar todos a mi carrito de compras</button>
             </div>
         </div>
     </div>
 
-    <div id="modal-perfil" class="modal">
+        <div id="modal-perfil" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <span class="close" id="close-perfil">×</span>
-            <h2 style="font-family: 'Orbitron'; color: var(--primary); border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">👤 Perfil de Usuario</h2>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main); border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">👤 Perfil de Usuario</h2>
             <div id="perfil-body"></div>
         </div>
     </div>
 
-    <div id="modal-historial-pedidos" class="modal">
+        <div id="modal-historial-pedidos" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close" id="close-historial">×</span>
-            <h2 style="font-family: 'Orbitron'; color: var(--primary); border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">📦 Mis Pedidos</h2>
+            <h2 style="font-family: 'Orbitron'; color: var(--text-main); border-bottom: 2px solid var(--secondary); padding-bottom: 10px;">📦 Mis Pedidos</h2>
             <div id="historial-pedidos-body" style="max-height: 400px; overflow-y: auto; margin-top: 15px;"></div>
         </div>
     </div>
