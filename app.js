@@ -1438,3 +1438,42 @@ window.zoomOut = () => {
     img.style.transformOrigin = "center center";
     img.style.transform = "scale(1)";
 };
+document.addEventListener("DOMContentLoaded", () => {
+            const overlay = document.getElementById('global-transition');
+            const textElement = document.getElementById('transition-text');
+
+            // Función principal para disparar la pantalla de carga
+            function triggerTransition(message, duration = 1500) {
+                textElement.textContent = message;
+                overlay.classList.add('active');
+                
+                // Ocultar automáticamente después del tiempo definido
+                setTimeout(() => {
+                    overlay.classList.remove('active');
+                }, duration);
+            }
+
+            // Interceptar clic en "Entrar"
+            const btnAuth = document.getElementById('btn-auth-action');
+            if (btnAuth) {
+                btnAuth.addEventListener('click', () => {
+                    triggerTransition("Preparando tu experiencia...");
+                });
+            }
+
+            // Interceptar clic en "Explorar catálogo sin sesión"
+            const btnCancelAuth = document.getElementById('btn-cancel-auth');
+            if (btnCancelAuth) {
+                btnCancelAuth.addEventListener('click', () => {
+                    triggerTransition("Ingresando al catálogo...");
+                });
+            }
+
+            // Interceptar clic en "Proceder al Pago" dentro del carrito
+            const btnCheckout = document.getElementById('btn-go-checkout');
+            if (btnCheckout) {
+                btnCheckout.addEventListener('click', () => {
+                    triggerTransition("Ya casi terminamos...");
+                });
+            }
+        });
