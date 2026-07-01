@@ -36,6 +36,40 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+
+    <!-- ETIQUETA: ESTILOS PARA EFECTOS DE TRANSICIÓN (NUEVO) -->
+    <style>
+        .transition-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .transition-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(212, 175, 55, 0.3);
+            border-top-color: #D4AF37;
+            border-radius: 50%;
+            animation: spin-transition 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin-transition { 
+            to { transform: rotate(360deg); } 
+        }
+    </style>
 </head>
 <body class="theme-light">
 
@@ -46,6 +80,12 @@
             <div class="loader-bar"></div>
             <p style="color: #D4AF37; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 2px; margin-top: 10px;">CARGANDO EXPERIENCIA PREMIUM...</p>
         </div>
+    </div>
+
+    <!-- ETIQUETA: OVERLAY DE TRANSICIÓN GLOBAL (NUEVO) -->
+    <div id="global-transition" class="transition-overlay">
+        <div class="transition-spinner"></div>
+        <h2 id="transition-text" style="color: #D4AF37; font-family: 'Orbitron', sans-serif; letter-spacing: 2px; text-align: center;">Cargando...</h2>
     </div>
 
     <!-- ETIQUETA: CONTENEDOR FLOTANTE PARA ALERTAS (TOASTS) -->
@@ -130,7 +170,7 @@
     <div id="app-container" class="hidden-app">
         <!-- Barra de Navegación (Navbar) -->
         <nav class="navbar">
-            <div class="logo" onclick="location.reload()" style="cursor:pointer">HUMAN STORE</div>
+            <div class="logo" onclick="document.getElementById('checkout-page').style.display='none'; document.getElementById('store-content').style.display=''; document.querySelectorAll('.modal').forEach(m => m.style.display='none'); let btn = document.querySelector('.filter-btn[data-category=\'all\']'); if(btn) btn.click(); window.scrollTo(0,0);" style="cursor:pointer" title="Volver a todos los productos">HUMAN STORE</div>
 
             <div class="search-bar">
                 <input type="text" id="input-search" placeholder="Buscar tecnología, hogar, ropa...">
@@ -167,16 +207,6 @@
                 <button class="filter-btn" data-category="electronica">Electrónica</button>
                 <button class="filter-btn" data-category="hogar">Hogar</button>
                 <button class="filter-btn" data-category="ropa">Ropa</button>
-
-                <!-- FILTRO DE PRECIO AVANZADO -->
-                <h3 style="margin-top: 35px; border-top: 1px dashed var(--border-color); padding-top: 20px;">Presupuesto Máx.</h3>
-                <div class="price-filter-container">
-                    <input type="range" id="price-slider" min="10" max="1500" step="10" value="1500">
-                    <div class="price-display">
-                        <span>$0</span>
-                        <span id="price-slider-value">$1500</span>
-                    </div>
-                </div>
             </aside>
 
             <!-- Rejilla Dinámica de Productos -->
@@ -429,6 +459,7 @@
             <div id="historial-pedidos-body" style="max-height: 400px; overflow-y: auto; margin-top: 15px;"></div>
         </div>
     </div>
+
 
     <script src="app.js"></script>
 </body>
