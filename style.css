@@ -500,4 +500,20 @@ body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--bg-ma
 /* CONTENEDOR DE GRÁFICOS (FIX INFINITE RESIZE CHART.JS) */
 .dashboard-charts { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px; }
 .chart-box { background: var(--bg-card); border-radius: 25px; padding: 30px; border: 1px solid var(--border-card); box-shadow: var(--shadow); }
-.chart-container { position: relative; height: 300px; width: 100%; } /* REGLA CLAVE PARA EVITAR EL BUCLE INFINITO */
+.chart-container { position: relative; height: 300px; width: 100%; }
+
+/* ==========================================================================
+   41. ESTILOS DEL CENTRO DE ALERTAS Y NOTIFICACIONES
+   ========================================================================== */
+.btn-icon { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); padding: 10px 15px; border-radius: 12px; cursor: pointer; font-size: 1.2rem; position: relative; transition: 0.3s; }
+.btn-icon:hover { border-color: var(--secondary); transform: translateY(-2px); }
+.notif-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 0.7rem; font-weight: bold; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.notif-dropdown { position: absolute; top: 120%; right: 0; width: 320px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); z-index: 1000; overflow: hidden; animation: fadeIn 0.3s ease; text-align: left; }
+.notif-header { padding: 15px 20px; background: var(--bg-main); font-family: 'Orbitron'; font-size: 0.9rem; font-weight: bold; border-bottom: 1px solid var(--border-color); color: var(--secondary); }
+.notif-list { max-height: 300px; overflow-y: auto; }
+.notif-item { padding: 15px 20px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; align-items: flex-start; transition: 0.3s; cursor: pointer; }
+.notif-item:hover { background: var(--bg-row-popup); }
+.notif-item.unread { background: rgba(212, 175, 55, 0.05); border-left: 3px solid var(--secondary); }
+.notif-icon { font-size: 1.2rem; }
+.notif-content p { margin: 0; font-size: 0.85rem; color: var(--text-main); line-height: 1.4; font-weight: 600; }
+.notif-content span { font-size: 0.7rem; color: var(--text-sub); }
