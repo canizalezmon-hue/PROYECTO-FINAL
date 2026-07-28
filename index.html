@@ -7,14 +7,17 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-QLLQD0F0TM');
     </script>
     
-    <!-- LIBRERÍAS EXTERNAS PARA GENERACIÓN DE PDF Y GRÁFICOS INTERACTIVOS -->
+    <!-- LIBRERÍAS EXTERNAS: PDF, GRÁFICOS Y AHORA FIREBASE SDK (V8 COMPAT) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- SDK DE FIREBASE PARA CONEXIÓN A LA NUBE -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,13 +27,6 @@
     <meta name="description" content="Explora nuestra tienda online con el mejor catálogo de productos. Añade tus artículos favoritos al carrito y compra de forma rápida y segura.">
     <meta name="keywords" content="tienda online, comprar productos, carrito de compras, ofertas, tecnología, moda, mejores precios">
     <meta name="author" content="Tu Tienda Online">  
-
-    <!-- ETIQUETA: PROTOCOLO OPEN GRAPH PARA COMPARTIR EN REDES -->
-    <meta property="og:title" content="Tu Tienda Online | El mejor catálogo a un clic" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://tutienda.com" />
-    <meta property="og:image" content="https://tutienda.com/assets/banner-compartir.jpg" />
-    <meta property="og:description" content="Descubre ofertas exclusivas, guarda tus favoritos y gestiona tu carrito de compras de manera fácil y segura." />
 
     <!-- ETIQUETA: VINCULACIÓN DE FUENTES GOOGLE FONTS Y HOJA DE ESTILOS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +75,7 @@
         <div class="loader-content">
             <div class="logo-large">HUMAN STORE</div>
             <div class="loader-bar"></div>
-            <p style="color: #D4AF37; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 2px; margin-top: 10px;">CARGANDO EXPERIENCIA PREMIUM...</p>
+            <p id="preloader-text" style="color: #D4AF37; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; letter-spacing: 2px; margin-top: 10px;">CONECTANDO CON LA NUBE...</p>
         </div>
     </div>
 
@@ -352,7 +348,19 @@
         <!-- ETIQUETA: PANEL DE VENDEDOR -->
         <div id="seller-panel" class="container" style="display: none; flex-direction: column;">
             <button class="btn-primary btn-back-store" style="width: fit-content; margin-bottom: 20px; cursor:pointer">← Volver a la Tienda</button>
-            <h2 class="checkout-title" style="margin-bottom: 10px;">🏪 Centro de Vendedores</h2>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h2 class="checkout-title" style="margin-bottom: 0;">🏪 Centro de Vendedores</h2>
+                <div class="notification-wrapper" style="position: relative;">
+                    <button id="btn-seller-notifications" class="btn-icon" onclick="toggleSellerNotifications()">
+                        🔔 <span id="seller-notif-badge" class="notif-badge" style="display:none;">0</span>
+                    </button>
+                    <div id="seller-notif-dropdown" class="notif-dropdown" style="display: none;">
+                        <div class="notif-header">Centro de Alertas</div>
+                        <div id="seller-notif-list" class="notif-list"></div>
+                    </div>
+                </div>
+            </div>
             <p style="color: var(--text-sub); margin-bottom: 20px;">Sube tus productos al catálogo, gestiona tu inventario y revisa tus ventas reales.</p>
             
             <div class="seller-dashboard">
@@ -386,7 +394,6 @@
                 </div>
             </div>
 
-            <!-- BOTÓN PARA ABRIR EL MODAL DE ANALÍTICAS -->
             <div style="display: flex; justify-content: flex-end; margin-bottom: 30px; gap: 15px;">
                 <button onclick="abrirAnaliticasVendedor()" class="btn-primary" style="width: auto; padding: 12px 25px; background: #3B82F6; color: white;">📈 Ver Analíticas y Reportes</button>
             </div>
@@ -467,11 +474,15 @@
                     
                     <div class="form-row">
                         <div class="form-col">
-                            <label>Precio Base (USD)</label>
+                            <label>Precio Original (USD)</label>
                             <input type="number" id="seller-prod-price" class="checkout-input" step="0.01" min="1" placeholder="Ej: 45.00" required>
                         </div>
                         <div class="form-col">
-                            <label>Stock Disponible (Unidades)</label>
+                            <label>Descuento (%) <span style="color:var(--danger); font-size:0.7rem;">Opcional</span></label>
+                            <input type="number" id="seller-prod-discount" class="checkout-input" min="0" max="100" value="0" placeholder="Ej: 20">
+                        </div>
+                        <div class="form-col">
+                            <label>Stock Disp.</label>
                             <input type="number" id="seller-prod-stock" class="checkout-input" min="0" placeholder="Ej: 10" required>
                         </div>
                     </div>
@@ -562,7 +573,7 @@
         </div>
     </div>
 
-    <!-- NUEVO MODAL: ANALÍTICAS Y REPORTES (CON CORRECCIÓN DE CONTENEDOR) -->
+    <!-- MODAL: ANALÍTICAS Y REPORTES -->
     <div id="modal-analiticas" class="modal">
         <div class="modal-content-lg">
             <span class="close" id="close-analiticas">×</span>
@@ -571,14 +582,12 @@
             <div class="dashboard-charts">
                 <div class="checkout-box chart-box" style="flex: 1; min-width: 300px;">
                     <h3 style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--secondary); margin-bottom: 15px;">📈 Ventas (Últimos 7 Días)</h3>
-                    <!-- CONTENEDOR RELATIVO ESTRICTO PARA EVITAR BUCLE DE CHART.JS -->
                     <div class="chart-container">
                         <canvas id="salesChart"></canvas>
                     </div>
                 </div>
                 <div class="checkout-box chart-box" style="flex: 0.7; min-width: 250px;">
                     <h3 style="font-family: 'Orbitron'; font-size: 1.1rem; color: var(--secondary); margin-bottom: 15px;">🛍️ Categorías</h3>
-                    <!-- CONTENEDOR RELATIVO ESTRICTO PARA EVITAR BUCLE DE CHART.JS -->
                     <div class="chart-container">
                         <canvas id="categoryChart"></canvas>
                     </div>
