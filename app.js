@@ -1,52 +1,5 @@
 // ==========================================================================
-// 1. CONFIGURACIÓN E INICIALIZACIÓN DE FIREBASE (EL CEREBRO EN LA NUBE)
-// ==========================================================================
-const firebaseConfig = {
-    apiKey: "AIzaSyDv1T2LlDQ_jFJEBWMLpw6Voo-0oaB2-Qc",
-    authDomain: "human-store-9382a.firebaseapp.com",
-    projectId: "human-store-9382a",
-    storageBucket: "human-store-9382a.firebasestorage.app",
-    messagingSenderId: "46873649912",
-    appId: "1:46873649912:web:3e82edb6c485e9aa07d10d",
-    measurementId: "G-QDV0TSR6F1"
-};
-
-// Inicializar la app y la base de datos
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// ==========================================================================
-// 2. MOTOR DE SINCRONIZACIÓN EN LA NUBE (LOCAL-FIRST)
-// ==========================================================================
-const CloudDB = {
-    async saveProduct(p) { 
-        try { await db.collection('productos').doc(String(p.id)).set(p); console.log("☁️ Producto sincronizado."); } 
-        catch(e){ console.warn("Error Firebase:", e); } 
-    },
-    async deleteProduct(id) { 
-        try { await db.collection('productos').doc(String(id)).delete(); } 
-        catch(e){} 
-    },
-    async saveOrder(o) { 
-        try { await db.collection('pedidos').doc(String(o.idPedido)).set(o); } 
-        catch(e){} 
-    },
-    async updateOrder(id, data) { 
-        try { await db.collection('pedidos').doc(String(id)).update(data); } 
-        catch(e){} 
-    },
-    async saveUserProp(correo, prop, data) { 
-        try { await db.collection('usuarios').doc(correo).set({ [prop]: data }, {merge: true}); } 
-        catch(e){} 
-    },
-    async saveQA(idProd, qaArray) { 
-        try { await db.collection('qa').doc(String(idProd)).set({ preguntas: qaArray }); } 
-        catch(e){} 
-    }
-};
-
-// ==========================================================================
-// 3. VARIABLES DE ESTADO Y PERSISTENCIA
+// 1. VARIABLES DE ESTADO Y PERSISTENCIA (MODO LOCAL)
 // ==========================================================================
 let TASA_BCV = parseFloat(localStorage.getItem('last_bcv_rate')) || 36.50; 
 let usuarioLogueado = localStorage.getItem('human_store_logged') === 'true';
@@ -71,7 +24,7 @@ let salesChartInstance = null;
 let categoryChartInstance = null;
 
 // ==========================================================================
-// 4. BASE DE DATOS INICIAL (CATÁLOGO SEMILLA)
+// 2. BASE DE DATOS INICIAL (CATÁLOGO SEMILLA)
 // ==========================================================================
 const catalogoInicial = [
     { id: 1, nombre: "Laptop Gamer X-Pro", precioOriginal: 1200, precio: 1200, descuento: 0, cat: "electronica", stock: 2, owner: 'admin@humanstore.com', img: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500", opciones: { "RAM": ["16GB", "32GB"], "Color": ["Negro", "Plata"] }, galeria: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=500", "https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=500", "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500"] },
@@ -111,16 +64,20 @@ window.selectVariant = (btn) => {
 };
 
 // ==========================================================================
-// 5. INICIALIZACIÓN DE LA APLICACIÓN Y DESCARGA DESDE LA NUBE
+// 3. INICIALIZACIÓN DE LA APLICACIÓN
 // ==========================================================================
-window.addEventListener('load', async () => {
+window.addEventListener('load', () => {
     
     // Crear Super Admin si no existe
     if (!localStorage.getItem('userdata_admin@humanstore.com')) {
         let adminData = { correo: 'admin@humanstore.com', clave: 'admin123', nombres: 'Super', apellidos: 'Administrador', telefono: '+580000000000', rol: 'admin' };
         localStorage.setItem('user_admin@humanstore.com', 'admin123');
         localStorage.setItem('userdata_admin@humanstore.com', JSON.stringify(adminData));
-        CloudDB.saveUserProp('admin@humanstore.com', 'perfil', adminData);
+    }
+
+    // Inicializar DB de productos si no existe
+    if (!localStorage.getItem('human_store_products_db')) {
+        localStorage.setItem('human_store_products_db', JSON.stringify(catalogoInicial));
     }
 
     const preloader = document.getElementById('preloader');
@@ -128,40 +85,6 @@ window.addEventListener('load', async () => {
 
     obtenerTasaBCV();
     mostrarSkeletons();
-
-    // 🚀 DESCARGA DE DATOS DESDE FIREBASE
-    try {
-        const snapProds = await db.collection('productos').get();
-        if(!snapProds.empty) {
-            let nProds = [];
-            snapProds.forEach(d => nProds.push(d.data()));
-            productos = nProds.sort((a,b) => b.id - a.id);
-            localStorage.setItem('human_store_products_db', JSON.stringify(productos));
-        } else {
-            productos.forEach(p => CloudDB.saveProduct(p));
-        }
-
-        const snapOrders = await db.collection('pedidos').get();
-        if(!snapOrders.empty) {
-            let nOrders = [];
-            snapOrders.forEach(d => nOrders.push(d.data()));
-            nOrders.sort((a,b) => b.idPedido - a.idPedido);
-            localStorage.setItem('human_store_global_orders', JSON.stringify(nOrders));
-        }
-        
-        if (usuarioActualCorreo) {
-            const uDoc = await db.collection('usuarios').doc(usuarioActualCorreo).get();
-            if(uDoc.exists) {
-                let ud = uDoc.data();
-                if(ud.perfil) localStorage.setItem(`userdata_${usuarioActualCorreo}`, JSON.stringify(ud.perfil));
-                if(ud.wallet) localStorage.setItem(`wallet_${usuarioActualCorreo}`, JSON.stringify(ud.wallet));
-                if(ud.payment) localStorage.setItem(`paymentData_${usuarioActualCorreo}`, JSON.stringify(ud.payment));
-                if(ud.branding) localStorage.setItem(`branding_${usuarioActualCorreo}`, JSON.stringify(ud.branding));
-            }
-        }
-    } catch(e) {
-        console.warn("Operando en Modo Local. Verifica tu conexión a internet.");
-    }
 
     const urlInput = document.getElementById('seller-prod-url');
     if(urlInput) {
@@ -174,6 +97,7 @@ window.addEventListener('load', async () => {
         });
     }
 
+    // Lógica para quitar el preloader y cargar las vistas
     setTimeout(() => {
         preloader.style.transition = "opacity 0.8s ease, filter 0.8s ease"; 
         preloader.style.opacity = "0"; 
@@ -185,7 +109,7 @@ window.addEventListener('load', async () => {
             app.classList.add('app-entry-animation'); 
             inyectarSelectorMonedaNavbar();
 
-            const ultimaSeccion = localStorage.getItem('human_store_current_view', 'store');
+            const ultimaSeccion = localStorage.getItem('human_store_current_view') || 'store';
             if (ultimaSeccion === 'checkout' && usuarioLogueado && carrito.length > 0) { irASeccionCheckout(false); } 
             else if(ultimaSeccion === 'admin' && usuarioLogueado) { mostrarPanelAdmin(); } 
             else if(ultimaSeccion === 'seller' && usuarioLogueado) { mostrarPanelVendedor(); } 
@@ -206,10 +130,34 @@ window.addEventListener('load', async () => {
 
     conectarEventosAutenticacion();
     if (usuarioLogueado) { configurarMenuUsuarioDesplegable(); } else { actualizarBotonLoginNavbar(); }
+
+    // =======================================================
+    // NUEVO: EVENTOS PARA BUSCADOR Y CATEGORÍAS EN TIEMPO REAL
+    // =======================================================
+    const searchInput = document.getElementById('input-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            localStorage.setItem('human_store_search_query', query);
+            const cat = localStorage.getItem('human_store_active_category') || 'all';
+            ejecutarFiltradoCombinado(query, cat);
+        });
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            const cat = e.currentTarget.dataset.category;
+            localStorage.setItem('human_store_active_category', cat);
+            const query = document.getElementById('input-search').value;
+            ejecutarFiltradoCombinado(query, cat);
+        });
+    });
 });
 
 // ==========================================================================
-// 6. FLUJO DE CHECKOUT Y DOM GENERAL
+// 4. FLUJO DE CHECKOUT Y DOM GENERAL
 // ==========================================================================
 const checkoutDelivery = document.getElementById('checkout-delivery');
 const deliveryAddressArea = document.getElementById('delivery-address-area');
@@ -294,11 +242,18 @@ function showToast(mensaje, duracion = 3000) {
 }
 
 // ==========================================================================
-// 7. RENDERIZADO DEL CATÁLOGO
+// 5. RENDERIZADO DEL CATÁLOGO
 // ==========================================================================
 function renderProducts(lista) {
     const grid = document.getElementById('product-grid'); grid.innerHTML = "";
-    if (lista.length === 0) { grid.innerHTML = `<div class="no-products-msg"><h3>🔍 Sin Resultados Coincidentes</h3></div>`; return; }
+    const errorMsg = document.getElementById('search-error-msg');
+
+    if (lista.length === 0) { 
+        if(errorMsg) errorMsg.style.display = 'block';
+        return; 
+    } else {
+        if(errorMsg) errorMsg.style.display = 'none';
+    }
 
     lista.forEach(p => {
         const esFav = favoritos.some(f => f.id === p.id); const estaAgotado = p.stock <= 0; let precioHtml = ""; const rate = getSimulatedRating(p.id);
@@ -337,11 +292,11 @@ function ejecutarFiltradoCombinado(texto, categoria) {
     if (categoria !== 'all') filtrados = filtrados.filter(p => p.cat === categoria);
     if (texto) filtrados = filtrados.filter(p => p.nombre.toLowerCase().includes(texto.toLowerCase()));
     filtrados = filtrados.filter(p => p.precio <= precioMax);
-    setTimeout(() => { renderProducts(filtrados); }, 500); 
+    setTimeout(() => { renderProducts(filtrados); }, 300); 
 }
 
 // ==========================================================================
-// 8. DETALLE DEL PRODUCTO Y SISTEMA DE PREGUNTAS
+// 6. DETALLE DEL PRODUCTO Y SISTEMA DE PREGUNTAS
 // ==========================================================================
 window.abrirDetalle = (id) => {
     const p = productos.find(i => i.id === id); if(!p) return;
@@ -408,7 +363,6 @@ window.hacerPregunta = (id) => {
     let preguntas = JSON.parse(localStorage.getItem(`human_store_qa_${id}`)) || [];
     preguntas.unshift({ usuario: usuarioActualCorreo, texto: texto, fecha: new Date().toLocaleDateString('es-VE'), respuesta: null });
     localStorage.setItem(`human_store_qa_${id}`, JSON.stringify(preguntas));
-    CloudDB.saveQA(id, preguntas); // NUBE
     
     showToast("❓ Consulta publicada con éxito"); input.value = ""; window.refreshQAList(id);
 
@@ -417,21 +371,13 @@ window.hacerPregunta = (id) => {
         if (currentPreguntas.length > 0 && !currentPreguntas[0].respuesta) {
             currentPreguntas[0].respuesta = "¡Hola! Gracias por tu consulta. Confirmamos stock e indicaciones técnicas. Puedes procesar tu orden al carrito y un asesor te atenderá de inmediato por WhatsApp.";
             localStorage.setItem(`human_store_qa_${id}`, JSON.stringify(currentPreguntas));
-            CloudDB.saveQA(id, currentPreguntas); // NUBE
             if (document.getElementById('modal-detalle').style.display === 'block') { window.refreshQAList(id); }
         }
     }, 2000);
 };
 
-window.refreshQAList = async (id) => {
+window.refreshQAList = (id) => {
     const listEl = document.getElementById('qa-items-list'); if (!listEl) return;
-    
-    // Intento de recargar preguntas desde la nube
-    try {
-        const qaDoc = await db.collection('qa').doc(String(id)).get();
-        if(qaDoc.exists) { localStorage.setItem(`human_store_qa_${id}`, JSON.stringify(qaDoc.data().preguntas)); }
-    } catch(e){}
-
     let preguntas = JSON.parse(localStorage.getItem(`human_store_qa_${id}`)) || [];
     listEl.innerHTML = preguntas.map(q => {
         let respHtml = q.respuesta ? `<div class="qa-answer-block"><p class="qa-answer-text"><span>↩️</span> ${q.respuesta}</p></div>` : `<div class="qa-answer-block pending"><p class="qa-answer-text italic">⏳ Esperando respuesta de HUMAN STORE...</p></div>`;
@@ -452,7 +398,7 @@ function cerrarModalGeneral() {
 }
 
 // ==========================================================================
-// 9. GESTIÓN DEL CARRITO DE COMPRAS Y PEDIDOS
+// 7. GESTIÓN DEL CARRITO DE COMPRAS Y PEDIDOS
 // ==========================================================================
 window.agregarCarrito = (id, desdeModal = false) => {
     if (!usuarioLogueado) { showToast("🔑 Identifícate para una experiencia de compra completa"); document.getElementById('welcome-screen').style.display = 'flex'; return; }
@@ -496,7 +442,6 @@ function actualizarTodo() {
         else if (total < umbralEnvio) { const faltante = umbralEnvio - total; const porcentaje = (total / umbralEnvio) * 100; shippingText.innerHTML = `¡Te faltan <strong>$${faltante.toFixed(2)}</strong> para 🚚 Envío Gratis!`; shippingFill.style.width = `${porcentaje}%`; shippingFill.classList.remove('success'); } 
         else { shippingText.innerHTML = `¡Felicidades! Tienes <strong>🚚 Envío Gratis</strong>`; shippingFill.style.width = '100%'; shippingFill.classList.add('success'); }
     }
-    actualizarSugerenciasCarrito();
 }
 
 window.cambiarCant = (index, delta) => {
@@ -569,13 +514,13 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
         const prodMaster = productos.find(p => p.id === i.id);
         if(prodMaster) {
             prodMaster.stock = Math.max(0, prodMaster.stock - i.qty);
-            CloudDB.saveProduct(prodMaster); // GUARDAR STOCK ACTUALIZADO EN LA NUBE
         }
         return {
             id: i.id, nombre: i.nombre, qty: i.qty, precio: i.precio, subtotal: i.precio * i.qty, variantes: i.variantesTexto, owner: prodMaster ? prodMaster.owner : 'admin@humanstore.com', payoutStatus: 'pendiente'
         };
     });
 
+    // Guardar stock actualizado en el almacenamiento local
     localStorage.setItem('human_store_products_db', JSON.stringify(productos)); 
     let clearPaymentInfo = paymentDetailsText.replace(/%0A/g, ' | ').replace(/\*/g, '').trim();
 
@@ -603,9 +548,6 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
     globalOrders.unshift(nuevoPedido);
     localStorage.setItem('human_store_global_orders', JSON.stringify(globalOrders));
 
-    // GUARDAR PEDIDO EN LA NUBE
-    CloudDB.saveOrder(nuevoPedido);
-
     let addressText = address ? `%0A📍 *Dirección:* ${address}` : "";
     const msg = `🛍️ *NUEVO PEDIDO CONFIRMADO - HUMAN STORE*%0A%0A👤 *Cliente:* ${usuarioActualCorreo}%0A🚚 *Entrega:* ${deliveryMethod}${addressText}%0A💳 *Pago:* ${paymentMethod}${paymentDetailsText}%0A%0A*🛒 ARTÍCULOS:*%0A${carrito.map(i => `▪️ ${i.nombre} ${i.variantesTexto ? `[${i.variantesTexto}]` : ''} (x${i.qty})%0A`).join("")}%0A💰 *TOTAL:* $${totalUsd} / ${totalBs} Bs.`;
     
@@ -616,7 +558,7 @@ document.getElementById('btn-finalizar-pago').onclick = () => {
 };
 
 // ==========================================================================
-// 10. AUTENTICACIÓN Y PERFILES (CON NUBE)
+// 8. AUTENTICACIÓN Y PERFILES
 // ==========================================================================
 function procesarAccionAuth() {
     const u = document.getElementById('usuario').value.trim(); const p = document.getElementById('password').value.trim(); const btnAuth = document.getElementById('btn-auth-action');
@@ -644,7 +586,6 @@ function procesarAccionAuth() {
             const nuevaPass = document.getElementById('new-password').value.trim(); const nuevaPassConf = document.getElementById('new-password-confirm').value.trim();
             if (!nuevaPass || !nuevaPassConf) return showToast("⚠️ Rellena los campos"); if (nuevaPass !== nuevaPassConf) return showToast("❌ Las contraseñas no coinciden");
             localStorage.setItem(`user_${correoTemporalRecuperacion}`, nuevaPass); 
-            CloudDB.saveUserProp(correoTemporalRecuperacion, 'clave', nuevaPass); // GUARDAR CLAVE EN NUBE
             showToast("🔒 ¡Contraseña actualizada!"); cancelarFlujosEspeciales(); document.getElementById('tab-login').click();
         }
         return;
@@ -666,10 +607,6 @@ function procesarAccionAuth() {
             if (codigoIngresado !== codigoGeneradoSimulado) return showToast("🔒 Código inválido");
             localStorage.setItem(`user_${datosRegistroTemporales.correo}`, datosRegistroTemporales.clave); 
             localStorage.setItem(`userdata_${datosRegistroTemporales.correo}`, JSON.stringify(datosRegistroTemporales));
-            
-            // GUARDAR USUARIO EN LA NUBE
-            CloudDB.saveUserProp(datosRegistroTemporales.correo, 'perfil', datosRegistroTemporales);
-            CloudDB.saveUserProp(datosRegistroTemporales.correo, 'clave', datosRegistroTemporales.clave);
 
             showToast("🎉 ¡Registro completado!"); cancelarFlujosEspeciales(); document.getElementById('tab-login').click();
         }
@@ -699,7 +636,6 @@ window.guardarMetodosPago = () => {
     const pm = document.getElementById('prof-pm-phone').value.trim(); const zelle = document.getElementById('prof-zelle-email').value.trim(); const paypal = document.getElementById('prof-paypal-email').value.trim();
     const payData = { pm, zelle, paypal };
     localStorage.setItem(`paymentData_${usuarioActualCorreo}`, JSON.stringify(payData)); 
-    CloudDB.saveUserProp(usuarioActualCorreo, 'payment', payData); // GUARDAR EN NUBE
     showToast("💾 Métodos de pago guardados exitosamente");
 };
 
@@ -799,7 +735,7 @@ function configurarMenuUsuarioDesplegable() {
 }
 
 // ==========================================================================
-// 11. PANEL DE ADMINISTRADOR MAESTRO
+// 9. PANEL DE ADMINISTRADOR MAESTRO
 // ==========================================================================
 window.mostrarPanelAdmin = () => {
     document.getElementById('store-content').style.display = 'none'; document.getElementById('checkout-page').style.display = 'none'; document.getElementById('seller-panel').style.display = 'none'; document.getElementById('main-hero').style.display = 'none'; document.getElementById('admin-panel').style.display = 'flex'; localStorage.setItem('human_store_current_view', 'admin');
@@ -841,14 +777,11 @@ window.liquidarVendedor = (correo) => {
         let globalOrders = JSON.parse(localStorage.getItem('human_store_global_orders')) || [];
         globalOrders.forEach(o => { 
             if (o.status === 'completado') { 
-                let updated = false;
                 o.items.forEach(i => { 
                     if (i.owner === correo && i.payoutStatus !== 'pagado') { 
                         i.payoutStatus = 'pagado'; 
-                        updated = true;
                     } 
                 }); 
-                if(updated) CloudDB.updateOrder(o.idPedido, {items: o.items});
             } 
         });
         localStorage.setItem('human_store_global_orders', JSON.stringify(globalOrders)); 
@@ -885,7 +818,6 @@ window.cambiarRolUsuario = (correo) => {
     if(nuevoRol && ['comprador', 'vendedor', 'admin'].includes(nuevoRol.toLowerCase())) { 
         data.rol = nuevoRol.toLowerCase(); 
         localStorage.setItem(`userdata_${correo}`, JSON.stringify(data)); 
-        CloudDB.saveUserProp(correo, 'perfil', data); // NUBE
         showToast(`✅ Rol de ${correo} actualizado con éxito a ${nuevoRol}`); renderAdminUsers(); 
     } 
     else if (nuevoRol) { showToast("❌ Comando inválido. Roles permitidos: comprador, vendedor, admin."); }
@@ -903,7 +835,7 @@ window.verBilleteraVendedor = (correo) => {
 };
 
 // ==========================================================================
-// 12. PANEL DE VENDEDOR, NOTIFICACIONES Y GRÁFICOS
+// 10. PANEL DE VENDEDOR, NOTIFICACIONES Y GRÁFICOS
 // ==========================================================================
 window.mostrarPanelVendedor = () => {
     document.getElementById('store-content').style.display = 'none'; document.getElementById('checkout-page').style.display = 'none'; document.getElementById('admin-panel').style.display = 'none'; document.getElementById('main-hero').style.display = 'none'; document.getElementById('seller-panel').style.display = 'flex'; localStorage.setItem('human_store_current_view', 'seller');
@@ -1106,7 +1038,6 @@ window.cambiarEstadoPedido = (idPedido, nuevoEstado) => {
     let globalOrders = JSON.parse(localStorage.getItem('human_store_global_orders')) || []; let order = globalOrders.find(o => String(o.idPedido) === String(idPedido));
     if(order) {
         order.status = nuevoEstado; localStorage.setItem('human_store_global_orders', JSON.stringify(globalOrders));
-        CloudDB.updateOrder(idPedido, {status: nuevoEstado}); // ACTUALIZAR EN LA NUBE
         let msjExito = "";
         if (nuevoEstado === 'procesando') msjExito = "📦 Pedido en proceso de empaque"; if (nuevoEstado === 'en_camino') msjExito = "🚚 Pedido en proceso de entrega"; if (nuevoEstado === 'listo_retiro') msjExito = "🛍️ Pedido listo para retiro en tienda"; if (nuevoEstado === 'completado') msjExito = "✅ Pedido entregado exitosamente";
         showToast(msjExito); renderSellerOrders(); renderSellerDashboard(); actualizarNotificacionesVendedor(false);
@@ -1114,7 +1045,7 @@ window.cambiarEstadoPedido = (idPedido, nuevoEstado) => {
 };
 
 // ==========================================================================
-// 13. GESTIÓN DE INVENTARIO Y MARKETING DEL VENDEDOR
+// 11. GESTIÓN DE INVENTARIO Y MARKETING DEL VENDEDOR
 // ==========================================================================
 function loadSellerWallet() {
     const walletData = JSON.parse(localStorage.getItem(`wallet_${usuarioActualCorreo}`)) || { pm: '', zelle: '', binance: '' };
@@ -1149,7 +1080,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault(); const pm = document.getElementById('wallet-pm').value.trim(); const zelle = document.getElementById('wallet-zelle').value.trim(); const binance = document.getElementById('wallet-binance').value.trim(); 
             const wallData = { pm, zelle, binance };
             localStorage.setItem(`wallet_${usuarioActualCorreo}`, JSON.stringify(wallData)); 
-            CloudDB.saveUserProp(usuarioActualCorreo, 'wallet', wallData); // GUARDAR EN LA NUBE
             showToast("💳 Datos de retiro guardados exitosamente. El Admin ya puede verlos."); 
         };
     }
@@ -1159,7 +1089,6 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault(); const name = document.getElementById('branding-name').value.trim(); 
             const brandData = { name: name, logo: base64StoreLogo };
             localStorage.setItem(`branding_${usuarioActualCorreo}`, JSON.stringify(brandData)); 
-            CloudDB.saveUserProp(usuarioActualCorreo, 'branding', brandData); // GUARDAR EN LA NUBE
             showToast("🏪 Identidad comercial actualizada con éxito."); 
         };
     }
@@ -1180,7 +1109,6 @@ window.eliminarProductoVendedor = (id) => {
     if(confirm("⚠️ ¿Estás seguro de que deseas eliminar este producto de la tienda? Esta acción no se puede deshacer.")) {
         productos = productos.filter(p => p.id !== id); 
         localStorage.setItem('human_store_products_db', JSON.stringify(productos)); 
-        CloudDB.deleteProduct(id); // ELIMINAR DE LA NUBE
         showToast("🗑️ Producto eliminado exitosamente del catálogo."); renderSellerInventory(); renderSellerDashboard(); actualizarNotificacionesVendedor(false);
     }
 };
@@ -1254,7 +1182,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     productos[index].stock = stock; 
                     productos[index].img = finalImg; 
                     productos[index].opciones = opciones && Object.keys(opciones).length > 0 ? opciones : null;
-                    CloudDB.saveProduct(productos[index]); // GUARDAR EN LA NUBE
                     showToast("✅ Producto actualizado y reabastecido correctamente");
                 }
                 editingProductId = null; document.getElementById('seller-form-title').innerHTML = "📦 Añadir Nuevo Producto"; document.getElementById('btn-submit-product').innerHTML = "➕ Publicar en el Catálogo";
@@ -1272,7 +1199,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     opciones: opciones && Object.keys(opciones).length > 0 ? opciones : null 
                 };
                 productos.unshift(nuevoProd); 
-                CloudDB.saveProduct(nuevoProd); // GUARDAR EN LA NUBE
                 showToast("✅ Producto publicado con éxito en el catálogo");
             }
             localStorage.setItem('human_store_products_db', JSON.stringify(productos)); 
@@ -1285,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================================================
-// 14. CANCELACIÓN DE FLUJOS Y EFECTOS VISUALES
+// 12. CANCELACIÓN DE FLUJOS Y EFECTOS VISUALES
 // ==========================================================================
 function cancelarFlujosEspeciales() {
     modoRecuperar = false; modoRegistro = false; pasoVerificacion = false; 
@@ -1325,7 +1251,21 @@ function renderFavoritos() {
 }
 
 document.getElementById('btn-llevar-todo-fav').onclick = () => { if (!usuarioLogueado) { cerrarModalGeneral(); document.getElementById('welcome-screen').style.display = 'flex'; return; } favoritos.forEach(p => { if(p.stock > 0) agregarCarrito(p.id, false); }); favoritos = []; localStorage.setItem('human_store_favs', JSON.stringify(favoritos)); actualizarContadorFavoritos(); cerrarModalGeneral(); actualizarTodo(); };
-document.getElementById('footer-ver-favoritos').onclick = (e) => { e.preventDefault(); renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; }; document.getElementById('close-favoritos').onclick = () => { document.getElementById('modal-favoritos').style.display = 'none'; }; document.querySelectorAll('.close').forEach(btn => btn.onclick = () => { cerrarModalGeneral(); }); window.onclick = (e) => { if (e.target.className === 'modal' || e.target.id === 'modal-perfil' || e.target.id === 'modal-historial-pedidos' || e.target.id === 'modal-analiticas') cerrarModalGeneral(); }; document.getElementById('btn-search-favoritos').addEventListener('click', () => { renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; });
+
+// EVENTOS DE LOS MODALES
+document.getElementById('footer-ver-favoritos').onclick = (e) => { e.preventDefault(); renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; }; 
+document.getElementById('close-favoritos').onclick = () => { document.getElementById('modal-favoritos').style.display = 'none'; }; 
+document.querySelectorAll('.close').forEach(btn => btn.onclick = () => { cerrarModalGeneral(); }); 
+window.onclick = (e) => { if (e.target.className === 'modal' || e.target.id === 'modal-perfil' || e.target.id === 'modal-historial-pedidos' || e.target.id === 'modal-analiticas') cerrarModalGeneral(); }; 
+document.getElementById('btn-search-favoritos').addEventListener('click', () => { renderFavoritos(); document.getElementById('modal-favoritos').style.display = 'block'; });
+
+// EVENTO PARA ABRIR EL CARRITO DE COMPRAS
+const btnVerCarrito = document.getElementById('btn-ver-carrito');
+if (btnVerCarrito) {
+    btnVerCarrito.addEventListener('click', () => {
+        document.getElementById('modal-carrito').style.display = 'block';
+    });
+}
 
 actualizarContadorFavoritos();
 
@@ -1352,6 +1292,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const overlay = document.getElementById('global-transition'); const textElement = document.getElementById('transition-text');
     function triggerTransition(message, duration = 1500) { textElement.textContent = message; overlay.classList.add('active'); setTimeout(() => { overlay.classList.remove('active'); }, duration); }
     const btnAuth = document.getElementById('btn-auth-action'); if (btnAuth) btnAuth.addEventListener('click', () => { triggerTransition("Preparando tu experiencia..."); });
-    const btnCancelAuth = document.getElementById('btn-cancel-auth'); if (btnCancelAuth) btnCancelAuth.addEventListener('click', () => { triggerTransition("Ingresando al catálogo..."); });
+    
+    // NUEVO: Lógica para ocultar el panel de bienvenida
+    const btnCancelAuth = document.getElementById('btn-cancel-auth'); 
+    if (btnCancelAuth) {
+        btnCancelAuth.addEventListener('click', () => { 
+            triggerTransition("Ingresando al catálogo...", 1200); 
+            setTimeout(() => {
+                const welcomeScr = document.getElementById('welcome-screen');
+                welcomeScr.style.opacity = "0";
+                setTimeout(() => { welcomeScr.style.display = "none"; }, 300);
+            }, 500);
+        }); 
+    }
+    
     const btnCheckout = document.getElementById('btn-go-checkout'); if (btnCheckout) btnCheckout.addEventListener('click', () => { triggerTransition("Ya casi terminamos..."); });
 });
