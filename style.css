@@ -96,7 +96,15 @@ body { font-family: 'Montserrat', sans-serif; margin: 0; background: var(--bg-ma
    9. INTERFAZ DE BIENVENIDA Y CAJA DE AUTENTICACIÓN
    ========================================================================== */
 .welcome-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at center, #141b2d 0%, var(--primary) 100%); position: fixed; width: 100%; top: 0; left: 0; z-index: 10011; padding: 20px; overflow: hidden; }
-.welcome-box { background: var(--bg-card); color: var(--text-main); padding: 50px 45px; border-radius: 30px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.5); width: 100%; max-width: 440px; border: 1px solid var(--border-card); position: relative; z-index: 10; backdrop-filter: blur(4px); }
+.welcome-box { 
+    background: var(--bg-card); color: var(--text-main); padding: 50px 45px; border-radius: 30px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,0.5); width: 100%; max-width: 440px; border: 1px solid var(--border-card); position: relative; z-index: 10; backdrop-filter: blur(4px); 
+    max-height: 90vh; /* Permite que la caja se adapte a pantallas pequeñas */
+    overflow-y: auto; /* Activa el scroll interno si el contenido es muy alto */
+}
+.welcome-box::-webkit-scrollbar { width: 6px; }
+.welcome-box::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 4px; }
+.welcome-box::-webkit-scrollbar-track { background: transparent; }
+
 .auth-tabs { display: flex !important; width: 100% !important; margin-bottom: 30px !important; border-bottom: 2px solid var(--border-color) !important; }
 .tab-btn { flex: 1 1 50% !important; width: 50% !important; padding: 15px !important; border: none !important; background: none !important; cursor: pointer !important; color: #94A3B8 !important; font-weight: 700 !important; font-family: 'Montserrat' !important; transition: 0.3s !important; }
 .tab-btn.active { color: var(--text-main) !important; border-bottom: 4px solid var(--secondary) !important; }
