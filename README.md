@@ -14,13 +14,29 @@ Puedes ver la versión estable del proyecto desplegada aquí:
 
 ## 🚀 Características principales
 
-* **Sistema de Autenticación:** Registro e inicio de sesión funcional con persistencia de datos mediante `localStorage`.
-* **Catálogo Dinámico:** Visualización de productos con filtros por categoría (Electrónica, Hogar, Ropa).
-* **Conversión de Divisas:** Integración visual de precios en USD y BS (Tasa BCV referencial).
-* **Carrito de Compras:** Gestión completa (añadir, eliminar y cálculo de totales en tiempo real).
-* **Diseño Responsivo:** Adaptado para una experiencia fluida en computadoras, tablets y teléfonos móviles.
-* **Detalle de Producto:** Modales dinámicos con galerías de imágenes, especificaciones técnicas y sistema de stock.
+### 🛍️ Experiencia de Compra (Compradores)
+* **Catálogo Dinámico:** Filtrado en tiempo real por categorías y barra de búsqueda inteligente.
+* **Conversión Multimoneda:** Switch instantáneo entre USD y Bolívares (Bs.) conectado a la API de la tasa oficial del BCV.
+* **Carrito de Compras Avanzado:** Cálculo automático de subtotales, detector de envío gratis y sugerencias inteligentes de compra.
+* **Checkout Vía WhatsApp:** Pasarela de pago que formatea y envía el pedido directamente al WhatsApp de la tienda, soportando múltiples métodos (Pago Móvil, Zelle, PayPal, Binance Pay).
+* **Sistema de Q&A:** Sección de preguntas y respuestas en tiempo real dentro del detalle de cada producto.
+* **Generación de Recibos:** Descarga automática de facturas en formato PDF tras cada compra.
 
+### 🏪 Gestión de Ventas (Vendedores)
+* **Dashboard Analítico:** Panel de control con gráficas visuales (Chart.js) de ingresos diarios y distribución de ventas por categoría.
+* **Gestión de Inventario:** Creación, edición, eliminación y control de stock de productos publicados.
+* **Reportes Financieros:** Exportación de reportes detallados de liquidación y ventas en PDF.
+* **Centro de Notificaciones:** Alertas de bajo stock y nuevos pedidos pendientes de despacho.
+
+### ⚙️ Control Operativo (Administradores)
+* **Visión Global:** Métricas de ingresos brutos, cantidad de pedidos y usuarios registrados.
+* **Liquidaciones:** Panel para gestionar los pagos pendientes a los vendedores de la plataforma.
+* **Gestión de Usuarios:** Control total sobre los roles del sistema (Comprador, Vendedor, Admin) y eliminación de cuentas.
+
+### 🎨 UI/UX y Core Técnico
+* **Autenticación Simulada:** Registro, login y recuperación de contraseñas con OTP (One Time Password) usando `localStorage`.
+* **Temas Personalizables:** Soporte nativo para Modo Claro (Light) y Modo Oscuro (Dark).
+* **Diseño Responsivo:** Interfaz 100% adaptable a dispositivos móviles, tablets y escritorio.
 ---
 
 ## 🎨 Diseño UI/UX (Figma)
